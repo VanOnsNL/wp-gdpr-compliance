@@ -59,7 +59,11 @@ class Pages {
             <div class="wpgdprc">
                 <h1 class="wpgdprc-title"><i class="fa fa-lock" aria-hidden="true"></i> <?php _e('WP GDPR Compliance', WP_GDPR_C_SLUG); ?></h1>
 
-                <p class="wpgdprc-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                <p class="wpgdprc-description">
+                    This plugin assists website and webshop owners to comply with European privacy regulations (known as GDPR).
+                    By May 24th, 2018 your website or shop has to comply to avoid large fines. The regulation can be read here:
+                    <a target="_blank" href="//www.eugdpr.org/the-regulation.html">GDPR Key Changes</a></p>
+                <p>Below we ask you what private data you currently collect and provide you with tips to comply.</p>
 
                 <?php if (!empty($checklist)) : ?>
                 <ul class="wpgdprc-checklist">
@@ -85,6 +89,8 @@ class Pages {
                     <?php endforeach; ?>
                 </ul>
                 <?php endif; ?>
+
+                <p class="wpgdprc-disclaimer"><?php _e('The creators of this plugin do not have a legal background. We try to assist website and webshop owners in being compliant with the European Unions GDPR law but for rock solid legal advice we recommend contacting a law firm.', WP_GDPR_C_SLUG); ?></p>
 
                 <div class="wpgdprc-background"><?php include(WP_GDPR_C_DIR_SVG . '/inline-waves.svg.php'); ?></div>
             </div>

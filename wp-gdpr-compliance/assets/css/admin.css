@@ -6,12 +6,21 @@
     display: none !important;
 }
 
+.wpgdprc *, .wpgdprc *:before, .wpgdprc *:after {
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
 .wpgdprc {
     padding: 20px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
     max-width: 800px;
     font-family: "freight-sans-pro", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
     font-weight: normal;
-    font-size: 22px;
+    font-size: 16px;
     line-height: 1.6;
     text-rendering: optimizeLegibility;
     color: #0A0A0A;
@@ -21,6 +30,15 @@
     color: inherit;
 }
 
+.wpgdprc p {
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.wpgdprc a {
+    color: #4AA94F;
+}
+
 h1.wpgdprc-title {
     font-weight: 700;
     font-size: 36px;
@@ -28,12 +46,12 @@ h1.wpgdprc-title {
 
 h1.wpgdprc-title .fa {
     margin-right: 10px;
-    color: #4aa94f;
+    color: #4AA94F;
 }
 
-.wpgdprc-description {
-    font-size: inherit;
-    line-height: inherit;
+p.wpgdprc-disclaimer {
+    font-size: small;
+    color: #8A8A8A;
 }
 
 .wpgdprc-background {
@@ -45,7 +63,7 @@ h1.wpgdprc-title .fa {
 }
 
 .wpgdprc-background g {
-    fill: #4aa94f;
+    fill: #4AA94F;
 }
 
 .wpgdprc-checklist {
@@ -107,7 +125,6 @@ h1.wpgdprc-title .fa {
 
 .wpgdprc-switch .wpgdprc-switch-inner:before, .wpgdprc-switch .wpgdprc-switch-inner:after {
     float: left;
-    box-sizing: border-box;
     width: 50%;
     line-height: 30px;
     color: #FFFFFF;
@@ -135,7 +152,11 @@ h1.wpgdprc-title .fa {
     width: 28px;
     height: 28px;
     background: #FFFFFF;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
     border-radius: 50%;
+    -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, .3);
+    -moz-box-shadow: 0 0 3px rgba(0, 0, 0, .3);
     box-shadow: 0 0 3px rgba(0, 0, 0, .3);
     transition: right 0.15s ease-in-out;
 }
@@ -143,4 +164,10 @@ h1.wpgdprc-title .fa {
 .wpgdprc-checklist-description {
     margin-top: 10px;
     color: #8A8A8A;
+}
+
+@media screen and (min-width: 768px) {
+    .wpgdprc {
+        font-size: 22px;
+    }
 }
