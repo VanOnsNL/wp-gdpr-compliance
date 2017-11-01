@@ -1,0 +1,146 @@
+.tools_page_wp_gdpr_compliance {
+    background: #FFFFFF;
+}
+
+.tools_page_wp_gdpr_compliance #wpfooter {
+    display: none !important;
+}
+
+.wpgdprc {
+    padding: 20px;
+    max-width: 800px;
+    font-family: "freight-sans-pro", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+    font-weight: normal;
+    font-size: 22px;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    color: #0A0A0A;
+}
+
+.wpgdprc h1, .wpgdprc p {
+    color: inherit;
+}
+
+h1.wpgdprc-title {
+    font-weight: 700;
+    font-size: 36px;
+}
+
+h1.wpgdprc-title .fa {
+    margin-right: 10px;
+    color: #4aa94f;
+}
+
+.wpgdprc-description {
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.wpgdprc-background {
+    position: fixed;
+    right: 0;
+    bottom: -10px;
+    left: 0;
+    z-index: -1;
+}
+
+.wpgdprc-background g {
+    fill: #4aa94f;
+}
+
+.wpgdprc-checklist {
+    margin: 0;
+    list-style: none;
+}
+
+.wpgdprc-checklist li {
+    padding: 10px 0;
+    border-bottom: 1px solid #F1F1F1;
+}
+
+.wpgdprc-checkbox {
+    position: relative;
+}
+
+.wpgdprc-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.wpgdprc-checkbox input[type="checkbox"]:checked ~ .wpgdprc-switch .wpgdprc-switch-label .wpgdprc-switch-inner {
+    margin-left: 0;
+}
+
+.wpgdprc-checkbox input[type="checkbox"]:checked ~ .wpgdprc-switch .wpgdprc-switch-label .wpgdprc-switch-switch {
+    right: 1px;
+}
+
+.wpgdprc-checkbox label {
+    display: block;
+    position: relative;
+    padding-right: 65px;
+    user-select: none;
+    z-index: 1;
+}
+
+.wpgdprc-switch {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 65px;
+    font-size: 12px;
+    transform: translateY(-50%);
+}
+
+.wpgdprc-switch .wpgdprc-switch-label {
+    display: block;
+    margin: 0;
+    border-radius: 30px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.wpgdprc-switch .wpgdprc-switch-inner {
+    margin-left: -100%;
+    width: 200%;
+    transition: margin 0.15s ease-in-out;
+}
+
+.wpgdprc-switch .wpgdprc-switch-inner:before, .wpgdprc-switch .wpgdprc-switch-inner:after {
+    float: left;
+    box-sizing: border-box;
+    width: 50%;
+    line-height: 30px;
+    color: #FFFFFF;
+}
+
+.wpgdprc-switch .wpgdprc-switch-inner:before {
+    content: 'YES';
+    padding-left: 10px;
+    background-color: #CC4B37;
+}
+
+.wpgdprc-switch .wpgdprc-switch-inner:after {
+    content: 'NO';
+    padding-right: 10px;
+    background-color: #4AA94F;
+    text-align: right;
+}
+
+.wpgdprc-switch .wpgdprc-switch-switch {
+    position: absolute;
+    top: 1px;
+    right: 36px;
+    bottom: 0;
+    margin: 0;
+    width: 28px;
+    height: 28px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    box-shadow: 0 0 3px rgba(0, 0, 0, .3);
+    transition: right 0.15s ease-in-out;
+}
+
+.wpgdprc-checklist-description {
+    margin-top: 10px;
+    color: #8A8A8A;
+}
