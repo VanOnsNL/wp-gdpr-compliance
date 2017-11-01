@@ -3,12 +3,29 @@
 /*
  Plugin Name: WP GDPR Compliance
  Plugin URI:  https://www.wpgdprc.com/
- Description: The creators of this plugin do not have a legal background. We try to assist website and webshop owners in being compliant with the European Unions GDPR law but for rock solid legal advice we recommend contacting a law firm.
+ Description: This plugin assists website and webshop owners to comply with European privacy regulations (known as GDPR). By May 24th, 2018 your website or shop has to comply to avoid large fines.
  Version:     0.1
- Author:      Van Ons
+ Author:      Donny Oexman, Van Ons
  Author URI:  https://www.van-ons.nl/
- Domain Path: /languages
+ License:     GPL2
+ License URI: https://www.gnu.org/licenses/gpl-2.0.html
  Text Domain: wp-gdpr-compliance
+ Domain Path: /languages
+*/
+
+/*
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see http://www.gnu.org/licenses.
 */
 
 namespace WPGDPRC;
@@ -55,7 +72,7 @@ class WPGDPRC {
         load_plugin_textdomain(WP_GDPR_C_SLUG, false, basename(dirname(__FILE__)) . '/languages/');
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
-        add_action('admin_head', array($this, 'addToHead'));
+        add_action('admin_head', array($this, 'addToAdminHead'));
     }
 
     public function loadAssets() {
@@ -65,10 +82,10 @@ class WPGDPRC {
         wp_enqueue_script('wpgdprc.js', WP_GDPR_C_URI_JS . '/admin.js', false, filemtime(WP_GDPR_C_DIR_JS . '/admin.js'), true);
     }
 
-    public function addToHead() {
+    public function addToAdminHead() {
         ?>
         <script src="//use.typekit.net/ais6lnh.js"></script>
-        <script>try{Typekit.load({ async: true });}catch(e){}</script>
+        <script>try {Typekit.load({async: true});} catch (e) {}</script>
         <?php
     }
 }

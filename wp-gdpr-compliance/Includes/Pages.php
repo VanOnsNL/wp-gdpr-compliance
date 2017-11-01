@@ -32,28 +32,6 @@ class Pages {
     }
 
     public function generatePage() {
-        $checklist = array(
-            'contact_form' => array(
-                'label' => 'Do you have a contact form?',
-                'description' => 'Make sure you add a checkbox specifically asking the user of the form if they consent to you storing and using their personal information to get back in touch with them. The checkbox must be unchecked by default. Also mention if you will send or share the data with any 3rd-parties and which.'
-            ),
-            'comments' => array(
-                'label' => 'Can visitors comment anywhere on your website?',
-                'description' => 'Make sure you add a checkbox specifically asking the user of the comment section if they consent to storing their message attached to the e-mail address they\'ve used to comment. The checkbox must be unchecked by default. Also mention if you will send or share the data with any 3rd-parties and which.'
-            ),
-            'webshop' => array(
-                'label' => 'Is there an order form on your website or webshop present?',
-                'description' => 'Make sure you add a checkbox specifically asking the user of the form if they consent to you storing and using their personal information to ship the order. This cannot be the same checkbox as the Privacy Policy checkbox you should already have in place. The checkbox must be unchecked by default. Also mention if you will send or share the data with any 3rd-parties and which.'
-            ),
-            'forum' => array(
-                'label' => 'Do you provide a forum or message board environment?',
-                'description' => 'Make sure you add a checkbox specifically asking forum / board users if they consent to you storing and using their personal information and messages. The checkbox must be unchecked by default. Also mention if you will send or share the data with any 3rd-parties and which.'
-            ),
-            'chat' => array(
-                'label' => 'Can visitors chat with your company directly?',
-                'description' => 'Make sure you add a checkbox specifically asking chat users if they consent to you storing and using their personal information and messages. The checkbox must be unchecked by default. We recommend also mentioning for how long you will store chat messages or deleting them all within 24 hours. Also mention if you will send or share the data with any 3rd-parties and which.'
-            ),
-        );
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -65,9 +43,8 @@ class Pages {
                     <a target="_blank" href="//www.eugdpr.org/the-regulation.html">GDPR Key Changes</a></p>
                 <p>Below we ask you what private data you currently collect and provide you with tips to comply.</p>
 
-                <?php if (!empty($checklist)) : ?>
                 <ul class="wpgdprc-checklist">
-                    <?php foreach ($checklist as $id => $check) : ?>
+                    <?php foreach (Helpers::getCheckList() as $id => $check) : ?>
                     <li>
                         <div class="wpgdprc-checkbox">
                             <input type="checkbox" name="<?php echo $id; ?>" id="<?php echo $id; ?>" value="" tabindex="1" />
@@ -88,9 +65,15 @@ class Pages {
                     </li>
                     <?php endforeach; ?>
                 </ul>
-                <?php endif; ?>
 
-                <p class="wpgdprc-disclaimer"><?php _e('The creators of this plugin do not have a legal background. We try to assist website and webshop owners in being compliant with the European Unions GDPR law but for rock solid legal advice we recommend contacting a law firm.', WP_GDPR_C_SLUG); ?></p>
+                <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background. We try to assist website and webshop owners in being compliant with the European Unions GDPR law but for rock solid legal advice we recommend contacting a law firm.', WP_GDPR_C_SLUG); ?></p>
+
+                <div class="wpgdprc-features">
+                    <div class="wpgdprc-features-inner">
+                        <h2><?php _e('Coming soon', WP_GDPR_C_SLUG); ?></h2>
+                        <p><?php _e('Tools to automatically comply with GDPR regulations.', WP_GDPR_C_SLUG); ?></p>
+                    </div>
+                </div>
 
                 <div class="wpgdprc-background"><?php include(WP_GDPR_C_DIR_SVG . '/inline-waves.svg.php'); ?></div>
             </div>
