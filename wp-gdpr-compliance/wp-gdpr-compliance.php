@@ -85,7 +85,7 @@ class WPGDPRC {
     public function addToAdminHead() {
         ?>
         <script src="//use.typekit.net/ais6lnh.js"></script>
-        <script>try {Typekit.load({async: true});} catch (e) {}</script>
+        <script>try{Typekit.load({ async: true });}catch(e){}</script>
         <?php
     }
 }
