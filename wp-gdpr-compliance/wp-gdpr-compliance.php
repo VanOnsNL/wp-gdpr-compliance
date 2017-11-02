@@ -76,10 +76,9 @@ class WPGDPRC {
     }
 
     public function loadAssets() {
-        wp_enqueue_style('wpgdprc.css', WP_GDPR_C_URI_CSS . '/admin.css', false, filemtime(WP_GDPR_C_DIR_CSS . '/admin.css'));
-        wp_enqueue_style('wpgdprc.fontawesome.icons', '//use.fontawesome.com/releases/v4.7.0/css/font-awesome-css.min.css', false, false);
-        wp_enqueue_style('wpgdprc.fontawesome.font', '//use.fontawesome.com/0e91d6595e.css', false, false);
-        wp_enqueue_script('wpgdprc.js', WP_GDPR_C_URI_JS . '/admin.js', false, filemtime(WP_GDPR_C_DIR_JS . '/admin.js'), true);
+        wp_enqueue_style('wpgdprc.css', WP_GDPR_C_URI_CSS . '/admin.css', array(), filemtime(WP_GDPR_C_DIR_CSS . '/admin.css'));
+        wp_enqueue_style('wpgdprc.fontawesome', WP_GDPR_C_URI_CSS . '/font-awesome.min.css', array(), false);
+        wp_enqueue_script('wpgdprc.js', WP_GDPR_C_URI_JS . '/admin.js', array(), filemtime(WP_GDPR_C_DIR_JS . '/admin.js'), true);
     }
 
     public function addToAdminHead() {
