@@ -1,9 +1,10 @@
 === WP GDPR Compliance ===
-Contributors: donny-oexman, van-ons
+Contributors: donnyoexman, van-ons
 Tags: gdpr, law, regulations, compliance, data, protection, privacy, data protection, eu, avg
 Requires at least: 4.5
 Tested up to: 4.8.3
-Stable tag: 0.1
+Requires PHP: 5.2.4
+Stable tag: 1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +20,12 @@ This plugin assists website and webshop owners to comply with European privacy r
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. Go to Tools -> WP GDPR Compliance
 
+== Screenshots ==
+
+1. We provide you with tips based on the private data you currently collect in order to comply with the GDPR regulations.
+
 == Changelog ==
 
-= 0.1 =
+= 1.0 =
+*Release date: November 4th, 2017*
 * Initial release.
