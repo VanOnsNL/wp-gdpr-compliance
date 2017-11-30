@@ -34,4 +34,14 @@ class Helpers {
             ),
         );
     }
+
+    public static function getActivatedPlugins() {
+        $plugins = get_option('active_plugins');
+        return array(
+            'cf7' => array(
+                'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
+                'active' => in_array('contact-form-7/wp-contact-form-7.php', $plugins) ? 1 : 0,
+            ),
+        );
+    }
 }

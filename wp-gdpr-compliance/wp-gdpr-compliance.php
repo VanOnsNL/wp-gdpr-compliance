@@ -31,7 +31,9 @@ along with this program. If not, see http://www.gnu.org/licenses.
 namespace WPGDPRC;
 
 // If this file is called directly, abort.
+use WPGDPRC\Includes\Helpers;
 use WPGDPRC\Includes\Pages;
+use WPGDPRC\Includes\Extensions\CF7;
 
 if (!defined('WPINC')) {
     die();
@@ -71,8 +73,19 @@ class WPGDPRC {
     public function init() {
         load_plugin_textdomain(WP_GDPR_C_SLUG, false, basename(dirname(__FILE__)) . '/languages/');
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
+        add_action('admin_init', array($this, 'settings'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
         add_action('admin_head', array($this, 'addToAdminHead'));
+    }
+
+    public function settings() {
+        foreach (Helpers::getActivatedPlugins() as $id => $plugin) {
+            register_setting( WP_GDPR_C_SLUG, WP_GDPR_C_SLUG . '_' . $id);
+            switch ($id) {
+                case 'cf7':
+                    add_filter('wpcf7_editor_panels', array(CF7::getInstance(), 'add_tab'));
+            }
+        }
     }
 
     public function loadAssets() {
@@ -100,5 +113,8 @@ function autoload($class) {
     }
     $result = str_replace('WPGDPRC\\', '', $class);
     $result = str_replace('\\', '/', $result);
+    if (strstr($result, 'Extensions')) {
+        $result = $result . strrchr($result, '/');
+    }
     require $result . '.php';
 }
