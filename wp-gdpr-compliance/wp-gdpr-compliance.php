@@ -30,21 +30,21 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace WPGDPRC;
 
-// If this file is called directly, abort.
-use WPGDPRC\Includes\Helpers;
+use WPGDPRC\Includes\Integrations;
 use WPGDPRC\Includes\Pages;
-use WPGDPRC\Includes\Extensions\CF7;
 
+// If this file is called directly, abort.
 if (!defined('WPINC')) {
     die();
 }
 
 define('WP_GDPR_C_SLUG', 'wp-gdpr-compliance');
-define('WP_GDPR_C_DIR', plugin_dir_path(__FILE__));
+define('WP_GDPR_C_ROOT_FILE', __FILE__);
+define('WP_GDPR_C_DIR', plugin_dir_path(WP_GDPR_C_ROOT_FILE));
 define('WP_GDPR_C_DIR_JS', WP_GDPR_C_DIR . 'assets/js');
 define('WP_GDPR_C_DIR_CSS', WP_GDPR_C_DIR . 'assets/css');
 define('WP_GDPR_C_DIR_SVG', WP_GDPR_C_DIR . 'assets/svg');
-define('WP_GDPR_C_URI', plugin_dir_url(__FILE__));
+define('WP_GDPR_C_URI', plugin_dir_url(WP_GDPR_C_ROOT_FILE));
 define('WP_GDPR_C_URI_JS', WP_GDPR_C_URI . 'assets/js');
 define('WP_GDPR_C_URI_CSS', WP_GDPR_C_URI . 'assets/css');
 define('WP_GDPR_C_URI_SVG', WP_GDPR_C_URI . 'assets/svg');
@@ -73,19 +73,9 @@ class WPGDPRC {
     public function init() {
         load_plugin_textdomain(WP_GDPR_C_SLUG, false, basename(dirname(__FILE__)) . '/languages/');
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
-        add_action('admin_init', array($this, 'settings'));
+        add_action('admin_init', array(Integrations::getInstance(), 'init'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
         add_action('admin_head', array($this, 'addToAdminHead'));
-    }
-
-    public function settings() {
-        foreach (Helpers::getActivatedPlugins() as $id => $plugin) {
-            register_setting( WP_GDPR_C_SLUG, WP_GDPR_C_SLUG . '_' . $id);
-            switch ($id) {
-                case 'cf7':
-                    add_filter('wpcf7_editor_panels', array(CF7::getInstance(), 'add_tab'));
-            }
-        }
     }
 
     public function loadAssets() {
@@ -113,8 +103,5 @@ function autoload($class) {
     }
     $result = str_replace('WPGDPRC\\', '', $class);
     $result = str_replace('\\', '/', $result);
-    if (strstr($result, 'Extensions')) {
-        $result = $result . strrchr($result, '/');
-    }
     require $result . '.php';
 }

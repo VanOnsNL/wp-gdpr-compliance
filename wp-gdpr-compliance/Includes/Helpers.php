@@ -10,6 +10,13 @@ class Helpers {
     /**
      * @return array
      */
+    public static function getPluginData() {
+        return get_plugin_data(WP_GDPR_C_ROOT_FILE);
+    }
+
+    /**
+     * @return array
+     */
     public static function getCheckList() {
         return array(
             'contact_form' => array(
@@ -35,13 +42,33 @@ class Helpers {
         );
     }
 
-    public static function getActivatedPlugins() {
-        $plugins = get_option('active_plugins');
+    /**
+     * @return array
+     */
+    public static function getSupportedPlugins() {
         return array(
-            'cf7' => array(
+            array(
+                'id' => 'contact-form-7',
+                'file' => 'contact-form-7/wp-contact-form-7.php',
                 'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
-                'active' => in_array('contact-form-7/wp-contact-form-7.php', $plugins) ? 1 : 0,
-            ),
+                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+            )
         );
+    }
+
+    /**
+     * @return array
+     */
+    public static function getActivatedPlugins() {
+        $output = array();
+        $activePlugins = get_option('active_plugins');
+        if (!empty($activePlugins)) {
+            foreach (self::getSupportedPlugins() as $plugin) {
+                if (in_array($plugin['file'], $activePlugins)) {
+                    $output[] = $plugin;
+                }
+            }
+        }
+        return $output;
     }
 }
