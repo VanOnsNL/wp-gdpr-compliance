@@ -59,10 +59,14 @@ class Pages {
                                 <p><?php _e('Below we ask you what private data you currently collect and provide you with tips to comply.', WP_GDPR_C_SLUG) ?></p>
 
                                 <ul class="wpgdprc-list">
-                                    <?php foreach (Helpers::getCheckList() as $id => $check) : ?>
+                                    <?php
+                                    foreach (Helpers::getCheckList() as $id => $check) :
+                                        $optionName = WP_GDPR_C_PREFIX . '_general_' . $id;
+                                        $checked = filter_var(get_option($optionName), FILTER_VALIDATE_BOOLEAN);
+                                        ?>
                                         <li>
                                             <div class="wpgdprc-checkbox">
-                                                <input type="checkbox" name="<?php echo $id; ?>" id="<?php echo $id; ?>" value="" tabindex="1" />
+                                                <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $id; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
                                                 <label for="<?php echo $id; ?>"><?php echo $check['label']; ?></label>
                                                 <div class="wpgdprc-switch wpgdprc-switch--reverse" aria-hidden="true">
                                                     <div class="wpgdprc-switch-label">
@@ -73,7 +77,7 @@ class Pages {
                                             </div>
 
                                             <?php if (!empty($check['description'])) : ?>
-                                                <div class="wpgdprc-checklist-description" style="display: none;">
+                                                <div class="wpgdprc-checklist-description" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
                                                     <?php echo esc_html($check['description']); ?>
                                                 </div>
                                             <?php endif; ?>
@@ -87,10 +91,14 @@ class Pages {
                                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
 
                                     <ul class="wpgdprc-list">
-                                        <?php foreach ($activatedPlugins as $key => $plugin) : ?>
+                                        <?php
+                                        foreach ($activatedPlugins as $key => $plugin) :
+                                            $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'];
+                                            $checked = filter_var(get_option($optionName), FILTER_VALIDATE_BOOLEAN);
+                                            ?>
                                             <li>
                                                 <div class="wpgdprc-checkbox">
-                                                    <input type="checkbox" name="<?php echo WP_GDPR_C_SLUG . '_' . $plugin['id']; ?>" id="<?php echo $plugin['id']; ?>" value="1" tabindex="1" <?php checked( get_option( WP_GDPR_C_SLUG . '_' . $id ), 1 ); ?> />
+                                                    <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $plugin['id']; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
                                                     <label for="<?php echo $plugin['id']; ?>"><?php echo $plugin['name']; ?></label>
                                                     <div class="wpgdprc-switch" aria-hidden="true">
                                                         <div class="wpgdprc-switch-label">
@@ -101,12 +109,14 @@ class Pages {
                                                 </div>
 
                                                 <?php if (!empty($plugin['description'])) : ?>
-                                                    <div class="wpgdprc-checklist-description" style="display: none;">
+                                                    <div class="wpgdprc-checklist-description" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
                                                         <?php echo esc_html($plugin['description']); ?>
                                                     </div>
                                                 <?php endif; ?>
                                             </li>
-                                        <?php endforeach; ?>
+                                            <?php
+                                        endforeach;
+                                        ?>
                                     </ul>
                                 <?php else : ?>
                                     <p><?php _e('Couldn\'t find any supported plugins installed.', WP_GDPR_C_SLUG); ?></p>

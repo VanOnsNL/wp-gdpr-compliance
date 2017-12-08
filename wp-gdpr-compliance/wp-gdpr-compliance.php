@@ -30,6 +30,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace WPGDPRC;
 
+use WPGDPRC\Includes\Ajax;
 use WPGDPRC\Includes\Integrations;
 use WPGDPRC\Includes\Pages;
 
@@ -39,6 +40,7 @@ if (!defined('WPINC')) {
 }
 
 define('WP_GDPR_C_SLUG', 'wp-gdpr-compliance');
+define('WP_GDPR_C_PREFIX', 'wpgdprc');
 define('WP_GDPR_C_ROOT_FILE', __FILE__);
 define('WP_GDPR_C_DIR', plugin_dir_path(WP_GDPR_C_ROOT_FILE));
 define('WP_GDPR_C_DIR_JS', WP_GDPR_C_DIR . 'assets/js');
@@ -73,15 +75,20 @@ class WPGDPRC {
     public function init() {
         load_plugin_textdomain(WP_GDPR_C_SLUG, false, basename(dirname(__FILE__)) . '/languages/');
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
-        add_action('admin_init', array(Integrations::getInstance(), 'init'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
         add_action('admin_head', array($this, 'addToAdminHead'));
+        new Ajax();
+        new Integrations();
     }
 
     public function loadAssets() {
         wp_enqueue_style('wpgdprc.css', WP_GDPR_C_URI_CSS . '/admin.css', array(), filemtime(WP_GDPR_C_DIR_CSS . '/admin.css'));
         wp_enqueue_style('wpgdprc.fontawesome', WP_GDPR_C_URI_CSS . '/font-awesome.min.css', array(), false);
         wp_enqueue_script('wpgdprc.js', WP_GDPR_C_URI_JS . '/admin.js', array(), filemtime(WP_GDPR_C_DIR_JS . '/admin.js'), true);
+        wp_localize_script('wpgdprc.js', 'wpgdprcData', array(
+            'ajaxURL' => admin_url('admin-ajax.php'),
+            'ajaxSecurity' => wp_create_nonce('wpgdprc'),
+        ));
     }
 
     public function addToAdminHead() {

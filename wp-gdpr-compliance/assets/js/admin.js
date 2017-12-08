@@ -1,7 +1,17 @@
 (function($, window, document, undefined) {
     'use strict';
 
-    var $wpgdprc = $('.wpgdprc'),
+    var ajaxLoading = false,
+        ajaxURL = wpgdprcData.ajaxURL,
+        ajaxSecurity = wpgdprcData.ajaxSecurity,
+        delay = (function () {
+            var timer = 0;
+            return function (callback, ms) {
+                clearTimeout(timer);
+                timer = setTimeout(callback, ms);
+            };
+        })(),
+        $wpgdprc = $('.wpgdprc'),
         $wpgdprcCheckbox = $('.wpgdprc-checkbox input[type="checkbox"]', $wpgdprc),
         $wpgdprcTabs = $('.wpgdprc-tabs'),
         initCheckboxes = function () {
@@ -17,6 +27,7 @@
                 } else {
                     $wpgdprcChecklistDescription.stop(true, true).slideUp('fast');
                 }
+                doProcessAction($(this));
             });
         },
         initTabs = function () {
@@ -40,8 +51,46 @@
                 $target.addClass('active').attr('aria-hidden', false);
             });
         },
-        initSettingsAjax = function() {
+        getElementAjaxData = function($element) {
+            var data = $element.data();
+            if ($element.is('input')) {
+                data.value = $element.val();
+                if ($element.is('input[type="checkbox"]')) {
+                    data.value = ($element.is(':checked')) ? 1 : 0;
+                }
+            }
+            return data;
+        },
+        doProcessAction = function($element) {
+            $element.addClass('processing');
 
+            $.ajax({
+                url: ajaxURL,
+                type: 'POST',
+                dataType: 'JSON',
+                data: {
+                    action: 'wpgdprc_process_action',
+                    security: ajaxSecurity,
+                    data: getElementAjaxData($element)
+                },
+                success: function (response) {
+                    if (response) {
+                        if (response.error) {
+                            $element.addClass('alert');
+                        }
+
+                        if (response.redirect) {
+                            document.location.href = currentPage;
+                        }
+                    }
+                },
+                complete: function () {
+                    $element.removeClass('processing');
+                    delay(function() {
+                        $element.removeClass('alert');
+                    }, 2000);
+                }
+            });
         };
 
     $(function() {
@@ -50,6 +99,5 @@
         }
         initCheckboxes();
         initTabs();
-        initSettingsAjax();
     });
 })(jQuery, window, document);
