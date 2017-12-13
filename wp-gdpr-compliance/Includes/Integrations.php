@@ -54,8 +54,8 @@ class Integrations {
         foreach (Helpers::getActivatedPlugins() as $plugin) {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_SLUG . '_' . $plugin['id']);
             switch ($plugin['id']) {
-                case 'contact-form-7' :
-                    add_filter('wpcf7_editor_panels', array(CF7::getInstance(), 'addTab'));
+                //Add you plugin support here
+                default:
                     break;
             }
         }
