@@ -1,3 +1,16 @@
+.cf:before, .cf:after {
+    content: " ";
+    display: table;
+}
+
+.cf:after {
+    clear: both;
+}
+
+.cf {
+    *zoom: 1;
+}
+
 .tools_page_wp_gdpr_compliance {
     background: #FFFFFF;
 }
@@ -49,6 +62,11 @@ h1.wpgdprc-title .fa {
     color: #4AA94F;
 }
 
+p.wpgdprc-description {
+    padding: 10px;
+    background: #F1F1F1;
+}
+
 p.wpgdprc-disclaimer {
     font-size: small;
     color: #8A8A8A;
@@ -66,12 +84,49 @@ p.wpgdprc-disclaimer {
     fill: #4AA94F;
 }
 
-.wpgdprc-checklist {
+.wpgdprc-tabs {
+    position: relative;
+}
+
+.wpgdprc-tabs__navigation {
+    margin: 0 -10px 20px;
+}
+
+.wpgdprc-tabs__navigation > a {
+    display: block;
+    float: left;
+    margin-bottom: 0;
+    padding: 0 10px;
+    border-left: 1px solid #F1F1F1;
+    text-decoration: none;
+    font-weight: 700;
+    line-height: 1;
+    color: inherit;
+}
+
+.wpgdprc-tabs__navigation > a:first-child {
+    border-left: none;
+}
+
+.wpgdprc-tabs__navigation > a.active {
+    text-decoration: underline;
+    color: #4AA94F;
+}
+
+.wpgdprc-tabs__panel {
+    display: none;
+}
+
+.wpgdprc-tabs__panel.active {
+    display: block;
+}
+
+.wpgdprc-list {
     margin: 0;
     list-style: none;
 }
 
-.wpgdprc-checklist li {
+.wpgdprc-list li {
     margin-bottom: 0;
     padding: 10px 0;
     border-bottom: 1px solid #F1F1F1;
@@ -85,12 +140,29 @@ p.wpgdprc-disclaimer {
     display: none;
 }
 
-.wpgdprc-checkbox input[type="checkbox"]:checked ~ .wpgdprc-switch .wpgdprc-switch-label .wpgdprc-switch-inner {
+.wpgdprc-checkbox input[type="checkbox"]:checked:not(.processing) ~ .wpgdprc-switch .wpgdprc-switch-label .wpgdprc-switch-inner {
     margin-left: 0;
 }
 
-.wpgdprc-checkbox input[type="checkbox"]:checked ~ .wpgdprc-switch .wpgdprc-switch-label .wpgdprc-switch-switch {
+.wpgdprc-checkbox input[type="checkbox"]:checked:not(.processing) ~ .wpgdprc-switch .wpgdprc-switch-label .wpgdprc-switch-switch {
     right: 1px;
+}
+
+.wpgdprc-checkbox input[type="checkbox"].processing ~ label {
+    pointer-events: none;
+}
+
+.wpgdprc-checkbox input[type="checkbox"].processing ~ .wpgdprc-switch .wpgdprc-switch-label .wpgdprc-switch-inner {
+    margin-left: -50%;
+}
+
+.wpgdprc-checkbox input[type="checkbox"].processing ~ .wpgdprc-switch .wpgdprc-switch-label .wpgdprc-switch-switch {
+    right: 50%;
+    -webkit-transform: translateX(50%);
+    -moz-transform: translateX(50%);
+    -ms-transform: translateX(50%);
+    -o-transform: translateX(50%);
+    transform: translateX(50%);
 }
 
 .wpgdprc-checkbox label {
@@ -123,7 +195,7 @@ p.wpgdprc-disclaimer {
 .wpgdprc-switch .wpgdprc-switch-inner {
     margin-left: -100%;
     width: 200%;
-    transition: margin 0.15s ease-in-out;
+    transition: all 0.15s ease-in-out;
 }
 
 .wpgdprc-switch .wpgdprc-switch-inner:before, .wpgdprc-switch .wpgdprc-switch-inner:after {
@@ -136,14 +208,22 @@ p.wpgdprc-disclaimer {
 .wpgdprc-switch .wpgdprc-switch-inner:before {
     content: 'YES';
     padding-left: 10px;
-    background-color: #CC4B37;
+    background-color: #4AA94F;
 }
 
 .wpgdprc-switch .wpgdprc-switch-inner:after {
     content: 'NO';
     padding-right: 10px;
-    background-color: #4AA94F;
+    background-color: #0A0A0A;
     text-align: right;
+}
+
+.wpgdprc-switch--reverse .wpgdprc-switch-inner:before {
+    background-color: #CC4B37;
+}
+
+.wpgdprc-switch--reverse .wpgdprc-switch-inner:after {
+    background-color: #4AA94F;
 }
 
 .wpgdprc-switch .wpgdprc-switch-switch {
@@ -161,7 +241,7 @@ p.wpgdprc-disclaimer {
     -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, .3);
     -moz-box-shadow: 0 0 3px rgba(0, 0, 0, .3);
     box-shadow: 0 0 3px rgba(0, 0, 0, .3);
-    transition: right 0.15s ease-in-out;
+    transition: all 0.15s ease-in-out;
 }
 
 .wpgdprc-checklist-description {

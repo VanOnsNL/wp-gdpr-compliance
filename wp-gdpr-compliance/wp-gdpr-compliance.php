@@ -32,7 +32,6 @@ namespace WPGDPRC;
 
 // If this file is called directly, abort.
 use WPGDPRC\Includes\Pages;
-use WPGDPRC\Includes\Extensions\WC;
 
 if (!defined('WPINC')) {
     die();
@@ -74,13 +73,7 @@ class WPGDPRC {
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
         add_action('admin_head', array($this, 'addToAdminHead'));
-
-        add_action('woocommerce_checkout_process', array(WC::getInstance(), 'my_custom_checkout_field_process'));
-        add_action('woocommerce_after_order_notes', array(WC::getInstance(), 'my_custom_checkout_field'));
-        add_action('woocommerce_checkout_update_order_meta', array(WC::getInstance(), 'my_custom_checkout_field_update_order_meta'));
-
     }
-
 
     public function loadAssets() {
         wp_enqueue_style('wpgdprc.css', WP_GDPR_C_URI_CSS . '/admin.css', array(), filemtime(WP_GDPR_C_DIR_CSS . '/admin.css'));

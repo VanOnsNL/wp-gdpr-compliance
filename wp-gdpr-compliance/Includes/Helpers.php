@@ -10,6 +10,13 @@ class Helpers {
     /**
      * @return array
      */
+    public static function getPluginData() {
+        return get_plugin_data(WP_GDPR_C_ROOT_FILE);
+    }
+
+    /**
+     * @return array
+     */
     public static function getCheckList() {
         return array(
             'contact_form' => array(
@@ -33,5 +40,35 @@ class Helpers {
                 'description' => __('Make sure you add a checkbox specifically asking chat users if they consent to you storing and using their personal information and messages. The checkbox must be unchecked by default. We recommend also mentioning for how long you will store chat messages or deleting them all within 24 hours. Also mention if you will send or share the data with any 3rd-parties and which.', WP_GDPR_C_SLUG),
             ),
         );
+    }
+
+    /**
+     * @return array
+     */
+    public static function getSupportedPlugins() {
+        return array(
+            array(
+                'id' => 'contact-form-7',
+                'file' => 'contact-form-7/wp-contact-form-7.php',
+                'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
+                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+            )
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public static function getActivatedPlugins() {
+        $output = array();
+        $activePlugins = get_option('active_plugins');
+        if (!empty($activePlugins)) {
+            foreach (self::getSupportedPlugins() as $plugin) {
+                if (in_array($plugin['file'], $activePlugins)) {
+                    $output[] = $plugin;
+                }
+            }
+        }
+        return $output;
     }
 }
