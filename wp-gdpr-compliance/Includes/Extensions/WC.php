@@ -16,30 +16,29 @@ class WC {
         return self::$instance;
     }
 
-
-    function my_custom_checkout_field( $checkout ) {
+    public function addField( $checkout ) {
 
         echo '<div id="my-new-field"><h3>'.__('My Checkbox: ').'</h3>';
 
         woocommerce_form_field( 'gdpr_checkbox', array(
             'type'          => 'checkbox',
             'class'         => array('input-checkbox'),
-            'label'         => __('I have read and agreed.'),
+            'label'         => __('We use your information to deliver the order.'),
             'required'  => true,
-        ), $checkout->get_value( 'my_checkbox' ));
+        ), $checkout->get_value( 'gdpr_checkbox' ));
 
         echo '</div>';
     }
 
-    function my_custom_checkout_field_process() {
+    public function checkPost() {
         global $woocommerce;
 
         // Check if set, if its not set add an error.
         if (!$_POST['gdpr_checkbox'])
-            $woocommerce->add_error( __('Please agree to my checkbox.') );
+            $woocommerce->add_error( __('Please agree to giving us your information.') );
     }
 
-    function my_custom_checkout_field_update_order_meta( $order_id ) {
+    public function updateMeta( $order_id ) {
         if ($_POST['gdpr_checkbox']) update_post_meta( $order_id, 'My Checkbox', esc_attr($_POST['gdpr_checkbox']));
     }
 

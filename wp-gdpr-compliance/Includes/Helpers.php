@@ -52,6 +52,12 @@ class Helpers {
                 'file' => 'contact-form-7/wp-contact-form-7.php',
                 'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
                 'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+            ),
+            array(
+                'id' => 'woocommerce',
+                'file' => 'woocommerce/woocommerce.php',
+                'name' => __('WooCommerce', WP_GDPR_C_SLUG),
+                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
             )
         );
     }
@@ -62,6 +68,7 @@ class Helpers {
     public static function getActivatedPlugins() {
         $output = array();
         $activePlugins = get_option('active_plugins');
+
         if (!empty($activePlugins)) {
             foreach (self::getSupportedPlugins() as $plugin) {
                 if (in_array($plugin['file'], $activePlugins)) {

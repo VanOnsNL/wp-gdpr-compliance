@@ -30,19 +30,23 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace WPGDPRC;
 
-// If this file is called directly, abort.
+use WPGDPRC\Includes\Ajax;
+use WPGDPRC\Includes\Integrations;
 use WPGDPRC\Includes\Pages;
 
+// If this file is called directly, abort.
 if (!defined('WPINC')) {
     die();
 }
 
 define('WP_GDPR_C_SLUG', 'wp-gdpr-compliance');
-define('WP_GDPR_C_DIR', plugin_dir_path(__FILE__));
+define('WP_GDPR_C_PREFIX', 'wpgdprc');
+define('WP_GDPR_C_ROOT_FILE', __FILE__);
+define('WP_GDPR_C_DIR', plugin_dir_path(WP_GDPR_C_ROOT_FILE));
 define('WP_GDPR_C_DIR_JS', WP_GDPR_C_DIR . 'assets/js');
 define('WP_GDPR_C_DIR_CSS', WP_GDPR_C_DIR . 'assets/css');
 define('WP_GDPR_C_DIR_SVG', WP_GDPR_C_DIR . 'assets/svg');
-define('WP_GDPR_C_URI', plugin_dir_url(__FILE__));
+define('WP_GDPR_C_URI', plugin_dir_url(WP_GDPR_C_ROOT_FILE));
 define('WP_GDPR_C_URI_JS', WP_GDPR_C_URI . 'assets/js');
 define('WP_GDPR_C_URI_CSS', WP_GDPR_C_URI . 'assets/css');
 define('WP_GDPR_C_URI_SVG', WP_GDPR_C_URI . 'assets/svg');
@@ -73,12 +77,18 @@ class WPGDPRC {
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
         add_action('admin_head', array($this, 'addToAdminHead'));
+        new Ajax();
+        new Integrations();
     }
 
     public function loadAssets() {
         wp_enqueue_style('wpgdprc.css', WP_GDPR_C_URI_CSS . '/admin.css', array(), filemtime(WP_GDPR_C_DIR_CSS . '/admin.css'));
         wp_enqueue_style('wpgdprc.fontawesome', WP_GDPR_C_URI_CSS . '/font-awesome.min.css', array(), false);
         wp_enqueue_script('wpgdprc.js', WP_GDPR_C_URI_JS . '/admin.js', array(), filemtime(WP_GDPR_C_DIR_JS . '/admin.js'), true);
+        wp_localize_script('wpgdprc.js', 'wpgdprcData', array(
+            'ajaxURL' => admin_url('admin-ajax.php'),
+            'ajaxSecurity' => wp_create_nonce('wpgdprc'),
+        ));
     }
 
     public function addToAdminHead() {
@@ -102,3 +112,4 @@ function autoload($class) {
     $result = str_replace('\\', '/', $result);
     require $result . '.php';
 }
+
