@@ -67,6 +67,7 @@ class Helpers {
      */
     private static function isEnabled($plugin) {
         $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin;
+        
         return (boolean)get_option($optionName);
     }
 
@@ -84,8 +85,9 @@ class Helpers {
 
     public static function getActivatedPlugins($output = []) {
         foreach (self::getPlugins() as $plugin) {
-            if (self::isEnabled($plugin['id']))
+            if (self::isEnabled($plugin['id'])) {
                 $output[] = $plugin;
+            }
         }
 
         return $output;
