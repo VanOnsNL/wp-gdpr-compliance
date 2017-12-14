@@ -65,17 +65,29 @@ class Helpers {
     /**
      * @return array
      */
-    public static function getActivatedPlugins() {
-        $output = array();
-        $activePlugins = get_option('active_plugins');
+    private static function isEnabled($plugin) {
+        $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin;
+        return (boolean)get_option($optionName);
+    }
 
-        if (!empty($activePlugins)) {
-            foreach (self::getSupportedPlugins() as $plugin) {
-                if (in_array($plugin['file'], $activePlugins)) {
-                    $output[] = $plugin;
-                }
+    public static function getPlugins($output = []) {
+        $activePlugins = (empty(get_option('active_plugins'))) ? [] : get_option('active_plugins');
+
+        foreach (self::getSupportedPlugins() as $plugin) {
+            if (in_array($plugin['file'], $activePlugins)) {
+                $output[] = $plugin;
             }
         }
+
+        return $output;
+    }
+
+    public static function getActivatedPlugins($output = []) {
+        foreach (self::getPlugins() as $plugin) {
+            if (self::isEnabled($plugin['id']))
+                $output[] = $plugin;
+        }
+
         return $output;
     }
 }

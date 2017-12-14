@@ -34,7 +34,7 @@ class Pages {
 
     public function generatePage() {
         $pluginData = Helpers::getPluginData();
-        $activatedPlugins = Helpers::getActivatedPlugins();
+        $activatedPlugins = Helpers::getPlugins();
         ?>
         <div class="wrap">
             <div class="wpgdprc">
