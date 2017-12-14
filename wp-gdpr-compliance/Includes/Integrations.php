@@ -35,10 +35,7 @@ class Integrations {
 
             switch ($plugin['id']) {
                 //Add your plugin support here
-                case "woocommerce":
-                    add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
-                    add_action('woocommerce_after_order_notes', array(WC::getInstance(), 'addField'));
-                    add_action('woocommerce_checkout_update_order_meta', array(WC::getInstance(), 'updateMeta'));
+                default:
                     break;
             }
         }
