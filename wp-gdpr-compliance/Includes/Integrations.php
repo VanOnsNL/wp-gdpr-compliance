@@ -2,8 +2,7 @@
 
 namespace WPGDPRC\Includes;
 
-//use your extension namespace
-
+//add use namespace for your extension
 /**
  * Class Integrations
  * @package WPGDPRC\Includes

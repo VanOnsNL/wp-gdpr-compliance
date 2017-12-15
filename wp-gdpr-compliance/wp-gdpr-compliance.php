@@ -76,7 +76,7 @@ class WPGDPRC {
         load_plugin_textdomain(WP_GDPR_C_SLUG, false, basename(dirname(__FILE__)) . '/languages/');
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
-        add_action('admin_head', array($this, 'addToAdminHead'));
+        add_action('admin_head', array($this, 'addToAdminHead'), 999);
         new Ajax();
         new Integrations();
     }
@@ -102,9 +102,9 @@ class WPGDPRC {
 spl_autoload_register(__NAMESPACE__ . '\\autoload');
 
 /**
- * @param $class
+ * @param string $class
  */
-function autoload($class) {
+function autoload($class = '') {
     if (!strstr($class, 'WPGDPRC')) {
         return;
     }

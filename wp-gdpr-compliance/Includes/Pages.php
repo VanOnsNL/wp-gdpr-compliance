@@ -45,7 +45,7 @@ class Pages {
                     By May 24th, 2018 your website or shop has to comply to avoid large fines. The regulation can be read here:', WP_GDPR_C_SLUG) ?>
                     <a target="_blank" href="//<?php _e('www.eugdpr.org/the-regulation.html', WP_GDPR_C_SLUG) ?>"><?php _e('GDPR Key Changes', WP_GDPR_C_SLUG) ?></a></p>
 
-                <form method="post" action="options.php" novalidate="novalidate">
+                <form method="post" action="<?php echo admin_url('options.php'); ?>" novalidate="novalidate">
                     <?php settings_fields(WP_GDPR_C_SLUG); ?>
                     <?php do_settings_sections(WP_GDPR_C_SLUG); ?>
                     <div class="wpgdprc-tabs">
@@ -63,6 +63,7 @@ class Pages {
                                     foreach (Helpers::getCheckList() as $id => $check) :
                                         $optionName = WP_GDPR_C_PREFIX . '_general_' . $id;
                                         $checked = Helpers::isEnabled($id, 'general');
+                                        $description = (!empty($check['description'])) ? esc_html($check['description']) : '';
                                         ?>
                                         <li>
                                             <div class="wpgdprc-checkbox">
@@ -76,9 +77,9 @@ class Pages {
                                                 </div>
                                             </div>
 
-                                            <?php if (!empty($check['description'])) : ?>
+                                            <?php if (!empty($description)) : ?>
                                                 <div class="wpgdprc-checklist-description" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
-                                                    <?php echo esc_html($check['description']); ?>
+                                                    <?php echo $description; ?>
                                                 </div>
                                             <?php endif; ?>
                                         </li>
@@ -95,6 +96,7 @@ class Pages {
                                         foreach ($activatedPlugins as $key => $plugin) :
                                             $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'];
                                             $checked = Helpers::isEnabled($plugin['id']);
+                                            $description = (!empty($plugin['description'])) ? esc_html($plugin['description']) : '';
                                             ?>
                                             <li>
                                                 <div class="wpgdprc-checkbox">
@@ -108,9 +110,9 @@ class Pages {
                                                     </div>
                                                 </div>
 
-                                                <?php if (!empty($plugin['description'])) : ?>
+                                                <?php if (!empty($description)) : ?>
                                                     <div class="wpgdprc-checklist-description" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
-                                                        <?php echo esc_html($plugin['description']); ?>
+                                                        <?php echo $description; ?>
                                                     </div>
                                                 <?php endif; ?>
                                             </li>
@@ -119,25 +121,32 @@ class Pages {
                                         ?>
                                     </ul>
                                 <?php else : ?>
-                                    <p><?php _e('Couldn\'t find any supported plugins installed.', WP_GDPR_C_SLUG); ?></p>
+                                    <p><strong><?php _e('Couldn\'t find any supported plugins installed.', WP_GDPR_C_SLUG); ?></strong></p>
+                                    <p><?php _e('The following plugins are supported as of now:', WP_GDPR_C_SLUG); ?></p>
+                                    <ul class="ul-square">
+                                        <?php foreach (Helpers::getSupportedPlugins() as $supportedPlugin) : ?>
+                                            <li><?php echo $supportedPlugin['name']; ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                    <p><?php _e('More plugins will be added in the future.', WP_GDPR_C_SLUG); ?></p>
                                 <?php endif; ?>
                             </div>
                         </div>
                     </div>
 
                     <?php submit_button(); ?>
-
-                    <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background. We try to assist website and webshop owners in being compliant with the European Unions GDPR law but for rock solid legal advice we recommend contacting a law firm.', WP_GDPR_C_SLUG); ?></p>
-
-                    <div class="wpgdprc-features">
-                        <div class="wpgdprc-features-inner">
-                            <h2><?php _e('Coming soon', WP_GDPR_C_SLUG); ?></h2>
-                            <p><?php _e('Tools to automatically comply with GDPR regulations.', WP_GDPR_C_SLUG); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="wpgdprc-background"><?php include(WP_GDPR_C_DIR_SVG . '/inline-waves.svg.php'); ?></div>
                 </form>
+
+                <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background. We try to assist website and webshop owners in being compliant with the European Unions GDPR law but for rock solid legal advice we recommend contacting a law firm.', WP_GDPR_C_SLUG); ?></p>
+
+                <div class="wpgdprc-features">
+                    <div class="wpgdprc-features-inner">
+                        <h2><?php _e('Coming soon', WP_GDPR_C_SLUG); ?></h2>
+                        <p><?php _e('Tools to automatically comply with GDPR regulations.', WP_GDPR_C_SLUG); ?></p>
+                    </div>
+                </div>
+
+                <div class="wpgdprc-background"><?php include(WP_GDPR_C_DIR_SVG . '/inline-waves.svg.php'); ?></div>
             </div>
         </div>
         <?php
