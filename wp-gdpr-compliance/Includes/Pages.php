@@ -2,6 +2,8 @@
 
 namespace WPGDPRC\Includes;
 
+use WPGDPRC\Includes\Extensions\CF7;
+
 /**
  * Class Pages
  * @package WPGDPRC\Includes
@@ -96,12 +98,12 @@ class Pages {
                                         foreach ($activatedPlugins as $key => $plugin) :
                                             $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'];
                                             $checked = Helpers::isEnabled($plugin['id']);
-                                            $description = (!empty($plugin['description'])) ? esc_html($plugin['description']) : '';
+                                            $description = (!empty($plugin['description'])) ? apply_filters('the_content', $plugin['description']) : '';
                                             ?>
                                             <li>
                                                 <div class="wpgdprc-checkbox">
-                                                    <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $plugin['id']; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
-                                                    <label for="<?php echo $plugin['id']; ?>"><?php echo $plugin['name']; ?></label>
+                                                    <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $optionName; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
+                                                    <label for="<?php echo $optionName; ?>"><?php echo $plugin['name']; ?></label>
                                                     <div class="wpgdprc-switch" aria-hidden="true">
                                                         <div class="wpgdprc-switch-label">
                                                             <div class="wpgdprc-switch-inner"></div>

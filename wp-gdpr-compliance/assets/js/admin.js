@@ -20,13 +20,6 @@
             }
             $wpgdprcCheckbox.on('change', function(e) {
                 e.preventDefault();
-                var $wpgdprcCheckboxContainer = $(this).closest('.wpgdprc-checkbox'),
-                    $wpgdprcChecklistDescription = $wpgdprcCheckboxContainer.next('.wpgdprc-checklist-description');
-                if ($(this).is(':checked')) {
-                    $wpgdprcChecklistDescription.stop(true, true).slideDown('fast');
-                } else {
-                    $wpgdprcChecklistDescription.stop(true, true).slideUp('fast');
-                }
                 doProcessAction($(this));
             });
         },
@@ -64,6 +57,9 @@
         doProcessAction = function($element) {
             $element.addClass('processing');
 
+            var $wpgdprcCheckboxContainer = $element.closest('.wpgdprc-checkbox'),
+                $wpgdprcChecklistDescription = $wpgdprcCheckboxContainer.next('.wpgdprc-checklist-description');
+
             $.ajax({
                 url: ajaxURL,
                 type: 'POST',
@@ -75,6 +71,14 @@
                 },
                 success: function (response) {
                     if (response) {
+                        if ($wpgdprcChecklistDescription.length) {
+                            if ($element.is(':checked')) {
+                                $wpgdprcChecklistDescription.stop(true, true).slideDown('fast');
+                            } else {
+                                $wpgdprcChecklistDescription.stop(true, true).slideUp('fast');
+                            }
+                        }
+
                         if (response.error) {
                             $element.addClass('alert');
                         }

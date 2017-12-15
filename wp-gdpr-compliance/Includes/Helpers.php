@@ -2,6 +2,8 @@
 
 namespace WPGDPRC\Includes;
 
+use WPGDPRC\Includes\Extensions\CF7;
+
 /**
  * Class Helpers
  * @package WPGDPRC\Includes
@@ -60,7 +62,7 @@ class Helpers {
                 'id' => 'contact-form-7',
                 'file' => 'contact-form-7/wp-contact-form-7.php',
                 'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
-                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+                'description' => self::getSupportedPluginDescription('contact-form-7'),
             ),
             array(
                 'id' => 'woocommerce',
@@ -69,6 +71,38 @@ class Helpers {
                 'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
             )
         );
+    }
+
+    /**
+     * @param string $plugin
+     * @return string
+     */
+    public static function getSupportedPluginDescription($plugin = '') {
+        $description = '';
+        switch ($plugin) {
+            case 'contact-form-7' :
+                $description .= '<p>' . __('Automatically add GDPR compliance to the following forms:', WP_GDPR_C_SLUG) . '</p>';
+                $description .= '<ul>';
+                foreach (CF7::getInstance()->getForms() as $form) {
+                    $optionName = 'HELLOWORLD';
+                    $checked = Helpers::isEnabled();
+                    $description .= '<li>';
+                    $description .= '<div class="wpgdprc-checkbox">';
+                    $description .= '<input type="checkbox" name="' . $optionName . '_' . $form . '" id="' . $optionName . '_' . $form . '" value="1" tabindex="1" data-type="save_setting" data-option="' . $form . '"' . checked(true, $checked, false) . ' />';
+                    $description .= '<label for="' . $optionName . '_' . $form . '">' . get_the_title($form) . '</label>';
+                    $description .= '<div class="wpgdprc-switch" aria-hidden="true">';
+                    $description .= '<div class="wpgdprc-switch-label">';
+                    $description .= '<div class="wpgdprc-switch-inner"></div>';
+                    $description .= '<div class="wpgdprc-switch-switch"></div>';
+                    $description .= '</div>';
+                    $description .= '</div>';
+                    $description .= '</div>';
+                    $description .= '</li>';
+                }
+                $description .= '</ul>';
+                break;
+        }
+        return $description;
     }
 
     /**
