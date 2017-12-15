@@ -2,8 +2,6 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
-use WPGDPRC\Includes\Helpers;
-
 /**
  * Class CF7
  * @package WPGDPRC\Includes\Extensions\CF7
@@ -23,26 +21,23 @@ class CF7 {
     }
 
     /**
-     * @param array $panels
-     * @return array
+     * Add [WPGDPRC] string to all forms
      */
-    public function addTab($panels = array()) {
-        $pluginData = Helpers::getPluginData();
-        $panels[$pluginData['TextDomain']] = array(
-            'title' => __($pluginData['Name'], 'contact-form-7'),
-            'callback' => array($this, 'addTabContents')
-        );
-        return $panels;
-    }
-
-    /**
-     * @param array $args
-     */
-    public function addTabContents($args = array()) {
-        var_dump($args);
-        ?>
-        HELLO WORLD
-        <?php
+    public function addFormTagToForms() {
+        $forms = CF7::getInstance()->getForms();
+        foreach ($forms as $form) {
+            $output = get_post_meta($form, '_form', true);
+            if (!preg_match('/(\[wpgdprc?.*\])/', $output)) {
+                $pattern = '/(\[submit?.*\])/';
+                preg_match($pattern, $output, $matches);
+                if (!empty($matches)) {
+                    $output = preg_replace($pattern, "[wpgdprc]\n\n" . $matches[0], $output);
+                } else {
+                    $output = $output . "\n\n[wpgdprc]";
+                }
+                update_post_meta($form, '_form', $output);
+            }
+        }
     }
 
     public function addFormTags() {

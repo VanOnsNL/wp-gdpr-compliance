@@ -34,7 +34,7 @@ class Pages {
 
     public function generatePage() {
         $pluginData = Helpers::getPluginData();
-        $activatedPlugins = Helpers::getPlugins();
+        $activatedPlugins = Helpers::getActivatedPlugins();
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -124,8 +124,8 @@ class Pages {
                                     <p><strong><?php _e('Couldn\'t find any supported plugins installed.', WP_GDPR_C_SLUG); ?></strong></p>
                                     <p><?php _e('The following plugins are supported as of now:', WP_GDPR_C_SLUG); ?></p>
                                     <ul class="ul-square">
-                                        <?php foreach (Helpers::getSupportedPlugins() as $supportedPlugin) : ?>
-                                            <li><?php echo $supportedPlugin['name']; ?></li>
+                                        <?php foreach (Helpers::getSupportedPlugins() as $plugin) : ?>
+                                            <li><?php echo $plugin['name']; ?></li>
                                         <?php endforeach; ?>
                                     </ul>
                                     <p><?php _e('More plugins will be added in the future.', WP_GDPR_C_SLUG); ?></p>

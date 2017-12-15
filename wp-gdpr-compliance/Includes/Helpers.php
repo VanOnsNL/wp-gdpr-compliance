@@ -75,7 +75,7 @@ class Helpers {
      * @param array $output
      * @return array
      */
-    public static function getPlugins($output = array()) {
+    public static function getActivatedPlugins($output = array()) {
         $activePlugins = (!empty(get_option('active_plugins'))) ? get_option('active_plugins') : array();
         foreach (self::getSupportedPlugins() as $plugin) {
             if (in_array($plugin['file'], $activePlugins)) {
@@ -89,8 +89,8 @@ class Helpers {
      * @param array $output
      * @return array
      */
-    public static function getActivatedPlugins($output = array()) {
-        foreach (self::getPlugins() as $plugin) {
+    public static function getEnabledPlugins($output = array()) {
+        foreach (self::getActivatedPlugins() as $plugin) {
             if (self::isEnabled($plugin['id'])) {
                 $output[] = $plugin;
             }
