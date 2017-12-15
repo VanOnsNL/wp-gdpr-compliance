@@ -47,7 +47,7 @@ class Pages {
 
                 <form method="post" action="<?php echo admin_url('options.php'); ?>" novalidate="novalidate">
                     <?php settings_fields(WP_GDPR_C_SLUG); ?>
-                    <?php do_settings_sections(WP_GDPR_C_SLUG); ?>
+
                     <div class="wpgdprc-tabs">
                         <div class="wpgdprc-tabs__navigation cf">
                             <a id="tab-general-label" class="active" href="#tab-general" aria-selected="true" aria-controls="tab-general" tabindex="0" role="tab"><?php _e('General', WP_GDPR_C_SLUG); ?></a>

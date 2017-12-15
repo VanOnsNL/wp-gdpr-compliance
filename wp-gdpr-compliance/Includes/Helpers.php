@@ -43,6 +43,15 @@ class Helpers {
     }
 
     /**
+     * @param string $plugin
+     * @return bool
+     */
+    private static function isEnabled($plugin = '') {
+        $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin;
+        return filter_var(get_option($optionName), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
      * @return array
      */
     public static function getSupportedPlugins() {
@@ -63,33 +72,29 @@ class Helpers {
     }
 
     /**
+     * @param array $output
      * @return array
      */
-    private static function isEnabled($plugin) {
-        $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin;
-        
-        return (boolean)get_option($optionName);
-    }
-
-    public static function getPlugins($output = []) {
-        $activePlugins = (empty(get_option('active_plugins'))) ? [] : get_option('active_plugins');
-
+    public static function getPlugins($output = array()) {
+        $activePlugins = (!empty(get_option('active_plugins'))) ? get_option('active_plugins') : array();
         foreach (self::getSupportedPlugins() as $plugin) {
             if (in_array($plugin['file'], $activePlugins)) {
                 $output[] = $plugin;
             }
         }
-
         return $output;
     }
 
-    public static function getActivatedPlugins($output = []) {
+    /**
+     * @param array $output
+     * @return array
+     */
+    public static function getActivatedPlugins($output = array()) {
         foreach (self::getPlugins() as $plugin) {
             if (self::isEnabled($plugin['id'])) {
                 $output[] = $plugin;
             }
         }
-
         return $output;
     }
 }

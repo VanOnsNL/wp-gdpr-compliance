@@ -2,6 +2,8 @@
 
 namespace WPGDPRC\Includes;
 
+use WPGDPRC\Includes\Extensions\CF7;
+
 /**
  * Class Integrations
  * @package WPGDPRC\Includes
@@ -30,10 +32,12 @@ class Integrations {
     public function init() {
         foreach (Helpers::getActivatedPlugins() as $plugin) {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_SLUG . '_' . $plugin['id']);
-
             switch ($plugin['id']) {
-                //Add your plugin support here
-                default:
+                case 'contact-form-7' :
+                    add_action('wpcf7_init', array(CF7::getInstance(), 'addFormTags'));
+                    add_filter('wpcf7_validate_wpgdprc', array(CF7::getInstance(), 'validateField'), 10, 2);
+                    break;
+                default :
                     break;
             }
         }
