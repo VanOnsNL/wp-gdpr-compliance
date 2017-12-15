@@ -24,8 +24,7 @@ class CF7 {
      * Add [WPGDPRC] string to all forms
      */
     public function addFormTagToForms() {
-        $forms = CF7::getInstance()->getForms();
-        foreach ($forms as $form) {
+        foreach (CF7::getInstance()->getForms() as $form) {
             $output = get_post_meta($form, '_form', true);
             if (!preg_match('/(\[wpgdprc?.*\])/', $output)) {
                 $pattern = '/(\[submit?.*\])/';
@@ -35,6 +34,18 @@ class CF7 {
                 } else {
                     $output = $output . "\n\n[wpgdprc]";
                 }
+                update_post_meta($form, '_form', $output);
+            }
+        }
+    }
+
+    public function removeFormTagFromForms() {
+        foreach (CF7::getInstance()->getForms() as $form) {
+            $output = get_post_meta($form, '_form', true);
+            $pattern = '/(\n\n\[wpgdprc?.*\])/';
+            preg_match($pattern, $output, $matches);
+            if (!empty($matches)) {
+                $output = preg_replace($pattern, '', $output);
                 update_post_meta($form, '_form', $output);
             }
         }

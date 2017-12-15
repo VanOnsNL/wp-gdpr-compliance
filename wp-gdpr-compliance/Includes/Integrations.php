@@ -26,6 +26,8 @@ class Integrations {
      * Integrations constructor.
      */
     public function __construct() {
+        /* TODO: Add function to remove [wpgdprc] tags from CF7, etc. when disabled */
+
         foreach (Helpers::getEnabledPlugins() as $plugin) {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_SLUG . '_' . $plugin['id']);
             switch ($plugin['id']) {
