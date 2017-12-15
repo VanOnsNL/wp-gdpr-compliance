@@ -98,7 +98,8 @@ class Pages {
                                         foreach ($activatedPlugins as $key => $plugin) :
                                             $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'];
                                             $checked = Helpers::isEnabled($plugin['id']);
-                                            $description = (!empty($plugin['description'])) ? apply_filters('the_content', $plugin['description']) : '';
+                                            $description = (!empty($plugin['description'])) ? esc_html($plugin['description']) : '';
+                                            $options = (!empty($plugin['options'])) ? apply_filters('the_content', $plugin['options']) : '';
                                             ?>
                                             <li>
                                                 <div class="wpgdprc-checkbox">
@@ -115,6 +116,7 @@ class Pages {
                                                 <?php if (!empty($description)) : ?>
                                                     <div class="wpgdprc-checklist-description" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
                                                         <?php echo $description; ?>
+                                                        <?php echo $options; ?>
                                                     </div>
                                                 <?php endif; ?>
                                             </li>

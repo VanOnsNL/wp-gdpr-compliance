@@ -40,6 +40,7 @@ class Ajax {
                 case 'save_setting' :
                     $option = (isset($data['option']) && is_string($data['option'])) ? esc_html($data['option']) : false;
                     $value = (isset($data['value'])) ? self::sanitizeValue($data['value']) : false;
+                    $append = (isset($data['append'])) ? filter_var($data['append'], FILTER_VALIDATE_BOOLEAN) : false;
 
                     if (!$option) {
                         $output['error'] = __('Missing option name.', WP_GDPR_C_SLUG);
@@ -51,6 +52,15 @@ class Ajax {
 
                     // Let's do this!
                     if (empty($output['error'])) {
+                        if ($append) {
+                            $values = (array) get_option($option, array());
+                            if (isset($values[$value])) {
+                                unset($values[$value]);
+                            } else {
+                                $values[] = $value;
+                            }
+                            $value = $values;
+                        }
                         $callback = update_option($option, $value);
                         if (!$callback) {
                             $output['error'] = __('Something went wrong while saving this setting. Please try again!', WP_GDPR_C_SLUG);
@@ -76,7 +86,7 @@ class Ajax {
      */
     private static function sanitizeValue($value) {
         if (is_numeric($value)) {
-            $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            $value = intval($value);
         }
         if (is_string($value)) {
             $value = esc_html($value);

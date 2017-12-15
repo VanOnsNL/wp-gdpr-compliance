@@ -46,10 +46,11 @@
         },
         getElementAjaxData = function($element) {
             var data = $element.data();
+            data.option = $element.attr('name');
             if ($element.is('input')) {
                 data.value = $element.val();
                 if ($element.is('input[type="checkbox"]')) {
-                    data.value = ($element.is(':checked')) ? 1 : 0;
+                    data.value = ($element.is(':checked')) ? $element.val() : 0;
                 }
             }
             return data;
@@ -58,7 +59,7 @@
             $element.addClass('processing');
 
             var $wpgdprcCheckboxContainer = $element.closest('.wpgdprc-checkbox'),
-                $wpgdprcChecklistDescription = $wpgdprcCheckboxContainer.next('.wpgdprc-checklist-description');
+                $wpgdprcChecklistDescription = ($wpgdprcCheckboxContainer.length) ? $wpgdprcCheckboxContainer.next('.wpgdprc-checklist-description') : false;
 
             $.ajax({
                 url: ajaxURL,

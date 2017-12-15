@@ -54,42 +54,24 @@ class Helpers {
     }
 
     /**
-     * @return array
-     */
-    public static function getSupportedPlugins() {
-        return array(
-            array(
-                'id' => 'contact-form-7',
-                'file' => 'contact-form-7/wp-contact-form-7.php',
-                'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
-                'description' => self::getSupportedPluginDescription('contact-form-7'),
-            ),
-            array(
-                'id' => 'woocommerce',
-                'file' => 'woocommerce/woocommerce.php',
-                'name' => __('WooCommerce', WP_GDPR_C_SLUG),
-                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
-            )
-        );
-    }
-
-    /**
      * @param string $plugin
      * @return string
      */
-    public static function getSupportedPluginDescription($plugin = '') {
+    public static function getSupportedPluginOptions($plugin = '') {
         $description = '';
         switch ($plugin) {
-            case 'contact-form-7' :
+            case CF7::ID :
+                $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_forms';
+                $value = get_option($optionName);
                 $description .= '<p>' . __('Automatically add GDPR compliance to the following forms:', WP_GDPR_C_SLUG) . '</p>';
                 $description .= '<ul>';
                 foreach (CF7::getInstance()->getForms() as $form) {
-                    $optionName = 'HELLOWORLD';
-                    $checked = Helpers::isEnabled();
+                    $id = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_' . $form;
+                    $checked = (in_array($form, $value));
                     $description .= '<li>';
                     $description .= '<div class="wpgdprc-checkbox">';
-                    $description .= '<input type="checkbox" name="' . $optionName . '_' . $form . '" id="' . $optionName . '_' . $form . '" value="1" tabindex="1" data-type="save_setting" data-option="' . $form . '"' . checked(true, $checked, false) . ' />';
-                    $description .= '<label for="' . $optionName . '_' . $form . '">' . get_the_title($form) . '</label>';
+                    $description .= '<input type="checkbox" name="' . $optionName . '" id="' . $id . '" value="' . $form . '" tabindex="1" data-type="save_setting" data-append="1" ' . checked(true, $checked, false) . ' />';
+                    $description .= '<label for="' . $id . '">' . get_the_title($form) . '</label>';
                     $description .= '<div class="wpgdprc-switch" aria-hidden="true">';
                     $description .= '<div class="wpgdprc-switch-label">';
                     $description .= '<div class="wpgdprc-switch-inner"></div>';
@@ -103,6 +85,27 @@ class Helpers {
                 break;
         }
         return $description;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getSupportedPlugins() {
+        return array(
+            array(
+                'id' => CF7::ID,
+                'file' => 'contact-form-7/wp-contact-form-7.php',
+                'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
+                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+                'options' => self::getSupportedPluginOptions(CF7::ID),
+            ),
+            array(
+                'id' => 'woocommerce',
+                'file' => 'woocommerce/woocommerce.php',
+                'name' => __('WooCommerce', WP_GDPR_C_SLUG),
+                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+            )
+        );
     }
 
     /**

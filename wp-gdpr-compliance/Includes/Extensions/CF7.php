@@ -7,6 +7,8 @@ namespace WPGDPRC\Includes\Extensions;
  * @package WPGDPRC\Includes\Extensions\CF7
  */
 class CF7 {
+    const ID = 'contact-form-7';
+
     /** @var null */
     private static $instance = null;
 
@@ -21,10 +23,17 @@ class CF7 {
     }
 
     /**
+     * @return array
+     */
+    public function getEnabledForms() {
+        return (array) get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_forms', array());
+    }
+
+    /**
      * Add [WPGDPRC] string to all forms
      */
     public function addFormTagToForms() {
-        foreach (CF7::getInstance()->getForms() as $form) {
+        foreach ($this->getEnabledForms() as $form) {
             $output = get_post_meta($form, '_form', true);
             if (!preg_match('/(\[wpgdprc?.*\])/', $output)) {
                 $pattern = '/(\[submit?.*\])/';
@@ -41,12 +50,14 @@ class CF7 {
 
     public function removeFormTagFromForms() {
         foreach (CF7::getInstance()->getForms() as $form) {
-            $output = get_post_meta($form, '_form', true);
-            $pattern = '/(\n\n\[wpgdprc?.*\])/';
-            preg_match($pattern, $output, $matches);
-            if (!empty($matches)) {
-                $output = preg_replace($pattern, '', $output);
-                update_post_meta($form, '_form', $output);
+            if (!in_array($form, $this->getEnabledForms())) {
+                $output = get_post_meta($form, '_form', true);
+                $pattern = '/(\n\n\[wpgdprc?.*\])/';
+                preg_match($pattern, $output, $matches);
+                if (!empty($matches)) {
+                    $output = preg_replace($pattern, '', $output);
+                    update_post_meta($form, '_form', $output);
+                }
             }
         }
     }
