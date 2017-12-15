@@ -2,8 +2,6 @@
 
 namespace WPGDPRC\Includes;
 
-use WPGDPRC\Includes\Extensions\WC;
-
 /**
  * Class Integrations
  * @package WPGDPRC\Includes
