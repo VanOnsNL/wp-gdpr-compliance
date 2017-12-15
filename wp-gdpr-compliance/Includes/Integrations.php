@@ -2,7 +2,7 @@
 
 namespace WPGDPRC\Includes;
 
-use WPGDPRC\Includes\Extensions\WC;
+//use your extension namespace
 
 /**
  * Class Integrations

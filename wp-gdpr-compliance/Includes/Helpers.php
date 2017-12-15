@@ -63,14 +63,20 @@ class Helpers {
     }
 
     /**
-     * @return array
+     * @param string $plugin
+     * @param string $type
+     * @return boolean
      */
-    private static function isEnabled($plugin) {
-        $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin;
+    public static function isEnabled($plugin, $type = "integrations") {
+        $optionName = WP_GDPR_C_PREFIX . '_'.$type.'_' . $plugin;
         
-        return (boolean)get_option($optionName);
+        return (get_option($optionName) == 1);
     }
 
+    /**
+     * @param array $output
+     * @return array
+     */
     public static function getPlugins($output = []) {
         $activePlugins = (empty(get_option('active_plugins'))) ? [] : get_option('active_plugins');
 
@@ -83,6 +89,10 @@ class Helpers {
         return $output;
     }
 
+    /**
+     * @param array $output
+     * @return array
+     */
     public static function getActivatedPlugins($output = []) {
         foreach (self::getPlugins() as $plugin) {
             if (self::isEnabled($plugin['id'])) {
