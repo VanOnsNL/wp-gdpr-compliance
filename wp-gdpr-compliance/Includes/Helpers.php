@@ -44,11 +44,11 @@ class Helpers {
 
     /**
      * @param string $plugin
+     * @param string $type
      * @return bool
      */
-    private static function isEnabled($plugin = '') {
-        $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin;
-        return filter_var(get_option($optionName), FILTER_VALIDATE_BOOLEAN);
+    public static function isEnabled($plugin = '', $type = 'integrations') {
+        return filter_var(get_option(WP_GDPR_C_PREFIX . '_' . $type . '_' . $plugin), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**

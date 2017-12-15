@@ -62,7 +62,7 @@ class Pages {
                                     <?php
                                     foreach (Helpers::getCheckList() as $id => $check) :
                                         $optionName = WP_GDPR_C_PREFIX . '_general_' . $id;
-                                        $checked = filter_var(get_option($optionName), FILTER_VALIDATE_BOOLEAN);
+                                        $checked = Helpers::isEnabled($id, 'general');
                                         $description = (!empty($check['description'])) ? esc_html($check['description']) : '';
                                         ?>
                                         <li>
@@ -95,7 +95,7 @@ class Pages {
                                         <?php
                                         foreach ($activatedPlugins as $key => $plugin) :
                                             $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'];
-                                            $checked = filter_var(get_option($optionName), FILTER_VALIDATE_BOOLEAN);
+                                            $checked = Helpers::isEnabled($plugin['id']);
                                             $description = (!empty($plugin['description'])) ? esc_html($plugin['description']) : '';
                                             ?>
                                             <li>
