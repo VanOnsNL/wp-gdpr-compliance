@@ -23,17 +23,31 @@ class Integrations {
     }
 
     /**
+     * @param string $plugin
+     * @return string
+     */
+    public static function getText($plugin = '') {
+        $output = '';
+        switch ($plugin) {
+            case CF7::ID :
+                $output = __('Yes, you may use my personal information.', WP_GDPR_C_SLUG);
+                break;
+        }
+        return apply_filters('wpgdprc_integration_text', $output, $plugin);
+    }
+
+    /**
      * Integrations constructor.
      */
     public function __construct() {
-        /* TODO: Add function to remove [wpgdprc] tags from CF7, etc. when disabled */
-
         foreach (Helpers::getEnabledPlugins() as $plugin) {
-            register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_SLUG . '_' . $plugin['id']);
+            register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id']);
             switch ($plugin['id']) {
                 case CF7::ID :
-                    CF7::getInstance()->addFormTagToForms();
-                    add_action('wpcf7_init', array(CF7::getInstance(), 'addFormTags'));
+                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_forms');
+                    add_action('wpgdprc_integrations_' . CF7::ID . '_forms', array(CF7::getInstance(), 'addFormTagToForms'));
+                    add_action('wpgdprc_integrations_' . CF7::ID . '_forms', array(CF7::getInstance(), 'removeFormTagFromForms'));
+                    add_action('wpcf7_init', array(CF7::getInstance(), 'addFormTagSupport'));
                     add_filter('wpcf7_validate_wpgdprc', array(CF7::getInstance(), 'validateField'), 10, 2);
                     break;
             }

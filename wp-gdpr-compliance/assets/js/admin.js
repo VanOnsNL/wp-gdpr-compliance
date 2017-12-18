@@ -50,7 +50,7 @@
             if ($element.is('input')) {
                 data.value = $element.val();
                 if ($element.is('input[type="checkbox"]')) {
-                    data.value = ($element.is(':checked')) ? $element.val() : 0;
+                    data.enabled = ($element.is(':checked'));
                 }
             }
             return data;

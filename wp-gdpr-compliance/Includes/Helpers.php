@@ -58,33 +58,38 @@ class Helpers {
      * @return string
      */
     public static function getSupportedPluginOptions($plugin = '') {
-        $description = '';
+        $output = '';
         switch ($plugin) {
             case CF7::ID :
                 $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_forms';
-                $value = get_option($optionName);
-                $description .= '<p>' . __('Automatically add GDPR compliance to the following forms:', WP_GDPR_C_SLUG) . '</p>';
-                $description .= '<ul>';
+                $value = (array) get_option($optionName, array());
+                $output .= '<p><strong>' . __('Automatically add GDPR compliance to the following forms:', WP_GDPR_C_SLUG) . '</strong></p>';
+                $output .= '<ul class="wpgdprc-checklist-options">';
                 foreach (CF7::getInstance()->getForms() as $form) {
-                    $id = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_' . $form;
+                    $formSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_' . $form;
+                    $textSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text_' . $form;
                     $checked = (in_array($form, $value));
-                    $description .= '<li>';
-                    $description .= '<div class="wpgdprc-checkbox">';
-                    $description .= '<input type="checkbox" name="' . $optionName . '" id="' . $id . '" value="' . $form . '" tabindex="1" data-type="save_setting" data-append="1" ' . checked(true, $checked, false) . ' />';
-                    $description .= '<label for="' . $id . '">' . get_the_title($form) . '</label>';
-                    $description .= '<div class="wpgdprc-switch" aria-hidden="true">';
-                    $description .= '<div class="wpgdprc-switch-label">';
-                    $description .= '<div class="wpgdprc-switch-inner"></div>';
-                    $description .= '<div class="wpgdprc-switch-switch"></div>';
-                    $description .= '</div>';
-                    $description .= '</div>';
-                    $description .= '</div>';
-                    $description .= '</li>';
+                    $output .= '<li>';
+                    $output .= '<div class="wpgdprc-checkbox">';
+                    $output .= '<input type="checkbox" name="' . $optionName . '" id="' . $formSettingId . '" value="' . $form . '" tabindex="1" data-type="save_setting" data-append="1" ' . checked(true, $checked, false) . ' />';
+                    $output .= '<label for="' . $formSettingId . '">' . get_the_title($form) . '</label>';
+                    $output .= '<div class="wpgdprc-switch" aria-hidden="true">';
+                    $output .= '<div class="wpgdprc-switch-label">';
+                    $output .= '<div class="wpgdprc-switch-inner"></div>';
+                    $output .= '<div class="wpgdprc-switch-switch"></div>';
+                    $output .= '</div>';
+                    $output .= '</div>';
+                    $output .= '</div>';
+                    $output .= '<p class="wpgdprc-setting">';
+                    $output .= '<label for="' . $textSettingId . '">' . __('Text', WP_GDPR_C_SLUG) . '</label>';
+                    $output .= '<input type="text" name="' . $optionName . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . Integrations::getText(CF7::ID) . '" />';
+                    $output .= '</p>';
+                    $output .= '</li>';
                 }
-                $description .= '</ul>';
+                $output .= '</ul>';
                 break;
         }
-        return $description;
+        return $output;
     }
 
     /**

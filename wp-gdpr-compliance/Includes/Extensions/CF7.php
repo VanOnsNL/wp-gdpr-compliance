@@ -2,6 +2,8 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
+use WPGDPRC\Includes\Integrations;
+
 /**
  * Class CF7
  * @package WPGDPRC\Includes\Extensions\CF7
@@ -30,7 +32,7 @@ class CF7 {
     }
 
     /**
-     * Add [WPGDPRC] string to all forms
+     * Add [WPGDPRC] string to enabled forms
      */
     public function addFormTagToForms() {
         foreach ($this->getEnabledForms() as $form) {
@@ -48,6 +50,9 @@ class CF7 {
         }
     }
 
+    /**
+     * Remove [WPGDPRC] string from disabled forms
+     */
     public function removeFormTagFromForms() {
         foreach (CF7::getInstance()->getForms() as $form) {
             if (!in_array($form, $this->getEnabledForms())) {
@@ -62,7 +67,7 @@ class CF7 {
         }
     }
 
-    public function addFormTags() {
+    public function addFormTagSupport() {
         wpcf7_add_form_tag(
             'wpgdprc',
             array($this, 'addFormTagHandler')
@@ -78,7 +83,7 @@ class CF7 {
         switch ($tag['type']) {
             case 'wpgdprc' :
                 $tag->name = 'wpgdprc';
-                $label = 'Ja, ik wil';
+                $label = Integrations::getText(self::ID);
                 $class = wpcf7_form_controls_class($tag->type, 'wpcf7-validates-as-required');
                 $validation_error = wpcf7_get_validation_error($tag->name);
                 if ($validation_error) {

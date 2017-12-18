@@ -126,8 +126,11 @@ p.wpgdprc-disclaimer {
     list-style: none;
 }
 
-.wpgdprc-list > li {
+.wpgdprc-list li {
     margin-bottom: 0;
+}
+
+.wpgdprc-list > li {
     padding: 10px 0;
     border-bottom: 1px solid #F1F1F1;
 }
@@ -247,6 +250,44 @@ p.wpgdprc-disclaimer {
 .wpgdprc-checklist-description {
     margin-top: 10px;
     color: #8A8A8A;
+}
+
+.wpgdprc-checklist-description p:first-child {
+    margin-top: 0;
+}
+
+.wpgdprc-checklist-description p:last-child {
+    margin-bottom: 0;
+}
+
+.wpgdprc-checklist-options {
+}
+
+.wpgdprc-checklist-options li:first-child {
+    margin-top: 0;
+}
+
+.wpgdprc-checklist-options li {
+    margin-top: 20px;
+    padding: 20px;
+    background: #F1F1F1;
+}
+
+.wpgdprc-checklist-options p {
+    margin: .5rem 0;
+}
+
+.wpgdprc-checklist-options ul {
+    margin: -5px 0;
+}
+
+.wpgdprc-setting {
+    overflow: hidden;
+}
+
+.wpgdprc-setting input {
+    float: right;
+    font-size: 1rem;
 }
 
 .wpgdprc-features {

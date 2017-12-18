@@ -40,6 +40,7 @@ class Ajax {
                 case 'save_setting' :
                     $option = (isset($data['option']) && is_string($data['option'])) ? esc_html($data['option']) : false;
                     $value = (isset($data['value'])) ? self::sanitizeValue($data['value']) : false;
+                    $enabled = (isset($data['enabled'])) ? filter_var($data['enabled'], FILTER_VALIDATE_BOOLEAN) : false;
                     $append = (isset($data['append'])) ? filter_var($data['append'], FILTER_VALIDATE_BOOLEAN) : false;
 
                     if (!$option) {
@@ -54,20 +55,26 @@ class Ajax {
                     if (empty($output['error'])) {
                         if ($append) {
                             $values = (array) get_option($option, array());
-                            if (isset($values[$value])) {
-                                unset($values[$value]);
+                            if ($enabled) {
+                                if (!in_array($value, $values)) {
+                                    $values[] = $value;
+                                }
                             } else {
-                                $values[] = $value;
+                                $index = array_search($value, $values);
+                                if ($index !== false) {
+                                    unset($values[$index]);
+                                }
                             }
                             $value = $values;
+                        } else {
+                            if (isset($data['enabled'])) {
+                                $value = $enabled;
+                            }
                         }
                         $callback = update_option($option, $value);
                         if (!$callback) {
                             $output['error'] = __('Something went wrong while saving this setting. Please try again!', WP_GDPR_C_SLUG);
                         } else {
-                            /*
-                             * TODO: Trigger this to do stuff after enabling/disabling an option, such as adding the Contact Form 7 crap.
-                             */
                             do_action($option, $value);
                         }
                     }
