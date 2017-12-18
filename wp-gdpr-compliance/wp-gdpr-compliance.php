@@ -74,6 +74,7 @@ class WPGDPRC {
 
     public function init() {
         load_plugin_textdomain(WP_GDPR_C_SLUG, false, basename(dirname(__FILE__)) . '/languages/');
+        add_action('admin_init', array(Pages::getInstance(), 'registerSettings'));
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
         add_action('admin_head', array($this, 'addToAdminHead'), 999);

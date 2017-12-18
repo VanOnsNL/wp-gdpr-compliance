@@ -20,7 +20,7 @@
             }
             $wpgdprcCheckbox.on('change', function(e) {
                 e.preventDefault();
-                doProcessAction($(this));
+                // doProcessAction($(this));
             });
         },
         initTabs = function () {

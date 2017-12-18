@@ -61,17 +61,19 @@ class Helpers {
         $output = '';
         switch ($plugin) {
             case CF7::ID :
-                $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_forms';
-                $value = (array) get_option($optionName, array());
+                $optionNameForms = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_forms';
+                $optionNameFormText = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text';
+                $valueForms = (array) get_option($optionNameForms, array());
+                $valueFormText = (array) get_option($optionNameFormText, array());
                 $output .= '<p><strong>' . __('Automatically add GDPR compliance to the following forms:', WP_GDPR_C_SLUG) . '</strong></p>';
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 foreach (CF7::getInstance()->getForms() as $form) {
                     $formSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_' . $form;
                     $textSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text_' . $form;
-                    $checked = (in_array($form, $value));
+                    $value = (isset($valueFormText[$form])) ? $valueFormText[$form] : '';
                     $output .= '<li>';
                     $output .= '<div class="wpgdprc-checkbox">';
-                    $output .= '<input type="checkbox" name="' . $optionName . '" id="' . $formSettingId . '" value="' . $form . '" tabindex="1" data-type="save_setting" data-append="1" ' . checked(true, $checked, false) . ' />';
+                    $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form . '" tabindex="1" data-type="save_setting" data-append="1" ' . checked(true, (in_array($form, $valueForms)), false) . ' />';
                     $output .= '<label for="' . $formSettingId . '">' . get_the_title($form) . '</label>';
                     $output .= '<div class="wpgdprc-switch" aria-hidden="true">';
                     $output .= '<div class="wpgdprc-switch-label">';
@@ -82,7 +84,7 @@ class Helpers {
                     $output .= '</div>';
                     $output .= '<p class="wpgdprc-setting">';
                     $output .= '<label for="' . $textSettingId . '">' . __('Text', WP_GDPR_C_SLUG) . '</label>';
-                    $output .= '<input type="text" name="' . $optionName . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . Integrations::getText(CF7::ID) . '" />';
+                    $output .= '<input type="text" name="' . $optionNameFormText . '[' . $form . ']' . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . Integrations::getText(CF7::ID) . '" value="' . $value . '" />';
                     $output .= '</p>';
                     $output .= '</li>';
                 }
@@ -102,7 +104,6 @@ class Helpers {
                 'file' => 'contact-form-7/wp-contact-form-7.php',
                 'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
                 'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
-                'options' => self::getSupportedPluginOptions(CF7::ID),
             ),
             array(
                 'id' => 'woocommerce',

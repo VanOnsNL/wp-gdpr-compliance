@@ -22,6 +22,12 @@ class Pages {
         return self::$instance;
     }
 
+    public function registerSettings() {
+        foreach (Helpers::getCheckList() as $id => $check) {
+            register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_general_' . $id, 'intval');
+        }
+    }
+
     public function addAdminMenu() {
         $pluginData = Helpers::getPluginData();
         add_submenu_page(
@@ -99,7 +105,7 @@ class Pages {
                                             $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'];
                                             $checked = Helpers::isEnabled($plugin['id']);
                                             $description = (!empty($plugin['description'])) ? apply_filters('the_content', $plugin['description']) : '';
-                                            $options = (!empty($plugin['options'])) ? $plugin['options'] : '';
+                                            $options = Helpers::getSupportedPluginOptions($plugin['id']);
                                             ?>
                                             <li>
                                                 <div class="wpgdprc-checkbox">
