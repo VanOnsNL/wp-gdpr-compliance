@@ -282,11 +282,20 @@ p.wpgdprc-disclaimer {
 }
 
 .wpgdprc-setting {
-    overflow: hidden;
+    *zoom: 1;
+}
+.wpgdprc-setting:before, .wpgdprc-setting:after {
+    display: table;
+    content: " ";
+}
+
+.wpgdprc-setting:after {
+    clear: both;
 }
 
 .wpgdprc-setting input {
     float: right;
+    max-width: 100%;
     font-size: 1rem;
 }
 

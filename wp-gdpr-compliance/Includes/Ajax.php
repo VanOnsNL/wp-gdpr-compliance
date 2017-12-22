@@ -71,12 +71,8 @@ class Ajax {
                                 $value = $enabled;
                             }
                         }
-                        $callback = update_option($option, $value);
-                        if (!$callback) {
-                            $output['error'] = __('Something went wrong while saving this setting. Please try again!', WP_GDPR_C_SLUG);
-                        } else {
-                            do_action($option, $value);
-                        }
+                        update_option($option, $value);
+                        do_action($option, $value);
                     }
                     break;
             }

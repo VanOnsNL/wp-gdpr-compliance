@@ -2,8 +2,6 @@
 
 namespace WPGDPRC\Includes;
 
-use WPGDPRC\Includes\Extensions\CF7;
-
 /**
  * Class Pages
  * @package WPGDPRC\Includes
@@ -47,6 +45,8 @@ class Pages {
         <div class="wrap">
             <div class="wpgdprc">
                 <h1 class="wpgdprc-title"><i class="fa fa-lock" aria-hidden="true"></i> <?php echo $pluginData['Name']; ?></h1>
+
+                <?php settings_errors(); ?>
 
                 <p class="wpgdprc-description">
                     <?php _e('This plugin assists website and webshop owners to comply with European privacy regulations (known as GDPR).
@@ -147,7 +147,7 @@ class Pages {
                     <?php submit_button(); ?>
                 </form>
 
-                <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background. We try to assist website and webshop owners in being compliant with the European Unions GDPR law but for rock solid legal advice we recommend contacting a law firm.', WP_GDPR_C_SLUG); ?></p>
+                <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background. We assist website and webshop owners in being compliant with the General Data Protection Regulation (GDPR) but recommend contacting a law firm for rock solid legal advice.', WP_GDPR_C_SLUG); ?></p>
 
                 <div class="wpgdprc-features">
                     <div class="wpgdprc-features-inner">

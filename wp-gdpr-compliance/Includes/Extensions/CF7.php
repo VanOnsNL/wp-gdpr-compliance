@@ -24,29 +24,32 @@ class CF7 {
         return self::$instance;
     }
 
-    /**
-     * @return array
-     */
-    public function getEnabledForms() {
-        return (array) get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_forms', array());
+    public function processIntegration() {
+        $this->addFormTagToForms();
+        $this->removeFormTagFromForms();
     }
 
     /**
      * Add [WPGDPRC] string to enabled forms
      */
     public function addFormTagToForms() {
-        foreach ($this->getEnabledForms() as $form) {
-            $output = get_post_meta($form, '_form', true);
-            if (!preg_match('/(\[wpgdprc?.*\])/', $output)) {
+        foreach ($this->getEnabledForms() as $formId) {
+            $tag = '[wpgdprc "' . $this->getLabelText($formId) . '"]';
+            $output = get_post_meta($formId, '_form', true);
+            preg_match('/(\[wpgdprc?.*\])/', $output, $matches);
+            if (!empty($matches)) {
+                $output = str_replace($matches[0], $tag, $output);
+            } else {
                 $pattern = '/(\[submit?.*\])/';
                 preg_match($pattern, $output, $matches);
                 if (!empty($matches)) {
-                    $output = preg_replace($pattern, "[wpgdprc]\n\n" . $matches[0], $output);
+                    $output = preg_replace($pattern, "$tag\n\n" . $matches[0], $output);
                 } else {
-                    $output = $output . "\n\n[wpgdprc]";
+                    $output = $output . "\n\n$tag";
                 }
-                update_post_meta($form, '_form', $output);
             }
+
+            update_post_meta($formId, '_form', $output);
         }
     }
 
@@ -83,7 +86,7 @@ class CF7 {
         switch ($tag['type']) {
             case 'wpgdprc' :
                 $tag->name = 'wpgdprc';
-                $label = Integrations::getText(self::ID);
+                $label = (!empty($tag->labels[0])) ? esc_html($tag->labels[0]) : self::getLabelText();
                 $class = wpcf7_form_controls_class($tag->type, 'wpcf7-validates-as-required');
                 $validation_error = wpcf7_get_validation_error($tag->name);
                 if ($validation_error) {
@@ -108,11 +111,13 @@ class CF7 {
                 if ($label_first) { // put label first, input last
                     $output = sprintf(
                         '<span class="wpcf7-list-item-label">%1$s</span><input %2$s />',
-                        esc_html($label), $item_atts);
+                        esc_html($label), $item_atts
+                    );
                 } else {
                     $output = sprintf(
                         '<input %2$s /><span class="wpcf7-list-item-label">%1$s</span>',
-                        esc_html($label), $item_atts);
+                        esc_html($label), $item_atts
+                    );
                 }
                 $output = '<span class="wpcf7-list-item"><label>' . $output . '</label></span>';
                 $output = sprintf(
@@ -152,5 +157,34 @@ class CF7 {
             'posts_per_page' => -1,
             'fields' => 'ids'
         ));
+    }
+
+    /**
+     * @return array
+     */
+    public function getEnabledForms() {
+        return (array) get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_forms', array());
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormTexts() {
+        return (array) get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_form_text', array());
+    }
+
+    /**
+     * @param int $formId
+     * @return string
+     */
+    public function getLabelText($formId = 0) {
+        $output = __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
+        if (!empty($formId)) {
+            $texts = $this->getFormTexts();
+            if (!empty($texts[$formId])) {
+                $output = $texts[$formId];
+            }
+        }
+        return $output;
     }
 }

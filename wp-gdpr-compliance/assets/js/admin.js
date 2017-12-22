@@ -20,7 +20,7 @@
             }
             $wpgdprcCheckbox.on('change', function(e) {
                 e.preventDefault();
-                // doProcessAction($(this));
+                doProcessAction($(this));
             });
         },
         initTabs = function () {
@@ -46,7 +46,9 @@
         },
         getElementAjaxData = function($element) {
             var data = $element.data();
-            data.option = $element.attr('name');
+            if (!data.option) {
+                data.option = $element.attr('name');
+            }
             if ($element.is('input')) {
                 data.value = $element.val();
                 if ($element.is('input[type="checkbox"]')) {
