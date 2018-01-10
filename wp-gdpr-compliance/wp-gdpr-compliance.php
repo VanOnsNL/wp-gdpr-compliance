@@ -33,6 +33,7 @@ namespace WPGDPRC;
 use WPGDPRC\Includes\Ajax;
 use WPGDPRC\Includes\Integrations;
 use WPGDPRC\Includes\Pages;
+use WPGDPRC\Includes\Extensions\WP;
 
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
@@ -80,6 +81,8 @@ class WPGDPRC {
         add_action('admin_head', array($this, 'addToAdminHead'), 999);
         new Ajax();
         new Integrations();
+        add_action( 'comment_form_field_comment', array(WP::getInstance(), 'addField') );
+        add_filter( 'preprocess_comment', array(WP::getInstance(), 'checkPost') );
     }
 
     public function loadAssets() {
