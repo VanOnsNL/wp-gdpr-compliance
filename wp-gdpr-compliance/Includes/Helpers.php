@@ -111,6 +111,19 @@ class Helpers {
     /**
      * @return array
      */
+    public static function getSupportedWordpress() {
+        return array(
+            array(
+                'id' => 'wordpress',
+                'name' => __('Wordpress Comments', WP_GDPR_C_SLUG),
+                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+            )
+        );
+    }
+
+    /**
+     * @return array
+     */
     public static function getSupportedPlugins() {
         return array(
             array(
@@ -139,6 +152,10 @@ class Helpers {
                 $output[] = $plugin;
             }
         }
+        foreach (self::getSupportedWordpress() as $wp) {
+            $output[] = $wp;
+        }
+
         return $output;
     }
 
@@ -153,5 +170,9 @@ class Helpers {
             }
         }
         return $output;
+    }
+
+    public static function getWordpressOptions(){
+        return self::isEnabled('wordpress');
     }
 }

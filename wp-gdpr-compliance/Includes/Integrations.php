@@ -4,6 +4,7 @@ namespace WPGDPRC\Includes;
 
 use WPGDPRC\Includes\Extensions\CF7;
 use WPGDPRC\Includes\Extensions\WC;
+use WPGDPRC\Includes\Extensions\WP;
 
 /**
  * Class Integrations
@@ -49,6 +50,13 @@ class Integrations {
                     //Default checkbox label text option
                     break;
             }
+        }
+
+        if (Helpers::getWordpressOptions()) {
+            add_action( 'comment_form_field_comment', array(WP::getInstance(), 'addField') );
+            add_filter( 'preprocess_comment', array(WP::getInstance(), 'checkPost') );
+            register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_wordpress');
+            register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_wordpress_text');
         }
     }
 

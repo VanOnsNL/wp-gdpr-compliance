@@ -21,7 +21,7 @@ class WP {
     public function addField($field) {
         $field .= "
             <label class=\"checkbox \"><br>
-                <input class=\"input-checkbox \" name=\"gdpr_accept\" id=\"gdpr_accept\" value=\"1\" type=\"checkbox\"> I accept that we can use your information <abbr class=\"required\" title=\"required\">*</abbr>
+                <input class=\"input-checkbox \" name=\"gdpr_accept\" id=\"gdpr_accept\" value=\"1\" type=\"checkbox\">". self::getLabelText() ."<abbr class=\"required\" title=\"required\">*</abbr>
             </label>";
         return $field;
     }
@@ -31,5 +31,11 @@ class WP {
             wp_die( __( 'You have to agree to giving us your information' ) );
         }
         return $post;
+    }
+
+    public function getLabelText() {
+        $default = __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
+        $option = get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID .'_text');
+        return !empty($option) ? $option : $default;
     }
 }
