@@ -3,7 +3,7 @@
 namespace WPGDPRC\Includes;
 
 use WPGDPRC\Includes\Extensions\CF7;
-
+use WPGDPRC\Includes\Extensions\WC;
 /**
  * Class Helpers
  * @package WPGDPRC\Includes
@@ -89,6 +89,19 @@ class Helpers {
                 }
                 $output .= '</ul>';
                 break;
+
+            default:
+                $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text';
+                $text = WC::getInstance()->getLabelText();
+                $output .= '<ul class="wpgdprc-checklist-options">';
+                $output .= '<li>';
+                $output .= '<p class="wpgdprc-setting">';
+                $output .= '<label for="' . $optionName . '">' . __('Text', WP_GDPR_C_SLUG) . '</label>';
+                $output .= '<input type="text" name="' . $optionName . '" class="regular-text" id="' . $optionName . '" placeholder="' . $text . '" value="' . $text . '" />';
+                $output .= '</p>';
+                $output .= '</li>';
+                $output .= '</ul>';
+                break;
         }
         return $output;
     }
@@ -102,6 +115,12 @@ class Helpers {
                 'id' => CF7::ID,
                 'file' => 'contact-form-7/wp-contact-form-7.php',
                 'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
+                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+            ),
+            array(
+                'id' => WC::ID,
+                'file' => 'woocommerce/woocommerce.php',
+                'name' => __('WooCommerce', WP_GDPR_C_SLUG),
                 'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
             ),
         );

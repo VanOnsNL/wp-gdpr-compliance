@@ -9,14 +9,14 @@ use WPGDPRC\Includes\Integrations;
  * @package WPGDPRC\Includes\Extensions\CF7
  */
 class CF7 {
+    private static $instance;
+
+    private function __construct() {}
+
+    private function __clone() {}
+
     const ID = 'contact-form-7';
 
-    /** @var null */
-    private static $instance = null;
-
-    /**
-     * @return null|CF7
-     */
     public static function getInstance() {
         if (!isset(self::$instance)) {
             self::$instance = new self();

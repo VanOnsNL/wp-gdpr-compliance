@@ -3,6 +3,7 @@
 namespace WPGDPRC\Includes;
 
 use WPGDPRC\Includes\Extensions\CF7;
+use WPGDPRC\Includes\Extensions\WC;
 
 /**
  * Class Integrations
@@ -37,6 +38,15 @@ class Integrations {
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_form_text', array(CF7::getInstance(), 'processIntegration'));
                     add_action('wpcf7_init', array(CF7::getInstance(), 'addFormTagSupport'));
                     add_filter('wpcf7_validate_wpgdprc', array(CF7::getInstance(), 'validateField'), 10, 2);
+                    break;
+                case WC::ID :
+                    add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
+                    add_action('woocommerce_after_order_notes', array(WC::getInstance(), 'addField'));
+                    //no break so it will also execute the default switch
+
+                default:
+                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . WC::ID . '_text');
+                    //Default checkbox label text option
                     break;
             }
         }
