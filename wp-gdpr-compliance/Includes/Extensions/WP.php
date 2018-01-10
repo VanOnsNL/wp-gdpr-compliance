@@ -7,6 +7,10 @@ class WP {
 
     private function __construct()  {}
 
+    private function __clone() {}
+
+    const ID = 'wordpress';
+
     public static function getInstance() {
         if (!isset(self::$instance)) {
             self::$instance = new self();

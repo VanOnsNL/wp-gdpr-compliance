@@ -92,7 +92,9 @@ class Helpers {
 
             default:
                 $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text';
-                $text = WC::getInstance()->getLabelText();
+                $text = get_option($optionName);
+                $text = empty($text) ? __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG) : $text;
+
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 $output .= '<li>';
                 $output .= '<p class="wpgdprc-setting">';

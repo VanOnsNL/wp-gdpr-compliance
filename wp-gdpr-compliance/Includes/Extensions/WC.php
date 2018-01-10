@@ -2,7 +2,6 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
-use WPGDPRC\Includes\Integrations;
 
 class WC {
     private static $instance;

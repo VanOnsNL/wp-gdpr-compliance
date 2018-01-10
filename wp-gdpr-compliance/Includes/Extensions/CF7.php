@@ -2,8 +2,6 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
-use WPGDPRC\Includes\Integrations;
-
 /**
  * Class CF7
  * @package WPGDPRC\Includes\Extensions\CF7
