@@ -1,4 +1,5 @@
 <?php
+
 namespace WPGDPRC\Includes\Extensions;
 
 
@@ -28,7 +29,7 @@ class WP {
 
     public function checkPost($post) {
         if (!isset($_POST['gdpr_accept'])) {
-            wp_die( __( 'You have to agree to giving us your information' ) );
+            wp_die( __( 'The field is required' ) );
         }
         return $post;
     }

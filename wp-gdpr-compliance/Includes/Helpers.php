@@ -171,8 +171,4 @@ class Helpers {
         }
         return $output;
     }
-
-    public static function getWordpressOptions(){
-        return self::isEnabled('wordpress');
-    }
 }

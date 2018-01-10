@@ -45,18 +45,17 @@ class Integrations {
                     add_action('woocommerce_after_order_notes', array(WC::getInstance(), 'addField'));
                     //no break so it will also execute the default switch
 
+                case WP::ID :
+                    add_action( 'comment_form_field_comment', array(WP::getInstance(), 'addField') );
+                    add_filter( 'preprocess_comment', array(WP::getInstance(), 'checkPost') );
+                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . WP::ID . '_text');
+
+
                 default:
-                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . WC::ID . '_text');
+                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_text');
                     //Default checkbox label text option
                     break;
             }
-        }
-
-        if (Helpers::getWordpressOptions()) {
-            add_action( 'comment_form_field_comment', array(WP::getInstance(), 'addField') );
-            add_filter( 'preprocess_comment', array(WP::getInstance(), 'checkPost') );
-            register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_wordpress');
-            register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_wordpress_text');
         }
     }
 
