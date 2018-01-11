@@ -64,7 +64,6 @@ class Helpers {
                 $optionNameForms = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_forms';
                 $optionNameFormText = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text';
                 $valueForms = CF7::getInstance()->getEnabledForms();
-                $output .= '<p><strong>' . __('Automatically add GDPR compliance to the following forms:', WP_GDPR_C_SLUG) . '</strong></p>';
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 foreach (CF7::getInstance()->getForms() as $form) {
                     $formSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_' . $form;
@@ -130,7 +129,7 @@ class Helpers {
                 'id' => CF7::ID,
                 'file' => 'contact-form-7/wp-contact-form-7.php',
                 'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
-                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+                'description' => 'Automatically add GDPR compliance to the following forms:',
             ),
             array(
                 'id' => WC::ID,
