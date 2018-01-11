@@ -131,7 +131,7 @@ p.wpgdprc-disclaimer {
 }
 
 .wpgdprc-list > li {
-    padding: 10px 0;
+    padding: 18px 0;
     border-bottom: 1px solid #F1F1F1;
 }
 
@@ -270,7 +270,8 @@ p.wpgdprc-disclaimer {
 .wpgdprc-checklist-options li {
     margin-top: 20px;
     padding: 20px;
-    background: #F1F1F1;
+    background: #fff;
+    border: 2px solid #f0f0f0;
 }
 
 .wpgdprc-checklist-options p {
@@ -297,6 +298,7 @@ p.wpgdprc-disclaimer {
     float: right;
     max-width: 100%;
     font-size: 1rem;
+    background-color: #f8f8f8;
 }
 
 .wpgdprc-features {
