@@ -22,7 +22,7 @@ class WP {
     public function addField($field) {
         $field .= "
             <label class=\"checkbox \"><br>
-                <input class=\"input-checkbox \" name=\"gdpr_accept\" id=\"gdpr_accept\" value=\"1\" type=\"checkbox\">". self::getLabelText() ."<abbr class=\"required\" title=\"required\">*</abbr>
+                <input class=\"input-checkbox \" name=\"gdpr_accept\" id=\"gdpr_accept\" value=\"1\" type=\"checkbox\">". esc_html(self::getLabelText()) ."<abbr class=\"required\" title=\"required\">*</abbr>
             </label>";
         return $field;
     }

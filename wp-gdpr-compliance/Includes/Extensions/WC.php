@@ -23,7 +23,7 @@ class WC {
         woocommerce_form_field('gdpr_accept', array(
             'type'          => 'checkbox',
             'class'         => array('input-checkbox'),
-            'label'         => self::getLabelText(),
+            'label'         => esc_html(self::getLabelText()),
             'required'  => true,
         ), $checkout->get_value('gdpr_accept'));
     }
