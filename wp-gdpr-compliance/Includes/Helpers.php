@@ -72,7 +72,8 @@ class Helpers {
                     $output .= '<li>';
                     $output .= '<div class="wpgdprc-checkbox">';
                     $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, (in_array($form, $valueForms)), false) . ' />';
-                    $output .= '<label for="' . $formSettingId . '"><strong>' . get_the_title($form) . '</strong></label>';
+                    $output .= '<label for="' . $formSettingId . '"><strong>Form: ' . get_the_title($form) . '</strong></label>';
+                    $output .= '<p>'.__("Activate for this form:",WP_GDPR_C_SLUG).'</p>';
                     $output .= '<div class="wpgdprc-switch" aria-hidden="true">';
                     $output .= '<div class="wpgdprc-switch-label">';
                     $output .= '<div class="wpgdprc-switch-inner"></div>';
@@ -81,7 +82,7 @@ class Helpers {
                     $output .= '</div>';
                     $output .= '</div>';
                     $output .= '<p class="wpgdprc-setting">';
-                    $output .= '<label for="' . $textSettingId . '">' . __('Text', WP_GDPR_C_SLUG) . '</label>';
+                    $output .= '<label for="' . $textSettingId . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                     $output .= '<input type="text" name="' . $optionNameFormText . '[' . $form . ']' . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . $text . '" value="' . $text . '" />';
                     $output .= '</p>';
                     $output .= '</li>';
@@ -97,7 +98,7 @@ class Helpers {
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 $output .= '<li>';
                 $output .= '<p class="wpgdprc-setting">';
-                $output .= '<label for="' . $optionName . '">' . __('Text', WP_GDPR_C_SLUG) . '</label>';
+                $output .= '<label for="' . $optionName . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                 $output .= '<input type="text" name="' . $optionName . '" class="regular-text" id="' . $optionName . '" placeholder="' . $text . '" value="' . $text . '" />';
                 $output .= '</p>';
                 $output .= '</li>';
@@ -115,7 +116,7 @@ class Helpers {
             array(
                 'id' => 'wordpress',
                 'name' => __('WordPress Comments', WP_GDPR_C_SLUG),
-                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+                'description' => 'When activated the GDPR checkbox will be added automatically just above the \'Post Comment\' button.',
             )
         );
     }
@@ -129,13 +130,13 @@ class Helpers {
                 'id' => CF7::ID,
                 'file' => 'contact-form-7/wp-contact-form-7.php',
                 'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
-                'description' => 'Automatically add GDPR compliance to the following forms:',
+                'description' => 'A GDPR shortcode will be automatically added to every form you activate it for.',
             ),
             array(
                 'id' => WC::ID,
                 'file' => 'woocommerce/woocommerce.php',
                 'name' => __('WooCommerce', WP_GDPR_C_SLUG),
-                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+                'description' => 'The GDPR checkbox will be added automatically at the end of your checkout page.',
             ),
         );
     }
@@ -169,5 +170,9 @@ class Helpers {
             }
         }
         return $output;
+    }
+
+    public static function getAdvancedOption($option = '') {
+        return get_option(WP_GDPR_C_PREFIX . '_advanced_'.$option);
     }
 }

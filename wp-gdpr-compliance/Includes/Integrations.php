@@ -57,6 +57,7 @@ class Integrations {
                     break;
             }
         }
+        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_advanced_error');
     }
 
     public function registerSettings() {

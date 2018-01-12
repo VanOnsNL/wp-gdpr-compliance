@@ -7,11 +7,9 @@ namespace WPGDPRC\Includes\Extensions;
  * @package WPGDPRC\Includes\Extensions\CF7
  */
 class CF7 {
-    private static $instance;
-
     private function __construct() {}
 
-    private function __clone() {}
+    private static $instance;
 
     const ID = 'contact-form-7';
 
@@ -139,7 +137,7 @@ class CF7 {
                 $name = $tag->name;
                 $value = (isset($_POST[$name])) ? filter_var($_POST[$name], FILTER_VALIDATE_BOOLEAN) : false;
                 if ($value === false) {
-                    $result->invalidate($tag, wpcf7_get_message('invalid_required'));
+                    $result->invalidate($tag, get_option(WP_GDPR_C_PREFIX . '_advanced_error'));
                 }
                 break;
         }
