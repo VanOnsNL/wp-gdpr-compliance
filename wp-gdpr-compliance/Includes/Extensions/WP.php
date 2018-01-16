@@ -2,6 +2,7 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
+use WPGDPRC\Includes\Helpers;
 /**
  * Class WP
  * @package WPGDPRC\Includes\Extensions
@@ -36,18 +37,9 @@ class WP {
      */
     public function checkPost($post = array()) {
         if (!isset($_POST['wpgdprc'])) {
-            wp_die(self::getErrorText());
+            wp_die(Helpers::getErrorText());
         }
         return $post;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getErrorText() {
-        $default = __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
-        $option = esc_html(get_option(WP_GDPR_C_PREFIX . '_advanced_error'));
-        return !empty($option) ? $option : $default;
     }
 
     /**

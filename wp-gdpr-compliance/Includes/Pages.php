@@ -41,7 +41,7 @@ class Pages {
     public function generatePage() {
         $pluginData = Helpers::getPluginData();
         $activatedPlugins = Helpers::getActivatedPlugins();
-        $errorMessage = Helpers::getAdvancedOption('error');
+        $errorMessage = Helpers::getErrorText();
 
         ?>
         <div class="wrap">

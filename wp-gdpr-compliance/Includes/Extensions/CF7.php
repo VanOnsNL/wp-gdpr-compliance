@@ -2,6 +2,7 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
+use WPGDPRC\Includes\Helpers;
 /**
  * Class CF7
  * @package WPGDPRC\Includes\Extensions
@@ -145,7 +146,7 @@ class CF7 {
                 $name = $tag->name;
                 $value = (isset($_POST[$name])) ? filter_var($_POST[$name], FILTER_VALIDATE_BOOLEAN) : false;
                 if ($value === false) {
-                    $result->invalidate($tag, self::getErrorText());
+                    $result->invalidate($tag, Helpers::getErrorText());
                 }
                 break;
         }
@@ -175,15 +176,6 @@ class CF7 {
      */
     public function getFormTexts() {
         return (array)get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_form_text', array());
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getErrorText() {
-        $default = __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
-        $option = esc_html(get_option(WP_GDPR_C_PREFIX . '_advanced_error'));
-        return !empty($option) ? $option : $default;
     }
 
     /**

@@ -191,8 +191,15 @@ class Helpers {
      * @return mixed
      */
     public static function getAdvancedOption($option = '') {
-        $option = get_option(WP_GDPR_C_PREFIX . '_advanced_' . $option);
+        return get_option(WP_GDPR_C_PREFIX . '_advanced_' . $option);
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function getErrorText() {
         $default = __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
-        return empty($option) ? $default : $option;
+        $option = esc_html(self::getAdvancedOption('error'));
+        return !empty($option) ? $option : $default;
     }
 }
