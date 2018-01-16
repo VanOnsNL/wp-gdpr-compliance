@@ -42,6 +42,7 @@ class Pages {
         $pluginData = Helpers::getPluginData();
         $activatedPlugins = Helpers::getActivatedPlugins();
         $errorMessage = Helpers::getAdvancedOption('error');
+
         ?>
         <div class="wrap">
             <div class="wpgdprc">
