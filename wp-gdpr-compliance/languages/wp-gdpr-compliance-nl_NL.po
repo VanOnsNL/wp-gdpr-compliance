@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP GDPR Compliance\n"
-"POT-Creation-Date: 2018-01-16 12:26+0100\n"
-"PO-Revision-Date: 2018-01-16 12:26+0100\n"
+"POT-Creation-Date: 2018-01-16 13:43+0100\n"
+"PO-Revision-Date: 2018-01-16 13:43+0100\n"
 "Last-Translator: \n"
 "Language-Team: Van Ons <info@van-ons.nl>\n"
 "Language: nl_NL\n"
@@ -80,7 +80,7 @@ msgid ""
 msgstr ""
 
 #: Includes/Helpers.php:38
-msgid "Do you provide a forum or message board environment?"
+msgid "Do you provide a forum or message board?"
 msgstr ""
 
 #: Includes/Helpers.php:39
@@ -122,7 +122,7 @@ msgstr ""
 
 #: Includes/Helpers.php:134
 msgid ""
-"A GDPR shortcode will be automatically added to every form you activate it "
+"A GDPR form tag will be automatically added to every form you activate it "
 "for."
 msgstr ""
 
@@ -139,65 +139,64 @@ msgstr ""
 #: Includes/Pages.php:53
 msgid ""
 "This plugin assists website and webshop owners to comply with European "
-"privacy regulations (known as GDPR).\n"
-"                    By May 24th, 2018 your website or shop has to comply to "
-"avoid large fines. The regulation can be read here:"
+"privacy regulations (known as GDPR). By May 24th, 2018 your site or shop has "
+"to comply to avoid large fines. The regulation can be read here:"
 msgstr ""
 
-#: Includes/Pages.php:55
+#: Includes/Pages.php:54
 msgid "GDPR Key Changes"
 msgstr ""
 
-#: Includes/Pages.php:63
+#: Includes/Pages.php:62
 msgid "General"
 msgstr ""
 
-#: Includes/Pages.php:64
+#: Includes/Pages.php:63
 msgid "Integrations"
 msgstr ""
 
-#: Includes/Pages.php:65
+#: Includes/Pages.php:64
 msgid "Advanced"
 msgstr ""
 
-#: Includes/Pages.php:70
+#: Includes/Pages.php:69
 msgid ""
 "Below we ask you what private data you currently collect and provide you "
 "with tips to comply."
 msgstr ""
 
-#: Includes/Pages.php:106
+#: Includes/Pages.php:105
 msgid ""
 "WP GDPR automatically detects certain plugins that possibly need to comply "
 "with GDPR. We currently support: WordPress Comments, WooCommerce, Contact "
 "Form 7."
 msgstr ""
 
-#: Includes/Pages.php:120
+#: Includes/Pages.php:119
 msgid "Enable compliance:"
 msgstr ""
 
-#: Includes/Pages.php:142
+#: Includes/Pages.php:141
 msgid "Couldn't find any supported plugins installed."
 msgstr ""
 
-#: Includes/Pages.php:143
+#: Includes/Pages.php:142
 msgid "The following plugins are supported as of now:"
 msgstr ""
 
-#: Includes/Pages.php:149
+#: Includes/Pages.php:148
 msgid "More plugins will be added in the future."
 msgstr ""
 
-#: Includes/Pages.php:153
+#: Includes/Pages.php:152
 msgid "If the user does not accept the checkbox, this message will appear."
 msgstr ""
 
-#: Includes/Pages.php:157
+#: Includes/Pages.php:156
 msgid "Error message"
 msgstr ""
 
-#: Includes/Pages.php:169
+#: Includes/Pages.php:168
 msgid ""
 "Disclaimer: The creators of this plugin do not have a legal background. We "
 "assist website and webshop owners in being compliant with the General Data "

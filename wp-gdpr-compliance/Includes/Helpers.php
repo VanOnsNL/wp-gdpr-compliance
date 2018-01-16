@@ -35,7 +35,7 @@ class Helpers {
                 'description' => __('Make sure you add a checkbox specifically asking the user of the form if they consent to you storing and using their personal information to ship the order. This cannot be the same checkbox as the Privacy Policy checkbox you should already have in place. The checkbox must be unchecked by default. Also mention if you will send or share the data with any 3rd-parties and which.', WP_GDPR_C_SLUG),
             ),
             'forum' => array(
-                'label' => __('Do you provide a forum or message board environment?', WP_GDPR_C_SLUG),
+                'label' => __('Do you provide a forum or message board?', WP_GDPR_C_SLUG),
                 'description' => __('Make sure you add a checkbox specifically asking forum / board users if they consent to you storing and using their personal information and messages. The checkbox must be unchecked by default. Also mention if you will send or share the data with any 3rd-parties and which.', WP_GDPR_C_SLUG),
             ),
             'chat' => array(
@@ -115,7 +115,7 @@ class Helpers {
             array(
                 'id' => 'wordpress',
                 'name' => __('WordPress Comments', WP_GDPR_C_SLUG),
-                'description' => 'When activated the GDPR checkbox will be added automatically just above the \'Post Comment\' button.',
+                'description' => 'When activated the GDPR checkbox will be added automatically just above the submit button.',
                 'text_field' => true,
                 'fields' => false
             )
@@ -131,7 +131,7 @@ class Helpers {
                 'id' => CF7::ID,
                 'file' => 'contact-form-7/wp-contact-form-7.php',
                 'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
-                'description' => __('A GDPR shortcode will be automatically added to every form you activate it for.', WP_GDPR_C_SLUG),
+                'description' => __('A GDPR form tag will be automatically added to every form you activate it for.', WP_GDPR_C_SLUG),
                 'text_field' => false,
                 'fields' => array(
                     'integrations_%id%_forms',
