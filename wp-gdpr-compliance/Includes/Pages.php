@@ -41,6 +41,7 @@ class Pages {
     public function generatePage() {
         $pluginData = Helpers::getPluginData();
         $activatedPlugins = Helpers::getActivatedPlugins();
+        $errorMessage = Helpers::getAdvancedOption('error');
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -50,8 +51,9 @@ class Pages {
 
                 <p class="wpgdprc-description">
                     <?php _e('This plugin assists website and webshop owners to comply with European privacy regulations (known as GDPR).
-                    By May 24th, 2018 your website or shop has to comply to avoid large fines. The regulation can be read here:', WP_GDPR_C_SLUG) ?>
-                    <a target="_blank" href="//<?php _e('www.eugdpr.org/the-regulation.html', WP_GDPR_C_SLUG) ?>"><?php _e('GDPR Key Changes', WP_GDPR_C_SLUG) ?></a></p>
+                    By May 24th, 2018 your website or shop has to comply to avoid large fines. The regulation can be read here:', WP_GDPR_C_SLUG); ?>
+                    <a target="_blank" href="//<?php _e('www.eugdpr.org/the-regulation.html', WP_GDPR_C_SLUG) ?>"><?php _e('GDPR Key Changes', WP_GDPR_C_SLUG); ?></a>
+                </p>
 
                 <form method="post" action="<?php echo admin_url('options.php'); ?>" novalidate="novalidate">
                     <?php settings_fields(WP_GDPR_C_SLUG); ?>
@@ -61,12 +63,11 @@ class Pages {
                             <a id="tab-general-label" class="active" href="#tab-general" aria-selected="true" aria-controls="tab-general" tabindex="0" role="tab"><?php _e('General', WP_GDPR_C_SLUG); ?></a>
                             <a id="tab-integrations-label" href="#tab-integrations" aria-controls="tab-integrations" tabindex="-1" role="tab"><?php _e('Integrations', WP_GDPR_C_SLUG); ?></a>
                             <a id="tab-advanced-label" href="#tab-advanced" aria-controls="tab-advanced" tabindex="-1" role="tab"><?php _e('Advanced', WP_GDPR_C_SLUG); ?></a>
-
                         </div>
 
                         <div class="wpgdprc-tabs__content">
                             <div id="tab-general" class="wpgdprc-tabs__panel active" aria-labelledby="tab-general-label" role="tabpanel">
-                                <p><?php _e('Below we ask you what private data you currently collect and provide you with tips to comply.', WP_GDPR_C_SLUG) ?></p>
+                                <p><?php _e('Below we ask you what private data you currently collect and provide you with tips to comply.', WP_GDPR_C_SLUG); ?></p>
 
                                 <ul class="wpgdprc-list">
                                     <?php
@@ -88,18 +89,21 @@ class Pages {
                                             </div>
 
                                             <?php if (!empty($description)) : ?>
-                                                <div class="wpgdprc-checklist-description" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
+                                                <div class="wpgdprc-checklist-description"
+                                                     <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
                                                     <?php echo $description; ?>
                                                 </div>
                                             <?php endif; ?>
                                         </li>
-                                    <?php endforeach; ?>
+                                        <?php
+                                    endforeach;
+                                    ?>
                                 </ul>
                             </div>
 
                             <div id="tab-integrations" class="wpgdprc-tabs__panel" aria-hidden="true">
                                 <?php if (!empty($activatedPlugins)) : ?>
-                                    <p><?php _e('WP GDPR automatically detects certain plugins that possibly need to comply with GDPR. We currently support: WordPress Comments, WooCommerce, Contact Form 7.', WP_GDPR_C_SLUG)?></p>
+                                    <p><?php _e('WP GDPR automatically detects certain plugins that possibly need to comply with GDPR. We currently support: WordPress Comments, WooCommerce, Contact Form 7.', WP_GDPR_C_SLUG) ?></p>
 
                                     <ul class="wpgdprc-list">
                                         <?php
@@ -113,9 +117,8 @@ class Pages {
                                                 <div class="wpgdprc-checkbox">
                                                     <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $optionName; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
                                                     <label for="<?php echo $optionName; ?>"><?php echo $plugin['name']; ?></label>
-                                                    <p><?php _e('Enable compliance:',WP_GDPR_C_SLUG) ?></p>
+                                                    <span class="wpgdprc-instructions"><?php _e('Enable compliance:', WP_GDPR_C_SLUG); ?></span>
                                                     <div class="wpgdprc-switch" aria-hidden="true">
-
                                                         <div class="wpgdprc-switch-label">
                                                             <div class="wpgdprc-switch-inner"></div>
                                                             <div class="wpgdprc-switch-switch"></div>
@@ -124,7 +127,8 @@ class Pages {
                                                 </div>
 
                                                 <?php if (!empty($description)) : ?>
-                                                    <div class="wpgdprc-checklist-description" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
+                                                    <div class="wpgdprc-checklist-description"
+                                                         <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
                                                         <?php echo $description; ?>
                                                         <?php echo $options; ?>
                                                     </div>
@@ -146,20 +150,16 @@ class Pages {
                                 <?php endif; ?>
                             </div>
                             <div id="tab-advanced" class="wpgdprc-tabs__panel" aria-hidden="true">
-                                <p><?php echo __('If the user does not accept the checkbox, this message will appear.', WP_GDPR_C_SLUG); ?></p>
+                                <p><?php _e('If the user does not accept the checkbox, this message will appear.', WP_GDPR_C_SLUG); ?></p>
                                 <ul class="wpgdprc-list">
-                                    <?php
-                                        $text = Helpers::getAdvancedOption('error');
-                                        ?>
-                                        <li>
-                                            <p class="wpgdprc-setting">
-                                                <label for="wpgdprc_advanced_error"><?php echo __('Error message', WP_GDPR_C_SLUG); ?></label>
-                                                <input name="wpgdprc_advanced_error" class="regular-text" id="wpgdprc_advanced_error" placeholder="<?php echo $text; ?>" value="<?php echo $text; ?>" type="text">
-                                            </p>
-                                        </li>
-                                    </ul>
+                                    <li>
+                                        <p class="wpgdprc-setting">
+                                            <label for="wpgdprc_advanced_error"><?php _e('Error message', WP_GDPR_C_SLUG); ?></label>
+                                            <input name="wpgdprc_advanced_error" class="regular-text" id="wpgdprc_advanced_error" placeholder="<?php echo $errorMessage; ?>" value="<?php echo $errorMessage; ?>" type="text" />
+                                        </p>
+                                    </li>
+                                </ul>
                             </div>
-
                         </div>
                     </div>
 
@@ -167,13 +167,6 @@ class Pages {
                 </form>
 
                 <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background. We assist website and webshop owners in being compliant with the General Data Protection Regulation (GDPR) but recommend contacting a law firm for rock solid legal advice.', WP_GDPR_C_SLUG); ?></p>
-
-                <div class="wpgdprc-features">
-                    <div class="wpgdprc-features-inner">
-                        <h2><?php _e('Coming soon', WP_GDPR_C_SLUG); ?></h2>
-                        <p><?php _e('Tools to automatically comply with GDPR regulations.', WP_GDPR_C_SLUG); ?></p>
-                    </div>
-                </div>
 
                 <div class="wpgdprc-background"><?php include(WP_GDPR_C_DIR_SVG . '/inline-waves.svg.php'); ?></div>
             </div>

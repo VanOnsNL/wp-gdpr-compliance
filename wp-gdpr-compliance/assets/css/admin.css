@@ -87,8 +87,9 @@ p.wpgdprc-disclaimer {
 .wpgdprc-tabs {
     position: relative;
 }
+
 .wpgdprc-tabs__navigation {
-    border-bottom:1px solid #dbd6d6;
+    border-bottom: 1px solid #dbd6d6;
 }
 
 .wpgdprc-tabs__navigation > a {
@@ -96,24 +97,24 @@ p.wpgdprc-disclaimer {
     float: left;
     margin-bottom: -2px;
     padding: 12px 16px;
-    border-left: 1px solid #F1F1F1;
+    background-color: #E9E9E9;
+    border: 1px solid transparent;
+    border-left-color: #F1F1F1;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
     text-decoration: none;
     font-weight: 500;
     line-height: 1;
     color: inherit;
-    background-color:#E9E9E9;
-}
-
-.wpgdprc-tabs__navigation > a:first-child {
-    border-left: none;
 }
 
 .wpgdprc-tabs__navigation > a.active {
-    background-color:#fff;
+    background-color: #fff;
     color: #4AA94F;
-    border-left: 1px solid #dbd6d6;
-    border-top: 1px solid #dbd6d6;
-    border-right: 1px solid #dbd6d6;
+    border-top-color: #dbd6d6;
+    border-right-color: #dbd6d6;
+    border-left-color: #dbd6d6;
 }
 
 .wpgdprc-tabs__panel {
@@ -122,15 +123,18 @@ p.wpgdprc-disclaimer {
 
 .wpgdprc-tabs__panel.active {
     display: block;
-    background-color:#fff;
-    border-left: 1px solid #dbd6d6;
-    border-bottom: 1px solid #dbd6d6;
-    border-right: 1px solid #dbd6d6;
-    padding:18px;
+    background-color: #fff;
+    border: 1px solid #dbd6d6;
+    border-top: none;
+    padding: 20px;
+}
+
+.wpgdprc-tabs__panel > p:first-child {
+    margin-top: 0;
 }
 
 .wpgdprc-list {
-    margin: 0;
+    margin: -20px 0;
     list-style: none;
 }
 
@@ -140,7 +144,11 @@ p.wpgdprc-disclaimer {
 
 .wpgdprc-list > li {
     padding: 20px 0;
-    border-bottom: 2px solid #EDEDED;
+    border-top: 2px solid #EDEDED;
+}
+
+.wpgdprc-list > li:first-child {
+    border-top: none;
 }
 
 .wpgdprc-checkbox {
@@ -182,13 +190,15 @@ p.wpgdprc-disclaimer {
     padding-right: 85px;
     user-select: none;
     z-index: 1;
+    font-weight: bold;
 }
-.wpgdprc-checkbox p {
+
+.wpgdprc-instructions {
     position: absolute;
-    top: 11%;
+    top: 50%;
     right: 80px;
-    font-size: 13px;
-    transform: translateY(-50%)
+    transform: translateY(-50%);
+    font-size: 12px;
 }
 
 .wpgdprc-switch {
@@ -237,11 +247,7 @@ p.wpgdprc-disclaimer {
 }
 
 .wpgdprc-switch--reverse .wpgdprc-switch-inner:before {
-    background-color: #CC4B37;
-}
-
-.wpgdprc-switch--reverse .wpgdprc-switch-inner:after {
-    background-color: #4AA94F;
+    background-color: #FFAE00;
 }
 
 .wpgdprc-switch .wpgdprc-switch-switch {
@@ -275,13 +281,6 @@ p.wpgdprc-disclaimer {
     margin-bottom: 0;
 }
 
-.wpgdprc-checklist-options {
-}
-
-.wpgdprc-checklist-options li:first-child {
-    margin-top: 0;
-}
-
 .wpgdprc-checklist-options li {
     margin-top: 20px;
     padding: 20px;
@@ -289,17 +288,14 @@ p.wpgdprc-disclaimer {
     border: 2px solid #f0f0f0;
 }
 
-.wpgdprc-checklist-options p {
-    margin: .5rem 0;
-}
-
-.wpgdprc-checklist-options ul {
-    margin: -5px 0;
+.wpgdprc-checklist-options li:first-child {
+    margin-top: 0;
 }
 
 .wpgdprc-setting {
     *zoom: 1;
 }
+
 .wpgdprc-setting:before, .wpgdprc-setting:after {
     display: table;
     content: " ";
@@ -312,53 +308,18 @@ p.wpgdprc-disclaimer {
 .wpgdprc-setting input {
     float: right;
     max-width: 100%;
+    background-color: #F8F8F8;
     font-size: 1rem;
-    background-color: #f8f8f8;
 }
 
-.wpgdprc-features {
-    display: table;
-    margin: 30px auto 0;
-    padding: 20px;
-    background: #4AA94F;
-    -webkit-border-radius: 50%;
-    -moz-border-radius: 50%;
-    border-radius: 50%;
-    width: 200px;
-    height: 200px;
-    text-align: center;
-    color: #FFFFFF;
-}
-
-.wpgdprc-features-inner {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.wpgdprc-features h2 {
-    font-size: 24px;
-}
-
-.wpgdprc-features p {
-    line-height: 1.4;
-    font-size: 16px;
-}
-
-.wpgdprc-features h2, .wpgdprc-features p {
-    margin: 0;
+@media screen and (max-width: 639px) {
+    .wpgdprc-instructions {
+        display: none;
+    }
 }
 
 @media screen and (min-width: 768px) {
     .wpgdprc {
-        font-size: 22px;
-    }
-}
-
-@media screen and (min-width: 1200px) {
-    .wpgdprc-features {
-        position: absolute;
-        top: 30px;
-        right: 30px;
-        margin: 0;
+        font-size: 18px;
     }
 }

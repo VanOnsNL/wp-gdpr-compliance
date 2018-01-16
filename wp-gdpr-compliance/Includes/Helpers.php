@@ -4,6 +4,7 @@ namespace WPGDPRC\Includes;
 
 use WPGDPRC\Includes\Extensions\CF7;
 use WPGDPRC\Includes\Extensions\WC;
+
 /**
  * Class Helpers
  * @package WPGDPRC\Includes
@@ -73,7 +74,7 @@ class Helpers {
                     $output .= '<div class="wpgdprc-checkbox">';
                     $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, (in_array($form, $valueForms)), false) . ' />';
                     $output .= '<label for="' . $formSettingId . '"><strong>Form: ' . get_the_title($form) . '</strong></label>';
-                    $output .= '<p>'.__("Activate for this form:",WP_GDPR_C_SLUG).'</p>';
+                    $output .= '<span class="wpgdprc-instructions">' . __('Activate for this form:', WP_GDPR_C_SLUG) . '</span>';
                     $output .= '<div class="wpgdprc-switch" aria-hidden="true">';
                     $output .= '<div class="wpgdprc-switch-label">';
                     $output .= '<div class="wpgdprc-switch-inner"></div>';
@@ -89,12 +90,10 @@ class Helpers {
                 }
                 $output .= '</ul>';
                 break;
-
-            default:
+            default :
                 $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text';
                 $text = get_option($optionName);
                 $text = empty($text) ? __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG) : $text;
-
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 $output .= '<li>';
                 $output .= '<p class="wpgdprc-setting">';
@@ -155,7 +154,6 @@ class Helpers {
         foreach (self::getSupportedWordpress() as $wp) {
             $output[] = $wp;
         }
-
         return $output;
     }
 
@@ -172,7 +170,11 @@ class Helpers {
         return $output;
     }
 
+    /**
+     * @param string $option
+     * @return mixed
+     */
     public static function getAdvancedOption($option = '') {
-        return get_option(WP_GDPR_C_PREFIX . '_advanced_'.$option);
+        return get_option(WP_GDPR_C_PREFIX . '_advanced_' . $option);
     }
 }

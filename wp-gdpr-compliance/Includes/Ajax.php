@@ -54,7 +54,7 @@ class Ajax {
                     // Let's do this!
                     if (empty($output['error'])) {
                         if ($append) {
-                            $values = (array) get_option($option, array());
+                            $values = (array)get_option($option, array());
                             if ($enabled) {
                                 if (!in_array($value, $values)) {
                                     $values[] = $value;

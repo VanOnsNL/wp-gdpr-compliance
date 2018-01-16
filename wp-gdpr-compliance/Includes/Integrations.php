@@ -28,8 +28,6 @@ class Integrations {
      * Integrations constructor.
      */
     public function __construct() {
-        add_action('admin_init', array($this, 'registerSettings'));
-
         foreach (Helpers::getEnabledPlugins() as $plugin) {
             switch ($plugin['id']) {
                 case CF7::ID :
@@ -43,17 +41,12 @@ class Integrations {
                 case WC::ID :
                     add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
                     add_action('woocommerce_after_order_notes', array(WC::getInstance(), 'addField'));
-                    //no break so it will also execute the default switch
-
                 case WP::ID :
-                    add_action( 'comment_form_field_comment', array(WP::getInstance(), 'addField') );
-                    add_filter( 'preprocess_comment', array(WP::getInstance(), 'checkPost') );
-                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . WP::ID . '_text');
-
-
-                default:
+                    add_action('comment_form_field_comment', array(WP::getInstance(), 'addField'));
+                    add_filter('preprocess_comment', array(WP::getInstance(), 'checkPost'));
+                default :
+                    // Default checkbox label text option
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_text');
-                    //Default checkbox label text option
                     break;
             }
         }

@@ -1,4 +1,4 @@
-(function($, window, document, undefined) {
+(function ($, window, document, undefined) {
     'use strict';
 
     var ajaxLoading = false,
@@ -18,7 +18,7 @@
             if (!$wpgdprcCheckbox.length) {
                 return;
             }
-            $wpgdprcCheckbox.on('change', function(e) {
+            $wpgdprcCheckbox.on('change', function (e) {
                 e.preventDefault();
                 doProcessAction($(this));
             });
@@ -31,7 +31,7 @@
                 $wpgdprcTabsNavigationItem = $('a', $wpgdprcTabsNavigation),
                 $wpgdprcTabsPanel = $('.wpgdprc-tabs__panel', $wpgdprcTabs);
 
-            $wpgdprcTabsNavigationItem.on('click', function(e) {
+            $wpgdprcTabsNavigationItem.on('click', function (e) {
                 e.preventDefault();
                 var target = $(this).attr('href'),
                     $target = $(target);
@@ -44,7 +44,7 @@
                 $target.addClass('active').attr('aria-hidden', false);
             });
         },
-        getElementAjaxData = function($element) {
+        getElementAjaxData = function ($element) {
             var data = $element.data();
             if (!data.option) {
                 data.option = $element.attr('name');
@@ -57,7 +57,7 @@
             }
             return data;
         },
-        doProcessAction = function($element) {
+        doProcessAction = function ($element) {
             $element.addClass('processing');
 
             var $wpgdprcCheckboxContainer = $element.closest('.wpgdprc-checkbox'),
@@ -93,14 +93,14 @@
                 },
                 complete: function () {
                     $element.removeClass('processing');
-                    delay(function() {
+                    delay(function () {
                         $element.removeClass('alert');
                     }, 2000);
                 }
             });
         };
 
-    $(function() {
+    $(function () {
         if (!$wpgdprc.length) {
             return;
         }

@@ -4,15 +4,16 @@ namespace WPGDPRC\Includes\Extensions;
 
 /**
  * Class CF7
- * @package WPGDPRC\Includes\Extensions\CF7
+ * @package WPGDPRC\Includes\Extensions
  */
 class CF7 {
-    private function __construct() {}
-
-    private static $instance;
-
     const ID = 'contact-form-7';
+    /** @var null */
+    private static $instance = null;
 
+    /**
+     * @return CF7
+     */
     public static function getInstance() {
         if (!isset(self::$instance)) {
             self::$instance = new self();
@@ -66,6 +67,9 @@ class CF7 {
         }
     }
 
+    /**
+     *
+     */
     public function addFormTagSupport() {
         wpcf7_add_form_tag(
             'wpgdprc',
@@ -88,9 +92,7 @@ class CF7 {
                 if ($validation_error) {
                     $class .= ' wpcf7-not-valid';
                 }
-
                 $label_first = $tag->has_option('label_first');
-
                 $atts = wpcf7_format_atts(array(
                     'class' => $tag->get_class_option($class),
                     'id' => $tag->get_id_option(),
@@ -107,18 +109,24 @@ class CF7 {
                 if ($label_first) { // put label first, input last
                     $output = sprintf(
                         '<span class="wpcf7-list-item-label">%1$s</span><input %2$s />',
-                        esc_html($label), $item_atts
+                        esc_html($label),
+                        $item_atts
                     );
                 } else {
                     $output = sprintf(
                         '<input %2$s /><span class="wpcf7-list-item-label">%1$s</span>',
-                        esc_html($label), $item_atts
+                        esc_html($label),
+                        $item_atts
                     );
                 }
+
                 $output = '<span class="wpcf7-list-item"><label>' . $output . '</label></span>';
                 $output = sprintf(
                     '<span class="wpcf7-form-control-wrap %1$s"><span %2$s>%3$s</span>%4$s</span>',
-                    sanitize_html_class($tag->name), $atts, $output, $validation_error
+                    sanitize_html_class($tag->name),
+                    $atts,
+                    $output,
+                    $validation_error
                 );
                 break;
         }
@@ -159,14 +167,14 @@ class CF7 {
      * @return array
      */
     public function getEnabledForms() {
-        return (array) get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_forms', array());
+        return (array)get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_forms', array());
     }
 
     /**
      * @return array
      */
     public function getFormTexts() {
-        return (array) get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_form_text', array());
+        return (array)get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_form_text', array());
     }
 
     /**

@@ -2,13 +2,14 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
-
+/**
+ * Class WP
+ * @package WPGDPRC\Includes\Extensions
+ */
 class WP {
-    private function __construct()  {}
-
-    private static $instance;
-
     const ID = 'wordpress';
+    /** @var null */
+    private static $instance = null;
 
     /**
      * @return WP
@@ -25,19 +26,16 @@ class WP {
      * @return string
      */
     public function addField($field = '') {
-        $field .= '
-            <label class="checkbox"><br>
-                <input class="input-checkbox" name="gdpr_accept" id="gdpr_accept" value="1" type="checkbox">'. esc_html(self::getLabelText()) .'<abbr class="required" title="required">*</abbr>
-            </label>';
+        $field .= apply_filters('wpgdprc_wordpress_field', '<p class="wpgdprc-checkbox"><label><input type="checkbox" name="wpgdprc" id="wpgdprc" value="1" />' . esc_html(self::getLabelText()) . ' <abbr class="required" title="required">*</abbr></label></p>', $field);
         return $field;
     }
 
     /**
-     * @param \WP_Post $post
-     * @return \WP_Post
+     * @param array $post
+     * @return array
      */
-    public function checkPost($post) {
-        if (!isset($_POST['gdpr_accept'])) {
+    public function checkPost($post = array()) {
+        if (!isset($_POST['wpgdprc'])) {
             wp_die(get_option(WP_GDPR_C_PREFIX . '_advanced_error'));
         }
         return $post;
@@ -48,7 +46,7 @@ class WP {
      */
     public function getLabelText() {
         $default = __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
-        $option = get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID .'_text');
+        $option = get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_text');
         return !empty($option) ? $option : $default;
     }
 }

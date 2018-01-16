@@ -52,6 +52,7 @@ define('WP_GDPR_C_URI_CSS', WP_GDPR_C_URI . 'assets/css');
 define('WP_GDPR_C_URI_SVG', WP_GDPR_C_URI . 'assets/svg');
 
 // Let's do this!
+spl_autoload_register(__NAMESPACE__ . '\\autoload');
 add_action('plugins_loaded', array(WPGDPRC::getInstance(), 'init'));
 
 /**
@@ -77,7 +78,7 @@ class WPGDPRC {
         add_action('admin_init', array(Pages::getInstance(), 'registerSettings'));
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
-        add_action('admin_head', array($this, 'addToAdminHead'), 999);
+        add_action('admin_init', array(Integrations::getInstance(), 'registerSettings'));
         new Ajax();
         new Integrations();
     }
@@ -91,16 +92,7 @@ class WPGDPRC {
             'ajaxSecurity' => wp_create_nonce('wpgdprc'),
         ));
     }
-
-    public function addToAdminHead() {
-        ?>
-        <script src="//use.typekit.net/ais6lnh.js"></script>
-        <script>try{Typekit.load({ async: true });}catch(e){}</script>
-        <?php
-    }
 }
-
-spl_autoload_register(__NAMESPACE__ . '\\autoload');
 
 /**
  * @param string $class
