@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP GDPR Compliance\n"
-"POT-Creation-Date: 2018-01-16 12:06+0100\n"
-"PO-Revision-Date: 2018-01-16 12:06+0100\n"
+"POT-Creation-Date: 2018-01-16 12:26+0100\n"
+"PO-Revision-Date: 2018-01-16 12:26+0100\n"
 "Last-Translator: \n"
 "Language-Team: Van Ons <info@van-ons.nl>\n"
 "Language: nl_NL\n"
@@ -116,12 +116,24 @@ msgstr ""
 msgid "WordPress Comments"
 msgstr ""
 
-#: Includes/Helpers.php:131
+#: Includes/Helpers.php:133
 msgid "Contact Form 7"
 msgstr ""
 
-#: Includes/Helpers.php:137
+#: Includes/Helpers.php:134
+msgid ""
+"A GDPR shortcode will be automatically added to every form you activate it "
+"for."
+msgstr ""
+
+#: Includes/Helpers.php:144
 msgid "WooCommerce"
+msgstr ""
+
+#: Includes/Helpers.php:145
+msgid ""
+"The GDPR checkbox will be added automatically at the end of your checkout "
+"page."
 msgstr ""
 
 #: Includes/Pages.php:53
