@@ -31,22 +31,20 @@ class Integrations {
         foreach (Helpers::getEnabledPlugins() as $plugin) {
             switch ($plugin['id']) {
                 case CF7::ID :
-                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_forms');
-                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_form_text');
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_forms', array(CF7::getInstance(), 'processIntegration'));
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_form_text', array(CF7::getInstance(), 'processIntegration'));
                     add_action('wpcf7_init', array(CF7::getInstance(), 'addFormTagSupport'));
                     add_filter('wpcf7_validate_wpgdprc', array(CF7::getInstance(), 'validateField'), 10, 2);
                     break;
+
                 case WC::ID :
                     add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
                     add_action('woocommerce_after_order_notes', array(WC::getInstance(), 'addField'));
+                    break;
+
                 case WP::ID :
                     add_action('comment_form_field_comment', array(WP::getInstance(), 'addField'));
                     add_filter('preprocess_comment', array(WP::getInstance(), 'checkPost'));
-                default :
-                    // Default checkbox label text option
-                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_text');
                     break;
             }
         }
@@ -54,8 +52,18 @@ class Integrations {
     }
 
     public function registerSettings() {
-        foreach (Helpers::getSupportedPlugins() as $plugin) {
+        foreach (Helpers::getSupported() as $plugin) {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'], 'intval');
+
+            if(!empty($plugin['text_field'])) {
+                register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_text');
+            }
+            if (!empty($plugin['fields'])) {
+                foreach ($plugin['fields'] as $field) {
+                    $field = str_replace('%id%', $plugin['id'], $field);
+                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_' . $field);
+                }
+            }
         }
     }
 }

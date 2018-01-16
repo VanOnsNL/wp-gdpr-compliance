@@ -116,6 +116,8 @@ class Helpers {
                 'id' => 'wordpress',
                 'name' => __('WordPress Comments', WP_GDPR_C_SLUG),
                 'description' => 'When activated the GDPR checkbox will be added automatically just above the \'Post Comment\' button.',
+                'text_field' => true,
+                'fields' => false
             )
         );
     }
@@ -129,15 +131,30 @@ class Helpers {
                 'id' => CF7::ID,
                 'file' => 'contact-form-7/wp-contact-form-7.php',
                 'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
-                'description' => 'A GDPR shortcode will be automatically added to every form you activate it for.',
+                'description' => __('A GDPR shortcode will be automatically added to every form you activate it for.', WP_GDPR_C_SLUG),
+                'text_field' => false,
+                'fields' => array(
+                    'integrations_%id%_forms',
+                    'integrations_%id%_form_text'
+                )
             ),
             array(
                 'id' => WC::ID,
                 'file' => 'woocommerce/woocommerce.php',
                 'name' => __('WooCommerce', WP_GDPR_C_SLUG),
-                'description' => 'The GDPR checkbox will be added automatically at the end of your checkout page.',
-            ),
+                'description' => __('The GDPR checkbox will be added automatically at the end of your checkout page.', WP_GDPR_C_SLUG),
+                'text_field' => true,
+                'fields' => false
+            )
         );
+    }
+
+    /**
+     * @return array
+     */
+    public static function getSupported()
+    {
+        return array_merge(self::getSupportedPlugins(), self::getSupportedWordpress());
     }
 
     /**
