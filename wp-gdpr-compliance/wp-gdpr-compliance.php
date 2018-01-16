@@ -5,7 +5,7 @@
  Plugin URI:  https://www.wpgdprc.com/
  Description: This plugin assists website and webshop owners to comply with European privacy regulations (known as GDPR). By May 24th, 2018 your website or shop has to comply to avoid large fines.
  Version:     1.1
- Author:      Donny Oexman, Michael van Tulder, Van Ons
+ Author:      Donny Oexman, Michael van Tulder, Jeffrey Visser, Van Ons
  Author URI:  https://www.van-ons.nl/
  License:     GPL2
  License URI: https://www.gnu.org/licenses/gpl-2.0.html
