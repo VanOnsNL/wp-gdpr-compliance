@@ -1,6 +1,6 @@
 === WP GDPR Compliance ===
 Contributors: donnyoexman, michaelvt, jeffreyvisser, van-ons
-Tags: gdpr, law, regulations, compliance, data, protection, privacy, data protection, eu, avg
+Tags: gdpr, law, regulations, compliance, data, protection, privacy, data protection, eu, avg, comments, woocommerce, contact form 7, cf7
 Requires at least: 4.5
 Tested up to: 4.9.1
 Requires PHP: 5.2.4
