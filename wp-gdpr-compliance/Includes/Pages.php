@@ -52,7 +52,7 @@ class Pages {
                 <p class="wpgdprc-description">
                     <?php _e('This plugin assists website and webshop owners to comply with European privacy regulations (known as GDPR).
                     By May 24th, 2018 your website or shop has to comply to avoid large fines. The regulation can be read here:', WP_GDPR_C_SLUG); ?>
-                    <a target="_blank" href="//<?php _e('www.eugdpr.org/the-regulation.html', WP_GDPR_C_SLUG) ?>"><?php _e('GDPR Key Changes', WP_GDPR_C_SLUG); ?></a>
+                    <a target="_blank" href="//www.eugdpr.org/the-regulation.html"><?php _e('GDPR Key Changes', WP_GDPR_C_SLUG); ?></a>
                 </p>
 
                 <form method="post" action="<?php echo admin_url('options.php'); ?>" novalidate="novalidate">
