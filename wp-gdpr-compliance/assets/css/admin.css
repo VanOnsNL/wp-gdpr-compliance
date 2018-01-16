@@ -52,6 +52,23 @@
     color: #4AA94F;
 }
 
+.wpgdprc .submit .button.button-primary {
+    height: 38px;
+    background: #4AA94F;
+    border-top-color: #459D49;
+    border-right-color: #419546;
+    border-bottom-color: #419546;
+    border-left-color: #419546;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    text-shadow: none;
+    vertical-align: top;
+    font-size: inherit;
+    font-weight: bold;
+    line-height: 36px;
+}
+
 h1.wpgdprc-title {
     font-weight: 700;
     font-size: 36px;
@@ -193,7 +210,7 @@ p.wpgdprc-disclaimer {
     font-weight: bold;
 }
 
-.wpgdprc-instructions {
+span.wpgdprc-instructions {
     position: absolute;
     top: 50%;
     right: 80px;
