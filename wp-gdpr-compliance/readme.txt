@@ -1,5 +1,5 @@
 === WP GDPR Compliance ===
-Contributors: donnyoexman, michaelvantulder, van-ons
+Contributors: donnyoexman, michaelvantulder, jeffreyvisser, van-ons
 Tags: gdpr, law, regulations, compliance, data, protection, privacy, data protection, eu, avg
 Requires at least: 4.5
 Tested up to: 4.8.3

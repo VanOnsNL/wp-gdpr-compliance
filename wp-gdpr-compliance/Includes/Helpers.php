@@ -152,8 +152,7 @@ class Helpers {
     /**
      * @return array
      */
-    public static function getSupported()
-    {
+    public static function getSupported() {
         return array_merge(self::getSupportedPlugins(), self::getSupportedWordpress());
     }
 

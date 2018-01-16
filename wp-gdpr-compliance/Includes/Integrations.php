@@ -54,7 +54,6 @@ class Integrations {
     public function registerSettings() {
         foreach (Helpers::getSupported() as $plugin) {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'], 'intval');
-
             if(!empty($plugin['text_field'])) {
                 register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_text');
             }
