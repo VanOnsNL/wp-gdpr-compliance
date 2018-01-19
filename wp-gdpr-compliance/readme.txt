@@ -2,9 +2,9 @@
 Contributors: donnyoexman, michaelvt, jeffreyvisser, van-ons
 Tags: gdpr, law, regulations, compliance, data, protection, privacy, data protection, eu, avg, comments, woocommerce, wc, contact form 7, cf7
 Requires at least: 4.5
-Tested up to: 4.9.1
+Tested up to: 4.9.2
 Requires PHP: 5.2.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,11 @@ You'll find answers to many of your questions on [wpgdprc.com](https://www.wpgdp
 2. Automatically add GDPR checkboxes to some of your existing plugins, such as 'Contact Form 7', 'WooCommerce' or 'WordPress Comments'.
 
 == Changelog ==
+
+= 1.1.2 =
+*Release date: January 19th, 2018*
+* Added default error message.
+* Small bugfixes.
 
 = 1.1.1 =
 *Release date: January 16th, 2018*
