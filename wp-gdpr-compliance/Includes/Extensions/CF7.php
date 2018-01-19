@@ -3,6 +3,7 @@
 namespace WPGDPRC\Includes\Extensions;
 
 use WPGDPRC\Includes\Helpers;
+
 /**
  * Class CF7
  * @package WPGDPRC\Includes\Extensions

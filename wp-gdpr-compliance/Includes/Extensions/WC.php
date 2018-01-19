@@ -3,6 +3,7 @@
 namespace WPGDPRC\Includes\Extensions;
 
 use WPGDPRC\Includes\Helpers;
+
 /**
  * Class WC
  * @package WPGDPRC\Includes\Extensions
@@ -31,7 +32,7 @@ class WC {
             array(
                 'type' => 'checkbox',
                 'class' => array('wpgdprc-checkbox'),
-                'label' => esc_html(self::getLabelText()),
+                'label' => self::getLabelText(),
                 'required' => true,
             ),
             $checkout->get_value('wpgdprc')
@@ -48,8 +49,7 @@ class WC {
      * @return mixed
      */
     public function getLabelText() {
-        $default = __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
         $option = get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_text');
-        return !empty($option) ? $option : $default;
+        return (!empty($option)) ? esc_html($option) : __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
     }
 }

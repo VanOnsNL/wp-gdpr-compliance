@@ -42,7 +42,6 @@ class Pages {
         $pluginData = Helpers::getPluginData();
         $activatedPlugins = Helpers::getActivatedPlugins();
         $errorMessage = Helpers::getErrorText();
-
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -155,7 +154,7 @@ class Pages {
                                     <li>
                                         <p class="wpgdprc-setting">
                                             <label for="wpgdprc_advanced_error"><?php _e('Error message', WP_GDPR_C_SLUG); ?></label>
-                                            <input name="wpgdprc_advanced_error" class="regular-text" id="wpgdprc_advanced_error" placeholder="<?php echo $errorMessage; ?>" value="<?php echo $errorMessage; ?>" type="text" />
+                                            <input type="text" name="wpgdprc_advanced_error" class="regular-text" id="wpgdprc_advanced_error" placeholder="<?php echo $errorMessage; ?>" value="<?php echo $errorMessage; ?>" />
                                         </p>
                                     </li>
                                 </ul>

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP GDPR Compliance\n"
-"POT-Creation-Date: 2018-01-16 13:43+0100\n"
-"PO-Revision-Date: 2018-01-16 13:43+0100\n"
+"POT-Creation-Date: 2018-01-19 22:14+0100\n"
+"PO-Revision-Date: 2018-01-19 22:14+0100\n"
 "Last-Translator: \n"
 "Language-Team: Van Ons <info@van-ons.nl>\n"
 "Language: nl_NL\n"
@@ -33,8 +33,8 @@ msgstr ""
 msgid "Missing value."
 msgstr ""
 
-#: Includes/Extensions/CF7.php:185 Includes/Extensions/WC.php:50
-#: Includes/Extensions/WP.php:48 Includes/Helpers.php:96
+#: Includes/Extensions/CF7.php:187 Includes/Extensions/WC.php:53
+#: Includes/Extensions/WP.php:51 Includes/Helpers.php:96
 msgid ""
 "By using this form you agree with the storage and handling of your data by "
 "this website."
@@ -134,6 +134,10 @@ msgstr ""
 msgid ""
 "The GDPR checkbox will be added automatically at the end of your checkout "
 "page."
+msgstr ""
+
+#: Includes/Helpers.php:202
+msgid "Please accept the privacy checkbox."
 msgstr ""
 
 #: Includes/Pages.php:53

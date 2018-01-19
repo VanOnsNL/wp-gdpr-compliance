@@ -110,7 +110,7 @@ class Helpers {
     /**
      * @return array
      */
-    public static function getSupportedWordpress() {
+    public static function getSupportedWordPress() {
         return array(
             array(
                 'id' => 'wordpress',
@@ -153,31 +153,31 @@ class Helpers {
      * @return array
      */
     public static function getSupported() {
-        return array_merge(self::getSupportedPlugins(), self::getSupportedWordpress());
+        return array_merge(self::getSupportedPlugins(), self::getSupportedWordPress());
     }
 
     /**
-     * @param array $output
      * @return array
      */
-    public static function getActivatedPlugins($output = array()) {
-        $activePlugins = (!empty(get_option('active_plugins'))) ? get_option('active_plugins') : array();
+    public static function getActivatedPlugins() {
+        $output = array();
+        $activePlugins = (array) get_option('active_plugins', array());
         foreach (self::getSupportedPlugins() as $plugin) {
             if (in_array($plugin['file'], $activePlugins)) {
                 $output[] = $plugin;
             }
         }
-        foreach (self::getSupportedWordpress() as $wp) {
+        foreach (self::getSupportedWordPress() as $wp) {
             $output[] = $wp;
         }
         return $output;
     }
 
     /**
-     * @param array $output
      * @return array
      */
-    public static function getEnabledPlugins($output = array()) {
+    public static function getEnabledPlugins() {
+        $output = array();
         foreach (self::getActivatedPlugins() as $plugin) {
             if (self::isEnabled($plugin['id'])) {
                 $output[] = $plugin;
@@ -198,8 +198,7 @@ class Helpers {
      * @return mixed
      */
     public static function getErrorText() {
-        $default = __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
-        $option = esc_html(self::getAdvancedOption('error'));
-        return !empty($option) ? $option : $default;
+        $errorText = self::getAdvancedOption('error');
+        return (!empty($errorText)) ? esc_html($errorText) : __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
     }
 }

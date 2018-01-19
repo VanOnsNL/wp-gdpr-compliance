@@ -3,6 +3,7 @@
 namespace WPGDPRC\Includes\Extensions;
 
 use WPGDPRC\Includes\Helpers;
+
 /**
  * Class WP
  * @package WPGDPRC\Includes\Extensions
@@ -27,7 +28,7 @@ class WP {
      * @return string
      */
     public function addField($field = '') {
-        $field .= apply_filters('wpgdprc_wordpress_field', '<p class="wpgdprc-checkbox"><label><input type="checkbox" name="wpgdprc" id="wpgdprc" value="1" />' . esc_html(self::getLabelText()) . ' <abbr class="required" title="required">*</abbr></label></p>', $field);
+        $field .= apply_filters('wpgdprc_wordpress_field', '<p class="wpgdprc-checkbox"><label><input type="checkbox" name="wpgdprc" id="wpgdprc" value="1" />' . self::getLabelText() . ' <abbr class="required" title="required">*</abbr></label></p>', $field);
         return $field;
     }
 
@@ -46,8 +47,7 @@ class WP {
      * @return mixed
      */
     public function getLabelText() {
-        $default = __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
         $option = get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_text');
-        return !empty($option) ? $option : $default;
+        return (!empty($option)) ? esc_html($option) : __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
     }
 }
