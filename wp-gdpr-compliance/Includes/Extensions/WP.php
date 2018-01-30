@@ -2,7 +2,7 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
-use WPGDPRC\Includes\Helpers;
+use WPGDPRC\Includes\Integrations;
 
 /**
  * Class WP
@@ -14,7 +14,7 @@ class WP {
     private static $instance = null;
 
     /**
-     * @return WP
+     * @return null|WP
      */
     public static function getInstance() {
         if (!isset(self::$instance)) {
@@ -28,7 +28,7 @@ class WP {
      * @return string
      */
     public function addField($field = '') {
-        $field .= apply_filters('wpgdprc_wordpress_field', '<p class="wpgdprc-checkbox"><label><input type="checkbox" name="wpgdprc" id="wpgdprc" value="1" />' . self::getLabelText() . ' <abbr class="required" title="required">*</abbr></label></p>', $field);
+        $field .= apply_filters('wpgdprc_wordpress_field', '<p class="wpgdprc-checkbox"><label><input type="checkbox" name="wpgdprc" id="wpgdprc" value="1" />' . Integrations::getCheckboxText(self::ID) . ' <abbr class="required" title="required">*</abbr></label></p>', $field);
         return $field;
     }
 
@@ -38,16 +38,15 @@ class WP {
      */
     public function checkPost($post = array()) {
         if (!isset($_POST['wpgdprc'])) {
-            wp_die(Helpers::getErrorText());
+            wp_die(
+                '<p>' . sprintf(__('<strong>ERROR</strong>: %s', WP_GDPR_C_SLUG), Integrations::getErrorMessage(self::ID)) . '</p>',
+                __('Comment Submission Failure'),
+                array(
+                    'response' => $post,
+                    'back_link' => true
+                )
+            );
         }
         return $post;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLabelText() {
-        $option = get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_text');
-        return (!empty($option)) ? esc_html($option) : __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
     }
 }

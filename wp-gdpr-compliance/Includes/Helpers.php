@@ -2,9 +2,6 @@
 
 namespace WPGDPRC\Includes;
 
-use WPGDPRC\Includes\Extensions\CF7;
-use WPGDPRC\Includes\Extensions\WC;
-
 /**
  * Class Helpers
  * @package WPGDPRC\Includes
@@ -46,6 +43,18 @@ class Helpers {
     }
 
     /**
+     * @param bool $return_default
+     * @return mixed
+     */
+    public static function getErrorMessage($return_default = true) {
+        $option = get_option(WP_GDPR_C_PREFIX . '_advanced_error');
+        if (empty($option) && $return_default === true) {
+            return __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
+        }
+        return esc_html($option);
+    }
+
+    /**
      * @param string $plugin
      * @param string $type
      * @return bool
@@ -55,119 +64,19 @@ class Helpers {
     }
 
     /**
-     * @param string $plugin
-     * @return string
-     */
-    public static function getSupportedPluginOptions($plugin = '') {
-        $output = '';
-        switch ($plugin) {
-            case CF7::ID :
-                $optionNameForms = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_forms';
-                $optionNameFormText = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text';
-                $valueForms = CF7::getInstance()->getEnabledForms();
-                $output .= '<ul class="wpgdprc-checklist-options">';
-                foreach (CF7::getInstance()->getForms() as $form) {
-                    $formSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_' . $form;
-                    $textSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text_' . $form;
-                    $text = CF7::getInstance()->getLabelText($form);
-                    $output .= '<li>';
-                    $output .= '<div class="wpgdprc-checkbox">';
-                    $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, (in_array($form, $valueForms)), false) . ' />';
-                    $output .= '<label for="' . $formSettingId . '"><strong>Form: ' . get_the_title($form) . '</strong></label>';
-                    $output .= '<span class="wpgdprc-instructions">' . __('Activate for this form:', WP_GDPR_C_SLUG) . '</span>';
-                    $output .= '<div class="wpgdprc-switch" aria-hidden="true">';
-                    $output .= '<div class="wpgdprc-switch-label">';
-                    $output .= '<div class="wpgdprc-switch-inner"></div>';
-                    $output .= '<div class="wpgdprc-switch-switch"></div>';
-                    $output .= '</div>';
-                    $output .= '</div>';
-                    $output .= '</div>';
-                    $output .= '<p class="wpgdprc-setting">';
-                    $output .= '<label for="' . $textSettingId . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
-                    $output .= '<input type="text" name="' . $optionNameFormText . '[' . $form . ']' . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . $text . '" value="' . $text . '" />';
-                    $output .= '</p>';
-                    $output .= '</li>';
-                }
-                $output .= '</ul>';
-                break;
-            default :
-                $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text';
-                $text = get_option($optionName);
-                $text = empty($text) ? __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG) : $text;
-                $output .= '<ul class="wpgdprc-checklist-options">';
-                $output .= '<li>';
-                $output .= '<p class="wpgdprc-setting">';
-                $output .= '<label for="' . $optionName . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
-                $output .= '<input type="text" name="' . $optionName . '" class="regular-text" id="' . $optionName . '" placeholder="' . $text . '" value="' . $text . '" />';
-                $output .= '</p>';
-                $output .= '</li>';
-                $output .= '</ul>';
-                break;
-        }
-        return $output;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getSupportedWordPress() {
-        return array(
-            array(
-                'id' => 'wordpress',
-                'name' => __('WordPress Comments', WP_GDPR_C_SLUG),
-                'description' => 'When activated the GDPR checkbox will be added automatically just above the submit button.',
-                'text_field' => true,
-                'fields' => false
-            )
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public static function getSupportedPlugins() {
-        return array(
-            array(
-                'id' => CF7::ID,
-                'file' => 'contact-form-7/wp-contact-form-7.php',
-                'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
-                'description' => __('A GDPR form tag will be automatically added to every form you activate it for.', WP_GDPR_C_SLUG),
-                'text_field' => false,
-                'fields' => array(
-                    'integrations_%id%_forms',
-                    'integrations_%id%_form_text'
-                )
-            ),
-            array(
-                'id' => WC::ID,
-                'file' => 'woocommerce/woocommerce.php',
-                'name' => __('WooCommerce', WP_GDPR_C_SLUG),
-                'description' => __('The GDPR checkbox will be added automatically at the end of your checkout page.', WP_GDPR_C_SLUG),
-                'text_field' => true,
-                'fields' => false
-            )
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public static function getSupported() {
-        return array_merge(self::getSupportedPlugins(), self::getSupportedWordPress());
-    }
-
-    /**
      * @return array
      */
     public static function getActivatedPlugins() {
         $output = array();
         $activePlugins = (array) get_option('active_plugins', array());
-        foreach (self::getSupportedPlugins() as $plugin) {
+        // Loop through supported plugins
+        foreach (Integrations::getSupportedPlugins() as $plugin) {
             if (in_array($plugin['file'], $activePlugins)) {
                 $output[] = $plugin;
             }
         }
-        foreach (self::getSupportedWordPress() as $wp) {
+        // Loop through supported WordPress functionality
+        foreach (Integrations::getSupportedWordPressFunctionality() as $wp) {
             $output[] = $wp;
         }
         return $output;
@@ -184,21 +93,5 @@ class Helpers {
             }
         }
         return $output;
-    }
-
-    /**
-     * @param string $option
-     * @return mixed
-     */
-    public static function getAdvancedOption($option = '') {
-        return get_option(WP_GDPR_C_PREFIX . '_advanced_' . $option);
-    }
-
-    /**
-     * @return mixed
-     */
-    public static function getErrorText() {
-        $errorText = self::getAdvancedOption('error');
-        return (!empty($errorText)) ? esc_html($errorText) : __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
     }
 }

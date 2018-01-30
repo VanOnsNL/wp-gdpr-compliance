@@ -2,7 +2,7 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
-use WPGDPRC\Includes\Helpers;
+use WPGDPRC\Includes\Integrations;
 
 /**
  * Class CF7
@@ -14,7 +14,7 @@ class CF7 {
     private static $instance = null;
 
     /**
-     * @return CF7
+     * @return null|CF7
      */
     public static function getInstance() {
         if (!isset(self::$instance)) {
@@ -33,7 +33,7 @@ class CF7 {
      */
     public function addFormTagToForms() {
         foreach ($this->getEnabledForms() as $formId) {
-            $tag = '[wpgdprc "' . $this->getLabelText($formId) . '"]';
+            $tag = '[wpgdprc "' . $this->getCheckboxText($formId) . '"]';
             $output = get_post_meta($formId, '_form', true);
             preg_match('/(\[wpgdprc?.*\])/', $output, $matches);
             if (!empty($matches)) {
@@ -47,7 +47,6 @@ class CF7 {
                     $output = $output . "\n\n$tag";
                 }
             }
-
             update_post_meta($formId, '_form', $output);
         }
     }
@@ -69,9 +68,6 @@ class CF7 {
         }
     }
 
-    /**
-     *
-     */
     public function addFormTagSupport() {
         wpcf7_add_form_tag(
             'wpgdprc',
@@ -88,7 +84,7 @@ class CF7 {
         switch ($tag['type']) {
             case 'wpgdprc' :
                 $tag->name = 'wpgdprc';
-                $label = (!empty($tag->labels[0])) ? esc_html($tag->labels[0]) : self::getLabelText();
+                $label = (!empty($tag->labels[0])) ? esc_html($tag->labels[0]) : self::getCheckboxText();
                 $class = wpcf7_form_controls_class($tag->type, 'wpcf7-validates-as-required');
                 $validation_error = wpcf7_get_validation_error($tag->name);
                 if ($validation_error) {
@@ -147,7 +143,7 @@ class CF7 {
                 $name = $tag->name;
                 $value = (isset($_POST[$name])) ? filter_var($_POST[$name], FILTER_VALIDATE_BOOLEAN) : false;
                 if ($value === false) {
-                    $result->invalidate($tag, Helpers::getErrorText());
+                    $result->invalidate($tag, Integrations::getErrorMessage(self::ID));
                 }
                 break;
         }
@@ -183,14 +179,13 @@ class CF7 {
      * @param int $formId
      * @return string
      */
-    public function getLabelText($formId = 0) {
-        $output = __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
+    public function getCheckboxText($formId = 0) {
         if (!empty($formId)) {
             $texts = $this->getFormTexts();
             if (!empty($texts[$formId])) {
-                $output = $texts[$formId];
+                return esc_html($texts[$formId]);
             }
         }
-        return $output;
+        return Integrations::getCheckboxText();
     }
 }

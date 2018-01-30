@@ -2,7 +2,7 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
-use WPGDPRC\Includes\Helpers;
+use WPGDPRC\Includes\Integrations;
 
 /**
  * Class WC
@@ -14,7 +14,7 @@ class WC {
     private static $instance = null;
 
     /**
-     * @return WC
+     * @return null|WC
      */
     public static function getInstance() {
         if (!isset(self::$instance)) {
@@ -32,7 +32,7 @@ class WC {
             array(
                 'type' => 'checkbox',
                 'class' => array('wpgdprc-checkbox'),
-                'label' => self::getLabelText(),
+                'label' => Integrations::getCheckboxText(self::ID),
                 'required' => true,
             ),
             $checkout->get_value('wpgdprc')
@@ -41,15 +41,7 @@ class WC {
 
     public function checkPost() {
         if (!isset($_POST['wpgdprc'])) {
-            wc_add_notice(sprintf(Helpers::getErrorText()), 'error');
+            wc_add_notice(sprintf(Integrations::getErrorMessage(self::ID)), 'error');
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLabelText() {
-        $option = get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_text');
-        return (!empty($option)) ? esc_html($option) : __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
     }
 }

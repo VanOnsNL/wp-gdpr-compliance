@@ -78,14 +78,12 @@ class WPGDPRC {
         add_action('admin_init', array(Pages::getInstance(), 'registerSettings'));
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
-        add_action('admin_init', array(Integrations::getInstance(), 'registerSettings'));
         new Ajax();
         new Integrations();
     }
 
     public function loadAssets() {
         wp_enqueue_style('wpgdprc.css', WP_GDPR_C_URI_CSS . '/admin.css', array(), filemtime(WP_GDPR_C_DIR_CSS . '/admin.css'));
-        wp_enqueue_style('wpgdprc.fontawesome', WP_GDPR_C_URI_CSS . '/font-awesome.min.css', array(), false);
         wp_enqueue_script('wpgdprc.js', WP_GDPR_C_URI_JS . '/admin.js', array(), filemtime(WP_GDPR_C_DIR_JS . '/admin.js'), true);
         wp_localize_script('wpgdprc.js', 'wpgdprcData', array(
             'ajaxURL' => admin_url('admin-ajax.php'),
