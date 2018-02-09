@@ -96,11 +96,12 @@ class WPGDPRC {
  * @param string $class
  */
 function autoload($class = '') {
-    if (!strstr($class, 'WPGDPRC')) {
+    if (!strstr($class, 'WPGDPRC') ) {
         return;
     }
     $result = str_replace('WPGDPRC\\', '', $class);
     $result = str_replace('\\', '/', $result);
+
     require $result . '.php';
 }
 

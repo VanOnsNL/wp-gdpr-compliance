@@ -35,6 +35,61 @@ class GForms {
         return $output;
     }
 
+    public function processIntegration() {
+        foreach (self::getForms() as $form) {
+            if (in_array($form, self::getEnabledForms())) {
+                self::addField($form);
+            } else {
+                self::removeField($form);
+            }
+        }
+    }
+
+    public function removeField($id) {
+        $form = \GFAPI::get_form($id);
+        foreach ($form['fields'] as $index => $field) {
+            if ($field['WP-GDPR_field'] == true) {
+                unset($form['fields'][$index]);
+            }
+        }
+        \GFAPI::update_form($form, $id);
+    }
+
+    public function addField($id) {
+        $form = \GFAPI::get_form($id);
+
+        foreach ($form['fields'] as $field) {
+            if ($field['WP-GDPR_field'] == true) {
+                return;
+            }
+        }
+        $new_field = array(
+            'type' => 'checkbox',
+            'id' => (isset(end($form['fields'])['id']) ? ((int)end($form['fields'])['id']+1) : 1),
+            'label' => 'GDPR',
+            'WP-GDPR_field' => true,
+            'isRequired' => true,
+            'size' => 'medium',
+            'choices' => array(
+                array(
+                    'text' => self::getCheckboxText($id),
+                    'value' => self::getCheckboxText($id),
+                    'isSelected' => false
+                )
+            ),
+            'inputs' => array(
+                array(
+                    'id' => (isset(end($form['fields'])['id']) ? ((int)end($form['fields'])['id']+1) : 1).'.1',
+                    'label' => self::getCheckboxText($id),
+                    'name' => ''
+                )
+            )
+        );
+
+        $form['fields'][] = $new_field;
+        \GFAPI::update_form($form, $id);
+    }
+
     /**
      * @param int $formId
      * @return array

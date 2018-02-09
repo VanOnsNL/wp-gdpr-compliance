@@ -46,6 +46,10 @@ class Integrations {
                     add_action('comment_form_field_comment', array(WP::getInstance(), 'addField'));
                     add_filter('preprocess_comment', array(WP::getInstance(), 'checkPost'));
                     break;
+
+                case GForms::ID :
+                    GForms::getInstance()->processIntegration();
+                    break;
             }
         }
     }
@@ -222,7 +226,7 @@ class Integrations {
                 'id' => GForms::ID,
                 'file' => 'gravityforms/gravityforms.php',
                 'name' => __('Gravity Forms', WP_GDPR_C_SLUG),
-                'description' => __('Something...', WP_GDPR_C_SLUG),
+                'description' => __('A GDPR form tag will be automatically added to every form you activate it for.', WP_GDPR_C_SLUG),
             ),
             array(
                 'id' => WC::ID,
