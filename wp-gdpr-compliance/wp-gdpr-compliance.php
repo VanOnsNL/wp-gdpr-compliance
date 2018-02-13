@@ -105,3 +105,15 @@ function autoload($class = '') {
     require $result . '.php';
 }
 
+function mattrad_update_privacy( $query ) {
+
+	unset($query['php']);
+	unset($query['mysql']);
+	unset($query['local_package']);
+	unset($query['blogs']);
+	unset($query['users']);
+	unset($query['multisite_enabled']);
+	unset($query['initial_db_version']);
+	return $query;
+}
+add_action( 'core_version_check_query_args', 'mattrad_update_privacy' );
