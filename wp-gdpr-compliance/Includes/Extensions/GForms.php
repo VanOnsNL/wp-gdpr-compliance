@@ -45,6 +45,12 @@ class GForms {
         }
     }
 
+    public function removeIntegration() {
+        foreach (self::getForms() as $form) {
+            self::removeField($form);
+        }
+    }
+
     public function removeField($id) {
         $form = \GFAPI::get_form($id);
         foreach ($form['fields'] as $index => $field) {

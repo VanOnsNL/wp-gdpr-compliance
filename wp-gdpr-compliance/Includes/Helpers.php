@@ -94,4 +94,17 @@ class Helpers {
         }
         return $output;
     }
+
+    /**
+     * @return array
+     */
+    public static function getDisabledPlugins() {
+        $output = array();
+        foreach (self::getActivatedPlugins() as $plugin) {
+            if (!self::isEnabled($plugin['id'])) {
+                $output[] = $plugin;
+            }
+        }
+        return $output;
+    }
 }

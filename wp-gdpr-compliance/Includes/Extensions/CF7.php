@@ -24,8 +24,9 @@ class CF7 {
     }
 
     public function processIntegration() {
-        $this->addFormTagToForms();
         $this->removeFormTagFromForms();
+        $this->addFormTagToForms();
+
     }
 
     /**
@@ -54,9 +55,9 @@ class CF7 {
     /**
      * Remove [WPGDPRC] string from disabled forms
      */
-    public function removeFormTagFromForms() {
+    public function removeFormTagFromForms($all=false) {
         foreach (CF7::getInstance()->getForms() as $form) {
-            if (!in_array($form, $this->getEnabledForms())) {
+            if (!in_array($form, $this->getEnabledForms()) || $all) {
                 $output = get_post_meta($form, '_form', true);
                 $pattern = '/(\n\n\[wpgdprc?.*\])/';
                 preg_match($pattern, $output, $matches);
@@ -79,7 +80,7 @@ class CF7 {
      * @param \WPCF7_FormTag $tag
      * @return string
      */
-    public function addFormTagHandler(\WPCF7_FormTag $tag) {
+    public function addFormTagHandler($tag) {
         $output = '';
         switch ($tag['type']) {
             case 'wpgdprc' :

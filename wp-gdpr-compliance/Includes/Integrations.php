@@ -30,6 +30,18 @@ class Integrations {
      */
     public function __construct() {
         add_action('admin_init', array($this, 'registerSettings'));
+        foreach (Helpers::getDisabledPlugins() as $plugin) {
+            switch ($plugin['id']) {
+                case CF7::ID :
+                    CF7::getInstance()->removeFormTagFromForms(true);
+                    break;
+
+                case GForms::ID :
+                    GForms::getInstance()->removeIntegration();
+                    break;
+            }
+        }
+        
         foreach (Helpers::getEnabledPlugins() as $plugin) {
             switch ($plugin['id']) {
                 case CF7::ID :
@@ -39,7 +51,7 @@ class Integrations {
                     add_filter('wpcf7_validate_wpgdprc', array(CF7::getInstance(), 'validateField'), 10, 2);
                     break;
                 case WC::ID :
-                    add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
+                    add_action('woocommerce_checkout_after_terms_and_conditions', array(WC::getInstance(), 'checkPost'));
                     add_action('woocommerce_after_order_notes', array(WC::getInstance(), 'addField'));
                     break;
                 case WP::ID :
@@ -59,6 +71,10 @@ class Integrations {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'], 'intval');
             switch ($plugin['id']) {
                 case CF7::ID :
+                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID , array(CF7::getInstance(), 'processIntegration'));
+                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_forms');
+                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_'  . $plugin['id'] . '_form_text');
+                    break;
                 case GForms::ID :
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_forms');
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_'  . $plugin['id'] . '_form_text');
