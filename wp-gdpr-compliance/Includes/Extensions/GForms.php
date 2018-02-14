@@ -2,6 +2,7 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
+use WPGDPRC\Includes\Helpers;
 use WPGDPRC\Includes\Integrations;
 
 /**
@@ -37,7 +38,7 @@ class GForms {
 
     public function processIntegration() {
         foreach (self::getForms() as $form) {
-            if (in_array($form, self::getEnabledForms())) {
+            if (in_array($form, self::getEnabledForms()) && Helpers::isEnabled(self::ID)) {
                 self::addField($form);
             } else {
                 self::removeField($form);

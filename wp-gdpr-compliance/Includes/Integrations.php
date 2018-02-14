@@ -30,18 +30,6 @@ class Integrations {
      */
     public function __construct() {
         add_action('admin_init', array($this, 'registerSettings'));
-        foreach (Helpers::getDisabledPlugins() as $plugin) {
-            switch ($plugin['id']) {
-                case CF7::ID :
-                    CF7::getInstance()->removeFormTagFromForms(true);
-                    break;
-
-                case GForms::ID :
-                    GForms::getInstance()->removeIntegration();
-                    break;
-            }
-        }
-        
         foreach (Helpers::getEnabledPlugins() as $plugin) {
             switch ($plugin['id']) {
                 case CF7::ID :
@@ -60,7 +48,8 @@ class Integrations {
                     break;
 
                 case GForms::ID :
-                    GForms::getInstance()->processIntegration();
+                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_forms', array(GForms::getInstance(), 'processIntegration'));
+                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_form_text', array(GForms::getInstance(), 'processIntegration'));
                     break;
             }
         }
@@ -71,11 +60,12 @@ class Integrations {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'], 'intval');
             switch ($plugin['id']) {
                 case CF7::ID :
-                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID , array(CF7::getInstance(), 'processIntegration'));
+                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] , array(CF7::getInstance(), 'processIntegration'));
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_forms');
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_'  . $plugin['id'] . '_form_text');
                     break;
                 case GForms::ID :
+                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] , array(GForms::getInstance(), 'processIntegration'));
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_forms');
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_'  . $plugin['id'] . '_form_text');
                     break;
