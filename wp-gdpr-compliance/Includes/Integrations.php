@@ -105,7 +105,7 @@ class Integrations {
                         $output .= '</div>';
                         $output .= '</div>';
                         $output .= '<p class="wpgdprc-setting">';
-                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox Text', WP_GDPR_C_SLUG) . '</label>';
+                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                         $output .= '<input type="text" name="' . $optionNameFormText . '[' . $form . ']' . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . $text . '" value="' . $text . '" />';
                         $output .= '</p>';
                         $output .= '</li>';
@@ -140,7 +140,7 @@ class Integrations {
                         $output .= '</div>';
                         $output .= '</div>';
                         $output .= '<p class="wpgdprc-setting">';
-                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox Text', WP_GDPR_C_SLUG) . '</label>';
+                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                         $output .= '<input type="text" name="' . $optionNameFormText . '[' . $form['id'] . ']' . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . $text . '" value="' . $text . '" />';
                         $output .= '</p>';
                         $output .= '</li>';
@@ -158,7 +158,7 @@ class Integrations {
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 $output .= '<li>';
                 $output .= '<p class="wpgdprc-setting">';
-                $output .= '<label for="' . $optionNameText . '">' . __('Checkbox Text', WP_GDPR_C_SLUG) . '</label>';
+                $output .= '<label for="' . $optionNameText . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                 $output .= '<input type="text" name="' . $optionNameText . '" class="regular-text" id="' . $optionNameText . '" placeholder="' . $text . '" value="' . $text . '" />';
                 $output .= '</p>';
                 $output .= '</li>';
