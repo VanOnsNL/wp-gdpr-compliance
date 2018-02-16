@@ -41,36 +41,41 @@ class GForms {
      * @param array $form
      */
     public function addField($form = array()) {
-        foreach ($form['fields'] as $field) {
+        $isUpdated = false;
+        $choices = array(
+            array(
+                'text' => self::getCheckboxText($form['id']),
+                'value' => 1,
+                'isSelected' => false
+            )
+        );
+        foreach ($form['fields'] as &$field) {
             if (isset($field->wpgdprc) && $field->wpgdprc === true) {
-                return;
+                $field['choices'] = $choices;
+                $isUpdated = true;
             }
         }
-        $lastField = array_values(array_slice($form['fields'], -1));
-        $lastField = (isset($lastField[0])) ? $lastField[0] : false;
-        $id = (!empty($lastField)) ? (int)$lastField['id'] + 1 : 1;
-        $form['fields'][] = array(
-            'type' => 'checkbox',
-            'id' => $id,
-            'label' => __('GDPR', WP_GDPR_C_SLUG),
-            'isRequired' => true,
-            'enableChoiceValue' => true,
-            'choices' => array(
-                array(
-                    'text' => self::getCheckboxText($form['id']),
-                    'value' => 1,
-                    'isSelected' => false
-                )
-            ),
-            'inputs' => array(
-                array(
-                    'id' => $id . '.1',
-                    'label' => self::getCheckboxText($form['id']),
-                    'name' => 'wpgdprc'
-                )
-            ),
-            'wpgdprc' => true
-        );
+        if (!$isUpdated) {
+            $lastField = array_values(array_slice($form['fields'], -1));
+            $lastField = (isset($lastField[0])) ? $lastField[0] : false;
+            $id = (!empty($lastField)) ? (int)$lastField['id'] + 1 : 1;
+            $form['fields'][] = array(
+                'id' => $id,
+                'type' => 'checkbox',
+                'label' => __('GDPR', WP_GDPR_C_SLUG),
+                'isRequired' => true,
+                'enableChoiceValue' => true,
+                'choices' => $choices,
+                'inputs' => array(
+                    array(
+                        'id' => $id . '.1',
+                        'label' => self::getCheckboxText($form['id']),
+                        'name' => 'wpgdprc'
+                    )
+                ),
+                'wpgdprc' => true
+            );
+        }
         \GFAPI::update_form($form, $form['id']);
     }
 
@@ -79,7 +84,7 @@ class GForms {
      */
     public function removeField($form = array()) {
         foreach ($form['fields'] as $index => $field) {
-            if ($field['wpgdprc'] == true) {
+            if (isset($field->wpgdprc) && $field->wpgdprc === true) {
                 unset($form['fields'][$index]);
             }
         }
