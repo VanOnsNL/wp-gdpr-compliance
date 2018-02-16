@@ -42,33 +42,35 @@ class GForms {
      */
     public function addField($form = array()) {
         foreach ($form['fields'] as $field) {
-            if ($field['WP-GDPR_field'] == true) {
+            if (isset($field->wpgdprc) && $field->wpgdprc === true) {
                 return;
             }
         }
-        $new_field = array(
+        $lastField = array_values(array_slice($form['fields'], -1));
+        $lastField = (isset($lastField[0])) ? $lastField[0] : false;
+        $id = (!empty($lastField)) ? (int)$lastField['id'] + 1 : 1;
+        $form['fields'][] = array(
             'type' => 'checkbox',
-            'id' => (isset(end($form['fields'])['id']) ? ((int)end($form['fields'])['id']+1) : 1),
-            'label' => 'GDPR',
-            'WP-GDPR_field' => true,
+            'id' => $id,
+            'label' => __('GDPR', WP_GDPR_C_SLUG),
             'isRequired' => true,
-            'size' => 'medium',
+            'enableChoiceValue' => true,
             'choices' => array(
                 array(
                     'text' => self::getCheckboxText($form['id']),
-                    'value' => self::getCheckboxText($form['id']),
+                    'value' => 1,
                     'isSelected' => false
                 )
             ),
             'inputs' => array(
                 array(
-                    'id' => (isset(end($form['fields'])['id']) ? ((int)end($form['fields'])['id']+1) : 1).'.1',
+                    'id' => $id . '.1',
                     'label' => self::getCheckboxText($form['id']),
-                    'name' => ''
+                    'name' => 'wpgdprc'
                 )
-            )
+            ),
+            'wpgdprc' => true
         );
-        $form['fields'][] = $new_field;
         \GFAPI::update_form($form, $form['id']);
     }
 
@@ -77,7 +79,7 @@ class GForms {
      */
     public function removeField($form = array()) {
         foreach ($form['fields'] as $index => $field) {
-            if ($field['WP-GDPR_field'] == true) {
+            if ($field['wpgdprc'] == true) {
                 unset($form['fields'][$index]);
             }
         }
