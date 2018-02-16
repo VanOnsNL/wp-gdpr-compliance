@@ -32,6 +32,10 @@ class Integrations {
         add_action('admin_init', array($this, 'registerSettings'));
         foreach (Helpers::getEnabledPlugins() as $plugin) {
             switch ($plugin['id']) {
+                case WP::ID :
+                    add_action('comment_form_field_comment', array(WP::getInstance(), 'addField'));
+                    add_filter('preprocess_comment', array(WP::getInstance(), 'checkPost'));
+                    break;
                 case CF7::ID :
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_forms', array(CF7::getInstance(), 'processIntegration'));
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_form_text', array(CF7::getInstance(), 'processIntegration'));
@@ -40,15 +44,11 @@ class Integrations {
                     break;
                 case WC::ID :
                     add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
-                    add_action('woocommerce_after_order_notes', array(WC::getInstance(), 'addField'));
+                    add_action('woocommerce_review_order_before_submit', array(WC::getInstance(), 'addField'));
                     break;
-                case WP::ID :
-                    add_action('comment_form_field_comment', array(WP::getInstance(), 'addField'));
-                    add_filter('preprocess_comment', array(WP::getInstance(), 'checkPost'));
-                    break;
-
                 case GForms::ID :
-                    GForms::getInstance()->processIntegration();
+                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_forms', array(GForms::getInstance(), 'processIntegration'));
+                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_form_text', array(GForms::getInstance(), 'processIntegration'));
                     break;
             }
         }
@@ -60,8 +60,10 @@ class Integrations {
             switch ($plugin['id']) {
                 case CF7::ID :
                 case GForms::ID :
+                    $class = ($plugin['id'] === CF7::ID) ? CF7::getInstance() : GForms::getInstance();
+                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'], array($class, 'processIntegration'));
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_forms');
-                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_'  . $plugin['id'] . '_form_text');
+                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_form_text');
                     break;
                 default :
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_text');
@@ -103,12 +105,14 @@ class Integrations {
                         $output .= '</div>';
                         $output .= '</div>';
                         $output .= '<p class="wpgdprc-setting">';
-                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox Text', WP_GDPR_C_SLUG) . '</label>';
+                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                         $output .= '<input type="text" name="' . $optionNameFormText . '[' . $form . ']' . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . $text . '" value="' . $text . '" />';
                         $output .= '</p>';
                         $output .= '</li>';
                     }
                     $output .= '</ul>';
+                } else {
+                    $output = '<p>' . __('No forms found.', WP_GDPR_C_SLUG) . '</p>';
                 }
                 break;
             case GForms::ID :
@@ -119,18 +123,14 @@ class Integrations {
                     $enabledForms = GForms::getInstance()->getEnabledForms();
                     $output .= '<ul class="wpgdprc-checklist-options">';
                     foreach ($forms as $form) {
-                        $formData = GForms::getInstance()->getFormById($form);
-                        if (empty($formData)) {
-                            continue;
-                        }
-                        $formSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_' . $form;
-                        $textSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text_' . $form;
-                        $enabled = in_array($form, $enabledForms);
-                        $text = GForms::getInstance()->getCheckboxText($form);
+                        $formSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_' . $form['id'];
+                        $textSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text_' . $form['id'];
+                        $enabled = in_array($form['id'], $enabledForms);
+                        $text = GForms::getInstance()->getCheckboxText($form['id']);
                         $output .= '<li>';
                         $output .= '<div class="wpgdprc-checkbox">';
-                        $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, $enabled, false) . ' />';
-                        $output .= '<label for="' . $formSettingId . '"><strong>' . sprintf(__('Form: %s', WP_GDPR_C_SLUG), $formData['title']) . '</strong></label>';
+                        $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form['id'] . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, $enabled, false) . ' />';
+                        $output .= '<label for="' . $formSettingId . '"><strong>' . sprintf(__('Form: %s', WP_GDPR_C_SLUG), $form['title']) . '</strong></label>';
                         $output .= '<span class="wpgdprc-instructions">' . __('Activate for this form:', WP_GDPR_C_SLUG) . '</span>';
                         $output .= '<div class="wpgdprc-switch" aria-hidden="true">';
                         $output .= '<div class="wpgdprc-switch-label">';
@@ -140,12 +140,14 @@ class Integrations {
                         $output .= '</div>';
                         $output .= '</div>';
                         $output .= '<p class="wpgdprc-setting">';
-                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox Text', WP_GDPR_C_SLUG) . '</label>';
-                        $output .= '<input type="text" name="' . $optionNameFormText . '[' . $form . ']' . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . $text . '" value="' . $text . '" />';
+                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
+                        $output .= '<input type="text" name="' . $optionNameFormText . '[' . $form['id'] . ']' . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . $text . '" value="' . $text . '" />';
                         $output .= '</p>';
                         $output .= '</li>';
                     }
                     $output .= '</ul>';
+                } else {
+                    $output = '<p>' . __('No forms found.', WP_GDPR_C_SLUG) . '</p>';
                 }
                 break;
             default :
@@ -156,7 +158,7 @@ class Integrations {
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 $output .= '<li>';
                 $output .= '<p class="wpgdprc-setting">';
-                $output .= '<label for="' . $optionNameText . '">' . __('Checkbox Text', WP_GDPR_C_SLUG) . '</label>';
+                $output .= '<label for="' . $optionNameText . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                 $output .= '<input type="text" name="' . $optionNameText . '" class="regular-text" id="' . $optionNameText . '" placeholder="' . $text . '" value="' . $text . '" />';
                 $output .= '</p>';
                 $output .= '</li>';

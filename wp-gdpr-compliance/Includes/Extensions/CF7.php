@@ -2,6 +2,7 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
+use WPGDPRC\Includes\Helpers;
 use WPGDPRC\Includes\Integrations;
 
 /**
@@ -24,8 +25,10 @@ class CF7 {
     }
 
     public function processIntegration() {
-        $this->addFormTagToForms();
         $this->removeFormTagFromForms();
+        if (Helpers::isEnabled(self::ID)) {
+            $this->addFormTagToForms();
+        }
     }
 
     /**
@@ -56,14 +59,12 @@ class CF7 {
      */
     public function removeFormTagFromForms() {
         foreach (CF7::getInstance()->getForms() as $form) {
-            if (!in_array($form, $this->getEnabledForms())) {
-                $output = get_post_meta($form, '_form', true);
-                $pattern = '/(\n\n\[wpgdprc?.*\])/';
-                preg_match($pattern, $output, $matches);
-                if (!empty($matches)) {
-                    $output = preg_replace($pattern, '', $output);
-                    update_post_meta($form, '_form', $output);
-                }
+            $output = get_post_meta($form, '_form', true);
+            $pattern = '/(\n\n\[wpgdprc?.*\])/';
+            preg_match($pattern, $output, $matches);
+            if (!empty($matches)) {
+                $output = preg_replace($pattern, '', $output);
+                update_post_meta($form, '_form', $output);
             }
         }
     }

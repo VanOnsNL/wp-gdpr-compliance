@@ -68,17 +68,29 @@ class Helpers {
      */
     public static function getActivatedPlugins() {
         $output = array();
+
         $activePlugins = (array) get_option('active_plugins', array());
+        $activeNetworkPlugins = (array) get_site_option('active_sitewide_plugins', array());
+        if (!empty($activeNetworkPlugins)) {
+            foreach ($activeNetworkPlugins as $file => $timestamp) {
+                if (!in_array($file, $activePlugins)) {
+                    $activePlugins[] = $file;
+                }
+            }
+        }
+
         // Loop through supported plugins
         foreach (Integrations::getSupportedPlugins() as $plugin) {
             if (in_array($plugin['file'], $activePlugins)) {
                 $output[] = $plugin;
             }
         }
+
         // Loop through supported WordPress functionality
         foreach (Integrations::getSupportedWordPressFunctionality() as $wp) {
             $output[] = $wp;
         }
+
         return $output;
     }
 
