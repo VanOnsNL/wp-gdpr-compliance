@@ -11,7 +11,7 @@ use WPGDPRC\Includes\Integrations;
  */
 class CF7 {
     const ID = 'contact-form-7';
-    const SUPPORTED_VERSION = '5.1';
+    const SUPPORTED_VERSION = '4.6';
     /** @var null */
     private static $instance = null;
 
