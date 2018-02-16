@@ -80,7 +80,7 @@ class CF7 {
      * @param \WPCF7_FormTag $tag
      * @return string
      */
-    public function addFormTagHandler($tag) {
+    public function addFormTagHandler(\WPCF7_FormTag $tag) {
         $output = '';
         switch ($tag['type']) {
             case 'wpgdprc' :
