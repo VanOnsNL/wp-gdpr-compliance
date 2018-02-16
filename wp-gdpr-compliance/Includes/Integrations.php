@@ -112,6 +112,8 @@ class Integrations {
                         $output .= '</li>';
                     }
                     $output .= '</ul>';
+                } else {
+                    $output = '<p>'.__('No forms found', WP_GDPR_C_SLUG).'</p>';
                 }
                 break;
             case GForms::ID :
@@ -149,6 +151,8 @@ class Integrations {
                         $output .= '</li>';
                     }
                     $output .= '</ul>';
+                } else {
+                    $output = '<p>'.__('No forms found', WP_GDPR_C_SLUG).'</p>';
                 }
                 break;
             default :
