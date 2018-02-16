@@ -44,7 +44,7 @@ class Integrations {
                     break;
                 case WC::ID :
                     add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
-                    add_action('woocommerce_after_order_notes', array(WC::getInstance(), 'addField'));
+                    add_action('woocommerce_review_order_before_submit', array(WC::getInstance(), 'addField'));
                     break;
                 case GForms::ID :
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_forms', array(GForms::getInstance(), 'processIntegration'));
@@ -105,7 +105,7 @@ class Integrations {
                         $output .= '</div>';
                         $output .= '</div>';
                         $output .= '<p class="wpgdprc-setting">';
-                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox Text', WP_GDPR_C_SLUG) . '</label>';
+                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                         $output .= '<input type="text" name="' . $optionNameFormText . '[' . $form . ']' . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . $text . '" value="' . $text . '" />';
                         $output .= '</p>';
                         $output .= '</li>';
@@ -140,7 +140,7 @@ class Integrations {
                         $output .= '</div>';
                         $output .= '</div>';
                         $output .= '<p class="wpgdprc-setting">';
-                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox Text', WP_GDPR_C_SLUG) . '</label>';
+                        $output .= '<label for="' . $textSettingId . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                         $output .= '<input type="text" name="' . $optionNameFormText . '[' . $form['id'] . ']' . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . $text . '" value="' . $text . '" />';
                         $output .= '</p>';
                         $output .= '</li>';
@@ -158,7 +158,7 @@ class Integrations {
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 $output .= '<li>';
                 $output .= '<p class="wpgdprc-setting">';
-                $output .= '<label for="' . $optionNameText . '">' . __('Checkbox Text', WP_GDPR_C_SLUG) . '</label>';
+                $output .= '<label for="' . $optionNameText . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                 $output .= '<input type="text" name="' . $optionNameText . '" class="regular-text" id="' . $optionNameText . '" placeholder="' . $text . '" value="' . $text . '" />';
                 $output .= '</p>';
                 $output .= '</li>';
