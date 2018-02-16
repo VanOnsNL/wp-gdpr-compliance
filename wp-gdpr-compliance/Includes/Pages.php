@@ -77,30 +77,38 @@ class Pages {
                                             $checked = Helpers::isEnabled($plugin['id']);
                                             $description = (!empty($plugin['description'])) ? apply_filters('the_content', $plugin['description']) : '';
                                             $options = Integrations::getSupportedPluginOptions($plugin['id']);
-                                            ?>
-                                            <li>
-                                                <div class="wpgdprc-checkbox">
-                                                    <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $optionName; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
-                                                    <label for="<?php echo $optionName; ?>"><?php echo $plugin['name']; ?></label>
-                                                    <span class="wpgdprc-instructions"><?php _e('Enable compliance:', WP_GDPR_C_SLUG); ?></span>
-                                                    <div class="wpgdprc-switch" aria-hidden="true">
-                                                        <div class="wpgdprc-switch-label">
-                                                            <div class="wpgdprc-switch-inner"></div>
-                                                            <div class="wpgdprc-switch-switch"></div>
+
+                                            if ($plugin['supported']): ?>
+                                                <li>
+                                                    <div class="wpgdprc-checkbox">
+                                                        <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $optionName; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
+                                                        <label for="<?php echo $optionName; ?>"><?php echo $plugin['name']; ?></label>
+                                                        <span class="wpgdprc-instructions"><?php _e('Enable compliance:', WP_GDPR_C_SLUG); ?></span>
+                                                        <div class="wpgdprc-switch" aria-hidden="true">
+                                                            <div class="wpgdprc-switch-label">
+                                                                <div class="wpgdprc-switch-inner"></div>
+                                                                <div class="wpgdprc-switch-switch"></div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
-                                                <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
-                                                    <?php if (!empty($description)) : ?>
-                                                    <div class="wpgdprc-checklist-description">
-                                                        <?php echo $description; ?>
+                                                    <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
+                                                        <?php if (!empty($description)) : ?>
+                                                        <div class="wpgdprc-checklist-description">
+                                                            <?php echo $description; ?>
+                                                        </div>
+                                                        <?php endif; ?>
+                                                        <?php echo $options; ?>
                                                     </div>
-                                                    <?php endif; ?>
-                                                    <?php echo $options; ?>
-                                                </div>
-                                            </li>
-                                            <?php
+                                                </li>
+                                            <?php else: ?>
+                                                <li>
+                                                    <div class="wpgdprc-checkbox">
+                                                        <label><?php echo $plugin['name']; ?></label>
+                                                        <span><?php echo $plugin['supported_version']; ?></span>
+                                                    </div>
+                                                </li>
+                                            <?php endif;
                                         endforeach;
                                         ?>
                                     </ul>
