@@ -77,12 +77,13 @@ class CF7 {
     }
 
     /**
-     * @param \WPCF7_FormTag $tag
+     * @param \WPCF7_FormTag|array $tag
      * @return string
      */
-    public function addFormTagHandler(\WPCF7_FormTag $tag) {
-        $output = '';
-        switch ($tag['type']) {
+    public function addFormTagHandler( $tag) {
+        $tag = (gettype($tag) == 'array') ? new \WPCF7_FormTag($tag): $tag;
+
+        switch ($tag->type) {
             case 'wpgdprc' :
                 $tag->name = 'wpgdprc';
                 $label = (!empty($tag->labels[0])) ? esc_html($tag->labels[0]) : self::getCheckboxText();
@@ -134,11 +135,13 @@ class CF7 {
 
     /**
      * @param \WPCF7_Validation $result
-     * @param \WPCF7_FormTag $tag
+     * @param \WPCF7_FormTag|array $tag
      * @return \WPCF7_Validation
      */
-    public function validateField(\WPCF7_Validation $result, \WPCF7_FormTag $tag) {
-        switch ($tag['type']) {
+    public function validateField(\WPCF7_Validation $result, $tag) {
+        $tag = (gettype($tag) == 'array') ? new \WPCF7_FormTag($tag): $tag;
+
+        switch ($tag->type) {
             case 'wpgdprc' :
                 $tag->name = 'wpgdprc';
                 $name = $tag->name;
