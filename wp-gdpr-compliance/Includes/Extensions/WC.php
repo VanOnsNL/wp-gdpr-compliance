@@ -24,9 +24,9 @@ class WC {
     }
 
     /**
-     * @param \WC_Checkout $checkout
+     * Add WP GDPR field before submit button
      */
-    public function addField(\WC_Checkout $checkout) {
+    public function addField() {
         woocommerce_form_field(
             'wpgdprc',
             array(
@@ -34,11 +34,13 @@ class WC {
                 'class' => array('wpgdprc-checkbox'),
                 'label' => Integrations::getCheckboxText(self::ID),
                 'required' => true,
-            ),
-            $checkout->get_value('wpgdprc')
+            )
         );
     }
 
+    /**
+     * Check if WP GDPR checkbox is checked
+     */
     public function checkPost() {
         if (!isset($_POST['wpgdprc'])) {
             wc_add_notice(sprintf(Integrations::getErrorMessage(self::ID)), 'error');

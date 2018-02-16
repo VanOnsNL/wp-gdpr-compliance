@@ -44,7 +44,7 @@ class Integrations {
                     break;
                 case WC::ID :
                     add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
-                    add_action('woocommerce_after_order_notes', array(WC::getInstance(), 'addField'));
+                    add_action('woocommerce_review_order_before_submit', array(WC::getInstance(), 'addField'));
                     break;
                 case GForms::ID :
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_forms', array(GForms::getInstance(), 'processIntegration'));
