@@ -104,8 +104,7 @@ class Pages {
                                             <?php else: ?>
                                                 <li>
                                                     <div class="wpgdprc-checkbox">
-                                                        <label><?php echo $plugin['name']; ?></label>
-                                                        <span><?php echo $plugin['supported_version']; ?></span>
+                                                        <label><?php echo $plugin['name']; ?> (<?php printf(__('Minimum supported version: %s', WP_GDPR_C_SLUG), $plugin['supported_version']); ?>)</label>
                                                     </div>
                                                 </li>
                                             <?php endif;
