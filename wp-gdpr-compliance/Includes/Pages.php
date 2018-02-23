@@ -77,9 +77,9 @@ class Pages {
                                             $checked = Helpers::isEnabled($plugin['id']);
                                             $description = (!empty($plugin['description'])) ? apply_filters('the_content', $plugin['description']) : '';
                                             $options = Integrations::getSupportedPluginOptions($plugin['id']);
-
-                                            if ($plugin['supported']): ?>
-                                                <li>
+                                            ?>
+                                            <li>
+                                                <?php if ($plugin['supported']) : ?>
                                                     <div class="wpgdprc-checkbox">
                                                         <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $optionName; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
                                                         <label for="<?php echo $optionName; ?>"><?php echo $plugin['name']; ?></label>
@@ -100,14 +100,16 @@ class Pages {
                                                         <?php endif; ?>
                                                         <?php echo $options; ?>
                                                     </div>
-                                                </li>
-                                            <?php else: ?>
-                                                <li>
-                                                    <div class="wpgdprc-checkbox">
-                                                        <label><?php echo $plugin['name']; ?> (<?php printf(__('Minimum supported version: %s', WP_GDPR_C_SLUG), $plugin['supported_version']); ?>)</label>
+                                                <?php else : ?>
+                                                    <div class="wpgdprc-checkbox wpgdrc-checkbox--error">
+                                                        <strong><?php echo $plugin['name']; ?></strong>
+                                                        <div class="wpgdprc-checklist-description">
+                                                            <?php printf(__('This plugin is outdated. %s supports version %s and up.', WP_GDPR_C_SLUG), $pluginData['Name'], '<strong>' . $plugin['supported_version']  . '</strong>'); ?>
+                                                        </div>
                                                     </div>
-                                                </li>
-                                            <?php endif;
+                                                <?php endif; ?>
+                                            </li>
+                                            <?php
                                         endforeach;
                                         ?>
                                     </ul>

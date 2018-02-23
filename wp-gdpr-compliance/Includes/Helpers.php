@@ -83,14 +83,12 @@ class Helpers {
         foreach (Integrations::getSupportedPlugins() as $plugin) {
             if (in_array($plugin['file'], $activePlugins)) {
                 $plugin['supported'] = true;
-
                 if (isset($plugin['supported_version'])) {
                     $pluginData = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin['file']);
                     if (!empty($pluginData['Version']) && $pluginData['Version'] < $plugin['supported_version']) {
                         $plugin['supported'] = false;
                     }
                 }
-
                 $output[] = $plugin;
             }
         }
