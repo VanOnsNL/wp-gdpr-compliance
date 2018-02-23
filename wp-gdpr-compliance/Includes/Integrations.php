@@ -33,7 +33,7 @@ class Integrations {
         foreach (Helpers::getEnabledPlugins() as $plugin) {
             switch ($plugin['id']) {
                 case WP::ID :
-                    add_action('comment_form_field_comment', array(WP::getInstance(), 'addField'));
+                    add_filter('comment_form_submit_field', array(WP::getInstance(), 'addField'));
                     add_filter('preprocess_comment', array(WP::getInstance(), 'checkPost'));
                     break;
                 case CF7::ID :
@@ -132,12 +132,12 @@ class Integrations {
                         $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form['id'] . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, $enabled, false) . ' />';
                         $output .= '<label for="' . $formSettingId . '"><strong>' . sprintf(__('Form: %s', WP_GDPR_C_SLUG), $form['title']) . '</strong></label>';
                         $output .= '<span class="wpgdprc-instructions">' . __('Activate for this form:', WP_GDPR_C_SLUG) . '</span>';
-                        $output .= '<div class="wpgdprc-switch" aria-hidden="true">';
-                        $output .= '<div class="wpgdprc-switch-label">';
-                        $output .= '<div class="wpgdprc-switch-inner"></div>';
-                        $output .= '<div class="wpgdprc-switch-switch"></div>';
-                        $output .= '</div>';
-                        $output .= '</div>';
+//                        $output .= '<div class="wpgdprc-switch" aria-hidden="true">';
+//                        $output .= '<div class="wpgdprc-switch-label">';
+//                        $output .= '<div class="wpgdprc-switch-inner"></div>';
+//                        $output .= '<div class="wpgdprc-switch-switch"></div>';
+//                        $output .= '</div>';
+//                        $output .= '</div>';
                         $output .= '</div>';
                         $output .= '<p class="wpgdprc-setting">';
                         $output .= '<label for="' . $textSettingId . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
@@ -154,17 +154,15 @@ class Integrations {
                 $optionNameText = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text';
                 $optionNameErrorMessage = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message';
                 $text = self::getCheckboxText($plugin, false);
-                $errorMessage = self::getErrorMessage($plugin, false);
+                $errorMessage = self::getErrorMessage($plugin);
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 $output .= '<li>';
                 $output .= '<p class="wpgdprc-setting">';
                 $output .= '<label for="' . $optionNameText . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                 $output .= '<input type="text" name="' . $optionNameText . '" class="regular-text" id="' . $optionNameText . '" placeholder="' . $text . '" value="' . $text . '" />';
                 $output .= '</p>';
-                $output .= '</li>';
-                $output .= '<li>';
                 $output .= '<p class="wpgdprc-setting">';
-                $output .= '<label for="' . $optionNameErrorMessage . '">' . __('Error Message', WP_GDPR_C_SLUG) . '</label>';
+                $output .= '<label for="' . $optionNameErrorMessage . '">' . __('Error message', WP_GDPR_C_SLUG) . '</label>';
                 $output .= '<input type="text" name="' . $optionNameErrorMessage . '" class="regular-text" id="' . $optionNameErrorMessage . '" placeholder="' . $errorMessage . '" value="' . $errorMessage . '" />';
                 $output .= '</p>';
                 $output .= '</li>';
@@ -189,12 +187,11 @@ class Integrations {
 
     /**
      * @param string $plugin
-     * @param bool $return_default
      * @return mixed
      */
-    public static function getErrorMessage($plugin = '', $return_default = true) {
+    public static function getErrorMessage($plugin = '') {
         $option = (!empty($plugin)) ? get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message') : '';
-        if (empty($option) && $return_default === true) {
+        if (empty($option)) {
             return __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
         }
         return esc_html($option);
@@ -223,14 +220,14 @@ class Integrations {
                 'supported_version' => CF7::SUPPORTED_VERSION,
                 'file' => 'contact-form-7/wp-contact-form-7.php',
                 'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
-                'description' => __('A GDPR form tag will be automatically added to every form you activate it for.', WP_GDPR_C_SLUG),
+                'description' => __('A GDPR form tag will be automatically added to every form you activate.', WP_GDPR_C_SLUG),
             ),
             array(
                 'id' => GForms::ID,
                 'supported_version' => GForms::SUPPORTED_VERSION,
                 'file' => 'gravityforms/gravityforms.php',
                 'name' => __('Gravity Forms', WP_GDPR_C_SLUG),
-                'description' => __('A GDPR form tag will be automatically added to every form you activate it for.', WP_GDPR_C_SLUG),
+                'description' => __('A GDPR form tag will be automatically added to every form you activate.', WP_GDPR_C_SLUG),
             ),
             array(
                 'id' => WC::ID,

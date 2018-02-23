@@ -63,7 +63,8 @@ class GForms {
             $form['fields'][] = array(
                 'id' => $id,
                 'type' => 'checkbox',
-                'label' => __('GDPR', WP_GDPR_C_SLUG),
+                'label' => __('Privacy', WP_GDPR_C_SLUG),
+                'labelPlacement' => 'hidden_label',
                 'isRequired' => true,
                 'enableChoiceValue' => true,
                 'choices' => $choices,

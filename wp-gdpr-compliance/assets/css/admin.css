@@ -70,6 +70,7 @@
 }
 
 h1.wpgdprc-title {
+    margin-bottom: 20px;
     font-weight: 700;
     font-size: 36px;
 }
@@ -81,9 +82,17 @@ h1.wpgdprc-title .dashicons {
     color: #4AA94F;
 }
 
-p.wpgdprc-description {
+div.wpgdprc-description {
     padding: 10px;
     background: #F1F1F1;
+}
+
+div.wpgdprc-description p {
+    margin-bottom: 0;
+}
+
+div.wpgdprc-description p:first-child {
+    margin-top: 0;
 }
 
 p.wpgdprc-disclaimer {
@@ -216,7 +225,6 @@ p.wpgdprc-disclaimer {
 .wpgdprc-checkbox label {
     display: block;
     position: relative;
-    padding-right: 85px;
     user-select: none;
     z-index: 1;
     font-weight: bold;
@@ -234,9 +242,9 @@ span.wpgdprc-instructions {
     position: absolute;
     top: 50%;
     right: 0;
+    transform: translateY(-50%);
     width: 65px;
     font-size: 12px;
-    transform: translateY(-50%);
 }
 
 .wpgdprc-switch .wpgdprc-switch-label {
@@ -317,6 +325,19 @@ span.wpgdprc-instructions {
     margin-top: 10px;
 }
 
+.wpgdprc-checklist-options .wpgdprc-checkbox input[type="checkbox"] {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin: 0;
+    transform: translateY(-50%);
+}
+
+.wpgdprc-checklist-options span.wpgdprc-instructions {
+    right: 30px;
+}
+
 .wpgdprc-checklist-options li {
     margin-top: 10px;
     padding: 20px;
@@ -359,6 +380,12 @@ span.wpgdprc-instructions {
 @media screen and (max-width: 639px) {
     .wpgdprc-instructions {
         display: none;
+    }
+}
+
+@media screen and (max-width: 782px) {
+    .wpgdprc-checklist-options span.wpgdprc-instructions {
+        right: 40px;
     }
 }
 

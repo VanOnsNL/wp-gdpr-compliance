@@ -24,12 +24,12 @@ class WP {
     }
 
     /**
-     * @param string $field
+     * @param string $submitField
      * @return string
      */
-    public function addField($field = '') {
-        $field .= apply_filters('wpgdprc_wordpress_field', '<p class="wpgdprc-checkbox"><label><input type="checkbox" name="wpgdprc" id="wpgdprc" value="1" />' . Integrations::getCheckboxText(self::ID) . ' <abbr class="required" title="required">*</abbr></label></p>', $field);
-        return $field;
+    public function addField($submitField = '') {
+        $field = apply_filters('wpgdprc_wordpress_field', '<p class="wpgdprc-checkbox"><label><input type="checkbox" name="wpgdprc" id="wpgdprc" value="1" />' . Integrations::getCheckboxText(self::ID) . ' <abbr class="required" title="required">*</abbr></label></p>', $submitField);
+        return $field . $submitField;
     }
 
     /**
