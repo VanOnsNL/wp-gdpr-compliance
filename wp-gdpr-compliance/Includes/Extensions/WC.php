@@ -10,6 +10,7 @@ use WPGDPRC\Includes\Integrations;
  */
 class WC {
     const ID = 'woocommerce';
+    const SUPPORTED_VERSION = '2.5.0';
     /** @var null */
     private static $instance = null;
 

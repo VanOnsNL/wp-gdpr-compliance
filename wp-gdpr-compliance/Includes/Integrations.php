@@ -233,6 +233,7 @@ class Integrations {
             ),
             array(
                 'id' => WC::ID,
+                'supported_version' => WC::SUPPORTED_VERSION,
                 'file' => 'woocommerce/woocommerce.php',
                 'name' => __('WooCommerce', WP_GDPR_C_SLUG),
                 'description' => __('The GDPR checkbox will be added automatically at the end of your checkout page.', WP_GDPR_C_SLUG),
