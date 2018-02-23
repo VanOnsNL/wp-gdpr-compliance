@@ -80,9 +80,9 @@ class CF7 {
      * @param \WPCF7_FormTag|array $tag
      * @return string
      */
-    public function addFormTagHandler( $tag) {
-        $tag = (gettype($tag) == 'array') ? new \WPCF7_FormTag($tag): $tag;
-
+    public function addFormTagHandler($tag) {
+        $tag = (is_array($tag)) ? new \WPCF7_FormTag($tag): $tag;
+        $output = '';
         switch ($tag->type) {
             case 'wpgdprc' :
                 $tag->name = 'wpgdprc';
