@@ -220,6 +220,7 @@ class Integrations {
         return array(
             array(
                 'id' => CF7::ID,
+                'supported_version' => CF7::SUPPORTED_VERSION,
                 'file' => 'contact-form-7/wp-contact-form-7.php',
                 'name' => __('Contact Form 7', WP_GDPR_C_SLUG),
                 'description' => __('A GDPR form tag will be automatically added to every form you activate it for.', WP_GDPR_C_SLUG),
