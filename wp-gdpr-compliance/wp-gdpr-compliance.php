@@ -30,6 +30,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace WPGDPRC;
 
+use WPGDPRC\Includes\Actions;
 use WPGDPRC\Includes\Ajax;
 use WPGDPRC\Includes\Integrations;
 use WPGDPRC\Includes\Pages;
@@ -78,8 +79,9 @@ class WPGDPRC {
         add_action('admin_init', array(Pages::getInstance(), 'registerSettings'));
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
-        new Ajax();
-        new Integrations();
+        add_action('core_version_check_query_args', array(Actions::getInstance(), 'onlySendEssentialDataDuringUpdateCheck'));
+        add_action('wp_ajax_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
+        Integrations::getInstance();
     }
 
     public function loadAssets() {
@@ -101,19 +103,5 @@ function autoload($class = '') {
     }
     $result = str_replace('WPGDPRC\\', '', $class);
     $result = str_replace('\\', '/', $result);
-
     require $result . '.php';
 }
-
-function mattrad_update_privacy( $query ) {
-
-	unset($query['php']);
-	unset($query['mysql']);
-	unset($query['local_package']);
-	unset($query['blogs']);
-	unset($query['users']);
-	unset($query['multisite_enabled']);
-	unset($query['initial_db_version']);
-	return $query;
-}
-add_action( 'core_version_check_query_args', 'mattrad_update_privacy' );

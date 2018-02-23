@@ -7,11 +7,17 @@ namespace WPGDPRC\Includes;
  * @package WPGDPRC\Includes
  */
 class Ajax {
+    /** @var null */
+    private static $instance = null;
+
     /**
-     * Ajax constructor.
+     * @return null|Ajax
      */
-    public function __construct() {
-        add_action('wp_ajax_wpgdprc_process_action', array($this, 'processAction'));
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     public function processAction() {
