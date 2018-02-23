@@ -33,6 +33,10 @@ You'll find answers to many of your questions on [wpgdprc.com](https://www.wpgdp
 
 == Changelog ==
 
+= 1.2 =
+*Release date: February 23rd, 2018*
+*
+
 = 1.1.2 =
 *Release date: January 19th, 2018*
 * Added default error message.
