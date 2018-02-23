@@ -20,7 +20,7 @@ WP GDPR Compliance currently supports Contact Form 7 (>= 4.6), Gravity Forms (>=
 
 1. Upload the plugin files to the `/wp-content/plugins/wp-gdpr-compliance` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
-3. Go to 'Tools' -> 'WP GDPR Compliance'
+3. Go to Tools -> WP GDPR Compliance
 
 == Frequently Asked Questions ==
 
