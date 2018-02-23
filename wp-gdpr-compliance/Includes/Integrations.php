@@ -227,6 +227,7 @@ class Integrations {
             ),
             array(
                 'id' => GForms::ID,
+                'supported_version' => GForms::SUPPORTED_VERSION,
                 'file' => 'gravityforms/gravityforms.php',
                 'name' => __('Gravity Forms', WP_GDPR_C_SLUG),
                 'description' => __('A GDPR form tag will be automatically added to every form you activate it for.', WP_GDPR_C_SLUG),

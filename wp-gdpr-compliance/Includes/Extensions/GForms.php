@@ -11,6 +11,7 @@ use WPGDPRC\Includes\Integrations;
  */
 class GForms {
     const ID = 'gravity-forms';
+    const SUPPORTED_VERSION = '1.9';
     /** @var null */
     private static $instance = null;
 
