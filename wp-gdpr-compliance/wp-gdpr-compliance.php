@@ -75,6 +75,9 @@ class WPGDPRC {
     }
 
     public function init() {
+        if (is_admin() && !function_exists('get_plugin_data')) {
+            require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        }
         load_plugin_textdomain(WP_GDPR_C_SLUG, false, basename(dirname(__FILE__)) . '/languages/');
         add_action('admin_init', array(Pages::getInstance(), 'registerSettings'));
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
@@ -98,7 +101,7 @@ class WPGDPRC {
  * @param string $class
  */
 function autoload($class = '') {
-    if (!strstr($class, 'WPGDPRC') ) {
+    if (!strstr($class, 'WPGDPRC')) {
         return;
     }
     $result = str_replace('WPGDPRC\\', '', $class);
