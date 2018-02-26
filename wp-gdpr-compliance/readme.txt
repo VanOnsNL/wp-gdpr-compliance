@@ -4,7 +4,7 @@ Tags: gdpr, law, regulations, compliance, data, protection, privacy, data protec
 Requires at least: 4.5
 Tested up to: 4.9.4
 Requires PHP: 5.2.4
-Stable tag: 1.2
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,11 @@ You'll find answers to many of your questions on [wpgdprc.com](https://www.wpgdp
 2. Automatically add GDPR checkboxes to some of your existing plugins, such as Contact Form 7, Gravity Forms, WooCommerce or WordPress Comments.
 
 == Changelog ==
+
+= 1.2.1 =
+*Release date: February 26th, 2018*
+* Fixed a bug with WordPress comments
+* Fixed a bug with default checkbox texts
 
 = 1.2 =
 *Release date: February 23rd, 2018*
