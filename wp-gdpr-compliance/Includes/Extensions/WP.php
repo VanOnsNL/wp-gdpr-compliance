@@ -32,21 +32,13 @@ class WP {
         return $field . $submitField;
     }
 
-    /**
-     * @param array $post
-     * @return array
-     */
-    public function checkPost($post = array()) {
+    public function checkPost() {
         if (!isset($_POST['wpgdprc'])) {
             wp_die(
                 '<p>' . sprintf(__('<strong>ERROR</strong>: %s', WP_GDPR_C_SLUG), Integrations::getErrorMessage(self::ID)) . '</p>',
                 __('Comment Submission Failure'),
-                array(
-                    'response' => $post,
-                    'back_link' => true
-                )
+                array('back_link' => true)
             );
         }
-        return $post;
     }
 }

@@ -34,7 +34,7 @@ class Integrations {
             switch ($plugin['id']) {
                 case WP::ID :
                     add_filter('comment_form_submit_field', array(WP::getInstance(), 'addField'));
-                    add_filter('preprocess_comment', array(WP::getInstance(), 'checkPost'));
+                    add_action('pre_comment_on_post', array(WP::getInstance(), 'checkPost'));
                     break;
                 case CF7::ID :
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_forms', array(CF7::getInstance(), 'processIntegration'));
@@ -141,7 +141,7 @@ class Integrations {
             default :
                 $optionNameText = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text';
                 $optionNameErrorMessage = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message';
-                $text = self::getCheckboxText($plugin, false);
+                $text = self::getCheckboxText($plugin);
                 $errorMessage = self::getErrorMessage($plugin);
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 $output .= '<li>';
@@ -162,12 +162,11 @@ class Integrations {
 
     /**
      * @param string $plugin
-     * @param bool $return_default
      * @return string
      */
-    public static function getCheckboxText($plugin = '', $return_default = true) {
+    public static function getCheckboxText($plugin = '') {
         $option = (!empty($plugin)) ? get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text') : '';
-        if (empty($option) && $return_default === true) {
+        if (empty($option)) {
             return __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
         }
         return esc_html($option);
