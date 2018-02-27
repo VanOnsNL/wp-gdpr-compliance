@@ -116,4 +116,15 @@ class Helpers {
         }
         return $output;
     }
+
+    public static function getDaysLeft() {
+        $date = mktime(0, 0, 0, 5, 25, 2018, 0);
+        $difference = $date - time();
+
+        if ($difference < 0) {
+            return 0;
+        }
+
+        return floor($difference/60/60/24);
+    }
 }

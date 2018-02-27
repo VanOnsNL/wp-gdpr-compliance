@@ -377,6 +377,38 @@ span.wpgdprc-instructions {
     font-size: 1rem;
 }
 
+.wpgdprc-features {
+    display: table;
+    margin: 30px auto 0;
+    padding: 20px;
+    background: #4AA94F;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.wpgdprc-features-inner {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.wpgdprc-features h2 {
+    font-size: 22px;
+}
+
+.wpgdprc-features p {
+    line-height: 1.4;
+    font-size: 16px;
+}
+
+.wpgdprc-features h2, .wpgdprc-features p {
+    margin: 0;
+}
+
 @media screen and (max-width: 639px) {
     .wpgdprc-instructions {
         display: none;
@@ -396,5 +428,13 @@ span.wpgdprc-instructions {
     .wpgdprc-setting input {
         float: right;
         max-width: 70%;
+    }
+}
+@media screen and (min-width: 1400px) {
+    .wpgdprc-features {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        margin: 0;
     }
 }
