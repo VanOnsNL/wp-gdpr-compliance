@@ -182,13 +182,15 @@ class CF7 {
 
     /**
      * @param int $formId
+     * @param bool $replace
      * @return string
      */
-    public function getCheckboxText($formId = 0) {
+    public function getCheckboxText($formId = 0, $replace = true) {
         if (!empty($formId)) {
             $texts = $this->getFormTexts();
             if (!empty($texts[$formId])) {
-                return esc_html($texts[$formId]);
+                $result = esc_html($texts[$formId]);
+                return ($replace) ? Integrations::insertLink($result) : $result;
             }
         }
         return Integrations::getCheckboxText();

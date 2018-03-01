@@ -367,7 +367,7 @@ span.wpgdprc-instructions {
     vertical-align: top;
 }
 
-.wpgdprc-setting input {
+.wpgdprc-setting input, .wpgdprc-setting select {
     margin: 0;
     width: 100%;
     background-color: #FFFFFF;
@@ -375,6 +375,10 @@ span.wpgdprc-instructions {
     -moz-box-shadow: none;
     box-shadow: none;
     font-size: 1rem;
+}
+
+.wpgdprc-setting select {
+    background-color:#f0f0f0;
 }
 
 @media screen and (max-width: 639px) {
@@ -393,7 +397,7 @@ span.wpgdprc-instructions {
     .wpgdprc-setting label {
         max-width: 30%;
     }
-    .wpgdprc-setting input {
+    .wpgdprc-setting input, .wpgdprc-setting select {
         float: right;
         max-width: 70%;
     }
