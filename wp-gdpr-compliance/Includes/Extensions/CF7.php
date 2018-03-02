@@ -141,6 +141,7 @@ class CF7 {
      */
     public function validateField(\WPCF7_Validation $result, $tag) {
         $tag = (gettype($tag) == 'array') ? new \WPCF7_FormTag($tag): $tag;
+        $formId = (isset($_POST['_wpcf7'])) ? $_POST['_wpcf7']: '';
 
         switch ($tag->type) {
             case 'wpgdprc' :
@@ -148,7 +149,7 @@ class CF7 {
                 $name = $tag->name;
                 $value = (isset($_POST[$name])) ? filter_var($_POST[$name], FILTER_VALIDATE_BOOLEAN) : false;
                 if ($value === false) {
-                    $result->invalidate($tag, Integrations::getErrorMessage(self::ID));
+                    $result->invalidate($tag, self::getErrorMessage($formId));
                 }
                 break;
         }
@@ -192,5 +193,26 @@ class CF7 {
             }
         }
         return Integrations::getCheckboxText();
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormErrorMessage() {
+        return (array)get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_error_message', array());
+    }
+
+    /**
+     * @param int $formId
+     * @return string
+     */
+    public function getErrorMessage($formId = 0) {
+        if (!empty($formId)) {
+            $errors = $this->getFormErrorMessage();
+            if (!empty($errors[$formId])) {
+                return esc_html($errors[$formId]);
+            }
+        }
+        return Integrations::getErrorMessage();
     }
 }

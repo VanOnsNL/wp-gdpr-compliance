@@ -90,16 +90,15 @@ class GForms {
         $form = $validation_result["form"];
 
         foreach ($form['fields'] as &$field) {
-            if (isset($field["wpgdprc"]) && $field["wpgdprc"] === true) {
+            if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
 
-                var_dump($field);
-                if (isset($field["failed_validation"]) && $field["failed_validation"] === true) {
-                    $field["validation_message"] = sprintf(Integrations::getErrorMessage(self::ID));
+                if (isset($field['failed_validation']) && $field['failed_validation'] === true) {
+                    $field['validation_message'] = sprintf(self::getErrorMessage($form['id']));
                 }
             }
         }
 
-        $validation_result["form"] = $form;
+        $validation_result['form'] = $form;
         return $validation_result;
     }
 
@@ -155,5 +154,26 @@ class GForms {
             }
         }
         return Integrations::getCheckboxText();
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormErrorMessage() {
+        return (array)get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_error_message', array());
+    }
+
+    /**
+     * @param int $formId
+     * @return string
+     */
+    public function getErrorMessage($formId = 0) {
+        if (!empty($formId)) {
+            $errors = $this->getFormErrorMessage();
+            if (!empty($errors[$formId])) {
+                return esc_html($errors[$formId]);
+            }
+        }
+        return Integrations::getErrorMessage();
     }
 }
