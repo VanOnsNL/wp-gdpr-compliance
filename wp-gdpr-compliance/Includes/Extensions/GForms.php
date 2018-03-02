@@ -129,7 +129,7 @@ class GForms {
         if (!empty($formId)) {
             $texts = $this->getFormTexts();
             if (!empty($texts[$formId])) {
-                return esc_html($texts[$formId]);
+                return wp_kses($texts[$formId], Helpers::getAllowedHTMLTags());
             }
         }
         return Integrations::getCheckboxText();

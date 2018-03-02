@@ -33,7 +33,7 @@ class Integrations {
         foreach (Helpers::getEnabledPlugins() as $plugin) {
             switch ($plugin['id']) {
                 case WP::ID :
-                    add_filter('comment_form_submit_field', array(WP::getInstance(), 'addField'));
+                    add_filter('comment_form_submit_field', array(WP::getInstance(), 'addField'), 999);
                     add_action('pre_comment_on_post', array(WP::getInstance(), 'checkPost'));
                     break;
                 case CF7::ID :
@@ -44,7 +44,7 @@ class Integrations {
                     break;
                 case WC::ID :
                     add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
-                    add_action('woocommerce_review_order_before_submit', array(WC::getInstance(), 'addField'));
+                    add_action('woocommerce_review_order_before_submit', array(WC::getInstance(), 'addField'), 999);
                     break;
                 case GForms::ID :
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_forms', array(GForms::getInstance(), 'processIntegration'));
@@ -120,7 +120,7 @@ class Integrations {
                         $formSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_' . $form['id'];
                         $textSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text_' . $form['id'];
                         $enabled = in_array($form['id'], $enabledForms);
-                        $text = GForms::getInstance()->getCheckboxText($form['id']);
+                        $text = esc_html(GForms::getInstance()->getCheckboxText($form['id']));
                         $output .= '<li>';
                         $output .= '<div class="wpgdprc-checkbox">';
                         $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form['id'] . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, $enabled, false) . ' />';
@@ -131,6 +131,7 @@ class Integrations {
                         $output .= '<label for="' . $textSettingId . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                         $output .= '<input type="text" name="' . $optionNameFormText . '[' . $form['id'] . ']' . '" class="regular-text" id="' . $textSettingId . '" placeholder="' . $text . '" value="' . $text . '" />';
                         $output .= '</p>';
+                        $output .= Helpers::getAllowedHTMLTagsOutput();
                         $output .= '</li>';
                     }
                     $output .= '</ul>';
@@ -141,8 +142,8 @@ class Integrations {
             default :
                 $optionNameText = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text';
                 $optionNameErrorMessage = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message';
-                $text = self::getCheckboxText($plugin);
-                $errorMessage = self::getErrorMessage($plugin);
+                $text = esc_html(self::getCheckboxText($plugin));
+                $errorMessage = esc_html(self::getErrorMessage($plugin));
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 $output .= '<li>';
                 $output .= '<p class="wpgdprc-setting">';
@@ -153,6 +154,7 @@ class Integrations {
                 $output .= '<label for="' . $optionNameErrorMessage . '">' . __('Error message', WP_GDPR_C_SLUG) . '</label>';
                 $output .= '<input type="text" name="' . $optionNameErrorMessage . '" class="regular-text" id="' . $optionNameErrorMessage . '" placeholder="' . $errorMessage . '" value="' . $errorMessage . '" />';
                 $output .= '</p>';
+                $output .= Helpers::getAllowedHTMLTagsOutput();
                 $output .= '</li>';
                 $output .= '</ul>';
                 break;
@@ -169,7 +171,7 @@ class Integrations {
         if (empty($option)) {
             return __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
         }
-        return esc_html($option);
+        return wp_kses($option, Helpers::getAllowedHTMLTags());
     }
 
     /**
@@ -181,7 +183,7 @@ class Integrations {
         if (empty($option)) {
             return __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
         }
-        return esc_html($option);
+        return wp_kses($option, Helpers::getAllowedHTMLTags());
     }
 
     /**

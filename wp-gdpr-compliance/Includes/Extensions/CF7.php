@@ -141,7 +141,6 @@ class CF7 {
      */
     public function validateField(\WPCF7_Validation $result, $tag) {
         $tag = (gettype($tag) == 'array') ? new \WPCF7_FormTag($tag): $tag;
-
         switch ($tag->type) {
             case 'wpgdprc' :
                 $tag->name = 'wpgdprc';
