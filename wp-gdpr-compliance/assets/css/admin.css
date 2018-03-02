@@ -68,7 +68,7 @@ div.wpgdprc-allowed-tags {
     color: #8A8A8A;
 }
 
-.wpgdprc .submit .button.button-primary {
+.wpgdprc p.submit .button.button-primary {
     vertical-align: top;
     height: 34px;
     background: #4AA94F;
@@ -393,7 +393,7 @@ span.wpgdprc-instructions {
     font-size: 1rem;
 }
 
-.wpgdprc-features {
+.wpgdprc-countdown {
     display: table;
     margin: 30px auto 0;
     padding: 20px;
@@ -407,21 +407,21 @@ span.wpgdprc-instructions {
     color: #FFFFFF;
 }
 
-.wpgdprc-features-inner {
+.wpgdprc-countdown-inner {
     display: table-cell;
     vertical-align: middle;
 }
 
-.wpgdprc-features h2 {
+.wpgdprc-countdown h2 {
     font-size: 22px;
 }
 
-.wpgdprc-features p {
+.wpgdprc-countdown p {
     line-height: 1.4;
     font-size: 16px;
 }
 
-.wpgdprc-features h2, .wpgdprc-features p {
+.wpgdprc-countdown h2, .wpgdprc-countdown p {
     margin: 0;
 }
 
@@ -441,13 +441,15 @@ span.wpgdprc-instructions {
     .wpgdprc-setting label {
         max-width: 30%;
     }
+
     .wpgdprc-setting input {
         float: right;
         max-width: 70%;
     }
 }
+
 @media screen and (min-width: 1400px) {
-    .wpgdprc-features {
+    .wpgdprc-countdown {
         position: absolute;
         top: 30px;
         right: 30px;

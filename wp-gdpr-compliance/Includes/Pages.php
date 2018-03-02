@@ -41,6 +41,7 @@ class Pages {
     public function generatePage() {
         $pluginData = Helpers::getPluginData();
         $activatedPlugins = Helpers::getActivatedPlugins();
+        $daysLeftToComply = Helpers::getDaysLeftToComply();
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -161,21 +162,15 @@ class Pages {
                 </div>
 
                 <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background. We assist website and webshop owners in being compliant with the General Data Protection Regulation (GDPR) but recommend contacting a law firm for rock solid legal advice.', WP_GDPR_C_SLUG); ?></p>
-                <?php
-                $days_left = Helpers::getDaysLeft();
 
-                if ($days_left > 0) {
-                ?>
-                <div class="wpgdprc-features">
-                    <div class="wpgdprc-features-inner">
-                        <h2>May 25th, 2018</h2>
-                        <p>You have <strong><?php echo $days_left ?></strong>
-                            day<?php if ($days_left !== 1) {echo 's';} ?> to comply with GDPR.</p>
+                <?php if ($daysLeftToComply > 0) : ?>
+                    <div class="wpgdprc-countdown">
+                        <div class="wpgdprc-countdown-inner">
+                            <h2><?php echo date(get_option('date_format'), strtotime('25 May 2018')); ?></h2>
+                            <p><?php printf(__('You have %s left to comply with GDPR.', WP_GDPR_C_SLUG), sprintf(_n('%s day', '%s days', $daysLeftToComply, WP_GDPR_C_SLUG), number_format_i18n($daysLeftToComply))); ?></p>
+                        </div>
                     </div>
-                </div>
-                <?php
-                }
-                ?>
+                <?php endif; ?>
 
                 <div class="wpgdprc-background"><?php include(WP_GDPR_C_DIR_SVG . '/inline-waves.svg.php'); ?></div>
             </div>

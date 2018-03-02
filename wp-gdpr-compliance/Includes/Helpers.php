@@ -57,6 +57,18 @@ class Helpers {
     }
 
     /**
+     * @return float|int
+     */
+    public static function getDaysLeftToComply() {
+        $date = mktime(0, 0, 0, 5, 25, 2018);
+        $difference = $date - time();
+        if ($difference < 0) {
+            return 0;
+        }
+        return floor($difference / 60 / 60 / 24);
+    }
+
+    /**
      * @return array
      */
     public static function getCheckList() {
@@ -111,8 +123,8 @@ class Helpers {
     public static function getActivatedPlugins() {
         $output = array();
 
-        $activePlugins = (array) get_option('active_plugins', array());
-        $activeNetworkPlugins = (array) get_site_option('active_sitewide_plugins', array());
+        $activePlugins = (array)get_option('active_plugins', array());
+        $activeNetworkPlugins = (array)get_site_option('active_sitewide_plugins', array());
         if (!empty($activeNetworkPlugins)) {
             foreach ($activeNetworkPlugins as $file => $timestamp) {
                 if (!in_array($file, $activePlugins)) {
@@ -157,16 +169,5 @@ class Helpers {
             }
         }
         return $output;
-    }
-
-    public static function getDaysLeft() {
-        $date = mktime(0, 0, 0, 5, 25, 2018, 0);
-        $difference = $date - time();
-
-        if ($difference < 0) {
-            return 0;
-        }
-
-        return floor($difference/60/60/24);
     }
 }
