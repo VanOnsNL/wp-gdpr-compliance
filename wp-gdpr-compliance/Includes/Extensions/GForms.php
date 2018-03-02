@@ -82,6 +82,23 @@ class GForms {
     }
 
     /**
+     * @param array $validation_result
+     * @return array
+     */
+    public function customValidation($validation_result = array()) {
+        $form = $validation_result['form'];
+        foreach ($form['fields'] as &$field) {
+            if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
+                if (isset($field['failed_validation']) && $field['failed_validation'] === true) {
+                    $field['validation_message'] = sprintf(self::getErrorMessage($form['id']));
+                }
+            }
+        }
+        $validation_result['form'] = $form;
+        return $validation_result;
+    }
+
+    /**
      * @param array $form
      */
     public function removeField($form = array()) {
@@ -122,6 +139,13 @@ class GForms {
     }
 
     /**
+     * @return array
+     */
+    public function getFormErrorMessages() {
+        return (array)get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_error_message', array());
+    }
+
+    /**
      * @param int $formId
      * @param bool $replace
      * @return string
@@ -130,10 +154,24 @@ class GForms {
         if (!empty($formId)) {
             $texts = $this->getFormTexts();
             if (!empty($texts[$formId])) {
-                $result = esc_html($texts[$formId]);
-                return ($replace) ? Integrations::insertLink($result) : $result;
+                $result = wp_kses($texts[$formId], Helpers::getAllowedHTMLTags());
+                return ($replace === true) ? Integrations::insertPrivacyPolicyLink($result) : $result;
             }
         }
         return Integrations::getCheckboxText();
+    }
+
+    /**
+     * @param int $formId
+     * @return string
+     */
+    public function getErrorMessage($formId = 0) {
+        if (!empty($formId)) {
+            $errors = $this->getFormErrorMessages();
+            if (!empty($errors[$formId])) {
+                return wp_kses($errors[$formId], Helpers::getAllowedHTMLTags());
+            }
+        }
+        return Integrations::getErrorMessage();
     }
 }

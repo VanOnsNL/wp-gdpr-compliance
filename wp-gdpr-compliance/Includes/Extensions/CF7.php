@@ -82,7 +82,7 @@ class CF7 {
      * @return string
      */
     public function addFormTagHandler($tag) {
-        $tag = (is_array($tag)) ? new \WPCF7_FormTag($tag): $tag;
+        $tag = (is_array($tag)) ? new \WPCF7_FormTag($tag) : $tag;
         $output = '';
         switch ($tag->type) {
             case 'wpgdprc' :
@@ -140,15 +140,15 @@ class CF7 {
      * @return \WPCF7_Validation
      */
     public function validateField(\WPCF7_Validation $result, $tag) {
-        $tag = (gettype($tag) == 'array') ? new \WPCF7_FormTag($tag): $tag;
-
+        $tag = (gettype($tag) == 'array') ? new \WPCF7_FormTag($tag) : $tag;
+        $formId = (isset($_POST['_wpcf7']) && is_numeric($_POST['_wpcf7'])) ? (int) $_POST['_wpcf7'] : 0;
         switch ($tag->type) {
             case 'wpgdprc' :
                 $tag->name = 'wpgdprc';
                 $name = $tag->name;
                 $value = (isset($_POST[$name])) ? filter_var($_POST[$name], FILTER_VALIDATE_BOOLEAN) : false;
                 if ($value === false) {
-                    $result->invalidate($tag, Integrations::getErrorMessage(self::ID));
+                    $result->invalidate($tag, self::getErrorMessage($formId));
                 }
                 break;
         }
@@ -181,6 +181,13 @@ class CF7 {
     }
 
     /**
+     * @return array
+     */
+    public function getFormErrorMessages() {
+        return (array)get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_error_message', array());
+    }
+
+    /**
      * @param int $formId
      * @param bool $replace
      * @return string
@@ -190,9 +197,23 @@ class CF7 {
             $texts = $this->getFormTexts();
             if (!empty($texts[$formId])) {
                 $result = esc_html($texts[$formId]);
-                return ($replace) ? Integrations::insertLink($result) : $result;
+                return ($replace === true) ? Integrations::insertPrivacyPolicyLink($result) : $result;
             }
         }
         return Integrations::getCheckboxText();
+    }
+
+    /**
+     * @param int $formId
+     * @return string
+     */
+    public function getErrorMessage($formId = 0) {
+        if (!empty($formId)) {
+            $errors = $this->getFormErrorMessages();
+            if (!empty($errors[$formId])) {
+                return esc_html($errors[$formId]);
+            }
+        }
+        return Integrations::getErrorMessage();
     }
 }

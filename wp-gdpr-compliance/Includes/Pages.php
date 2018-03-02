@@ -43,6 +43,7 @@ class Pages {
     public function generatePage() {
         $pluginData = Helpers::getPluginData();
         $activatedPlugins = Helpers::getActivatedPlugins();
+        $daysLeftToComply = Helpers::getDaysLeftToComply();
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -56,9 +57,8 @@ class Pages {
                     <div class="wpgdprc-tabs">
                         <div class="wpgdprc-tabs__navigation cf">
                             <a id="tab-integrations-label" class="active" href="#tab-integrations" aria-controls="tab-integrations" tabindex="0" role="tab"><?php _e('Integrations', WP_GDPR_C_SLUG); ?></a>
-                            <a id="tab-checklist-label" href="#tab-checklist" aria-selected="true" aria-controls="tab-checklist" tabindex="-1" role="tab"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
-                            <a id="tab-settings-label" href="#tab-settings" aria-selected="true" aria-controls="tab-settings" tabindex="-1" role="tab"><?php _e('Settings', WP_GDPR_C_SLUG); ?></a>
-
+                            <a id="tab-checklist-label" href="#tab-checklist" aria-controls="tab-checklist" tabindex="-1" role="tab"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
+                            <a id="tab-settings-label" href="#tab-settings" aria-controls="tab-settings" tabindex="-1" role="tab"><?php _e('Settings', WP_GDPR_C_SLUG); ?></a>
                         </div>
 
                         <div class="wpgdprc-tabs__content">
@@ -88,9 +88,9 @@ class Pages {
 
                                                     <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
                                                         <?php if (!empty($description)) : ?>
-                                                        <div class="wpgdprc-checklist-description">
-                                                            <?php echo $description; ?>
-                                                        </div>
+                                                            <div class="wpgdprc-checklist-description">
+                                                                <?php echo $description; ?>
+                                                            </div>
                                                         <?php endif; ?>
                                                         <?php echo $options; ?>
                                                     </div>
@@ -120,7 +120,6 @@ class Pages {
                             </div>
                             <div id="tab-checklist" class="wpgdprc-tabs__panel" aria-hidden="true" aria-labelledby="tab-checklist-label" role="tabpanel">
                                 <p><?php _e('Below we ask you what private data you currently collect and provide you with tips to comply.', WP_GDPR_C_SLUG); ?></p>
-
                                 <ul class="wpgdprc-list">
                                     <?php
                                     foreach (Helpers::getCheckList() as $id => $check) :
@@ -141,40 +140,39 @@ class Pages {
                                             </div>
 
                                             <?php if (!empty($description)) : ?>
-                                            <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
-                                                <div class="wpgdprc-checklist-description">
-                                                    <?php echo $description; ?>
+                                                <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
+                                                    <div class="wpgdprc-checklist-description">
+                                                        <?php echo $description; ?>
+                                                    </div>
                                                 </div>
-                                            </div>
                                             <?php endif; ?>
                                         </li>
-                                    <?php
+                                        <?php
                                     endforeach;
                                     ?>
                                 </ul>
                             </div>
                             <div id="tab-settings" class="wpgdprc-tabs__panel" aria-hidden="true" aria-labelledby="tab-settings-label" role="tabpanel">
-                                <li class="wpgdprc-list">
-                                    <p><?php _e('User %privacylink% if you want to use the link to this page in your custom GDPR checkbox text.', WP_GDPR_C_SLUG); ?></p>
+                                <p><?php _e('Use %privacy_policy% if you want to use the link to this page in your custom GDPR checkbox text.', WP_GDPR_C_SLUG); ?></p>
 
-                                    <?php
-                                    $optionName = WP_GDPR_C_PREFIX . '_settings_page';
-                                    $select = get_option(WP_GDPR_C_PREFIX . '_settings_page');
-                                    ?>
-                                    <p class="wpgdprc-setting">
-                                        <label for="<?php $optionName ?>"><?php echo __('Privacy Page', WP_GDPR_C_SLUG); ?></label>
-                                        <?php wp_dropdown_pages(array('name'=> $optionName, 'selected' => $select)); ?>
-                                    </p>
-                                    <?php
-                                    $optionName = WP_GDPR_C_PREFIX . '_settings_label';
-                                    $value = get_option(WP_GDPR_C_PREFIX . '_settings_label');
-                                    ?>
-                                    <p class="wpgdprc-setting">
-                                        <label for="<?php $optionName ?>"><?php echo __('Link Text', WP_GDPR_C_SLUG); ?></label>
-                                        <input type="text" name="<?php echo $optionName; ?>" class="regular-text" id="<?php echo $optionName; ?>" placeholder="<?php echo $value; ?>" value="<?php echo $value; ?>" />
-                                    </p>
-                                </li>
+                                <?php
+                                $optionName = WP_GDPR_C_PREFIX . '_settings_page';
+                                $select = get_option(WP_GDPR_C_PREFIX . '_settings_page');
+                                ?>
+                                <p class="wpgdprc-setting">
+                                    <label for="<?php echo $optionName; ?>"><?php _e('Privacy Page', WP_GDPR_C_SLUG); ?></label>
+                                    <?php wp_dropdown_pages(array('name'=> $optionName, 'selected' => $select)); ?>
+                                </p>
+                                <?php
+                                $optionName = WP_GDPR_C_PREFIX . '_settings_label';
+                                $value = get_option(WP_GDPR_C_PREFIX . '_settings_label');
+                                ?>
+                                <p class="wpgdprc-setting">
+                                    <label for="<?php echo $optionName; ?>"><?php _e('Link Text', WP_GDPR_C_SLUG); ?></label>
+                                    <input type="text" name="<?php echo $optionName; ?>" class="regular-text" id="<?php echo $optionName; ?>" placeholder="<?php echo $value; ?>" value="<?php echo $value; ?>" />
+                                </p>
                             </div>
+                        </div>
                     </div>
 
                     <?php submit_button(); ?>
@@ -185,6 +183,15 @@ class Pages {
                 </div>
 
                 <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background. We assist website and webshop owners in being compliant with the General Data Protection Regulation (GDPR) but recommend contacting a law firm for rock solid legal advice.', WP_GDPR_C_SLUG); ?></p>
+
+                <?php if ($daysLeftToComply > 0) : ?>
+                    <div class="wpgdprc-countdown">
+                        <div class="wpgdprc-countdown-inner">
+                            <h2><?php echo date(get_option('date_format'), strtotime('25 May 2018')); ?></h2>
+                            <p><?php printf(__('You have %s left to comply with GDPR.', WP_GDPR_C_SLUG), sprintf(_n('%s day', '%s days', $daysLeftToComply, WP_GDPR_C_SLUG), number_format_i18n($daysLeftToComply))); ?></p>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <div class="wpgdprc-background"><?php include(WP_GDPR_C_DIR_SVG . '/inline-waves.svg.php'); ?></div>
             </div>
