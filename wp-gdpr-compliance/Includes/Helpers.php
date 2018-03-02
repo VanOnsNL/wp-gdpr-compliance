@@ -17,6 +17,48 @@ class Helpers {
     /**
      * @return array
      */
+    public static function getAllowedHTMLTags() {
+        return array(
+            'a' => array(
+                'class' => array(),
+                'href' => array(),
+                'hreflang' => array(),
+                'title' => array(),
+                'target' => array(),
+                'rel' => array(),
+            ),
+            'br' => array(),
+            'em' => array(),
+            'strong' => array(),
+            'u' => array(),
+            'strike' => array(),
+            'span' => array(
+                'class' => array(),
+            ),
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public static function getAllowedHTMLTagsOutput() {
+        $tags = self::getAllowedHTMLTags();
+        $output = '';
+        foreach ($tags as $tag => $attributes) {
+            $output .= ' <' . $tag;
+            if (!empty($attributes)) {
+                foreach ($attributes as $attribute => $data) {
+                    $output .= ' ' . $attribute . '=""';
+                }
+            }
+            $output .= '>';
+        }
+        return '<div class="wpgdprc-allowed-tags">' . sprintf(__('You can use: %s', WP_GDPR_C_SLUG), '<pre>' . esc_html($output) . '</pre>') . '</div>';
+    }
+
+    /**
+     * @return array
+     */
     public static function getCheckList() {
         return array(
             'contact_form' => array(

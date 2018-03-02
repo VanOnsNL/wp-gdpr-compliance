@@ -52,6 +52,22 @@
     color: #4AA94F;
 }
 
+.wpgdprc pre {
+    display: inline;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+    font-style: normal;
+}
+
+div.wpgdprc-allowed-tags {
+    font-size: 14px;
+    font-style: italic;
+    color: #8A8A8A;
+}
+
 .wpgdprc .submit .button.button-primary {
     vertical-align: top;
     height: 34px;
