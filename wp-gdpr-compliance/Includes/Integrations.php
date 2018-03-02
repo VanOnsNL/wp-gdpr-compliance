@@ -33,7 +33,7 @@ class Integrations {
         foreach (Helpers::getEnabledPlugins() as $plugin) {
             switch ($plugin['id']) {
                 case WP::ID :
-                    add_filter('comment_form_submit_field', array(WP::getInstance(), 'addField'));
+                    add_filter('comment_form_submit_field', array(WP::getInstance(), 'addField'), 999);
                     add_action('pre_comment_on_post', array(WP::getInstance(), 'checkPost'));
                     break;
                 case CF7::ID :
@@ -45,14 +45,14 @@ class Integrations {
                     break;
                 case WC::ID :
                     add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
-                    add_action('woocommerce_review_order_before_submit', array(WC::getInstance(), 'addField'));
+                    add_action('woocommerce_review_order_before_submit', array(WC::getInstance(), 'addField'), 999);
                     break;
                 case GForms::ID :
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_forms', array(GForms::getInstance(), 'processIntegration'));
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_form_text', array(GForms::getInstance(), 'processIntegration'));
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_error_message', array(GForms::getInstance(), 'processIntegration'));
                     foreach (GForms::getInstance()->getEnabledForms() as $formId) {
-                        add_action('gform_validation_'.$formId, array(GForms::getInstance(), 'customValidation'));
+                        add_action('gform_validation_' . $formId, array(GForms::getInstance(), 'customValidation'));
                     }
                     break;
             }
@@ -64,9 +64,13 @@ class Integrations {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'], 'intval');
             switch ($plugin['id']) {
                 case CF7::ID :
+                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'], array(CF7::getInstance(), 'processIntegration'));
+                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_forms');
+                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_form_text', array('sanitize_callback' => array(Helpers::getInstance(), 'sanitizeData')));
+                    register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_error_message', array('sanitize_callback' => array(Helpers::getInstance(), 'sanitizeData')));
+                    break;
                 case GForms::ID :
-                    $class = ($plugin['id'] === CF7::ID) ? CF7::getInstance() : GForms::getInstance();
-                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'], array($class, 'processIntegration'));
+                    add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'], array(GForms::getInstance(), 'processIntegration'));
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_forms');
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_form_text');
                     register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'] . '_error_message');
@@ -97,7 +101,7 @@ class Integrations {
                     foreach ($forms as $form) {
                         $formSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_' . $form;
                         $textSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text_' . $form;
-                        $errorSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message_' . $form['id'];
+                        $errorSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message_' . $form;
                         $enabled = in_array($form, $enabledForms);
                         $text = CF7::getInstance()->getCheckboxText($form);
                         $errorMessage = CF7::getInstance()->getErrorMessage($form);
@@ -113,7 +117,7 @@ class Integrations {
                         $output .= '</p>';
                         $output .= '<p class="wpgdprc-setting">';
                         $output .= '<label for="' . $errorSettingId . '">' . __('Error message', WP_GDPR_C_SLUG) . '</label>';
-                        $output .= '<input type="text" name="' . $optionNameErrorMessage  . '[' . $form . ']' .  '" class="regular-text" id="' . $errorSettingId . '" placeholder="' . $errorMessage . '" value="' . $errorMessage . '" />';
+                        $output .= '<input type="text" name="' . $optionNameErrorMessage . '[' . $form . ']' . '" class="regular-text" id="' . $errorSettingId . '" placeholder="' . $errorMessage . '" value="' . $errorMessage . '" />';
                         $output .= '</p>';
                         $output .= '</li>';
                     }
@@ -135,8 +139,8 @@ class Integrations {
                         $textSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text_' . $form['id'];
                         $errorSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message_' . $form['id'];
                         $enabled = in_array($form['id'], $enabledForms);
-                        $text = GForms::getInstance()->getCheckboxText($form['id']);
-                        $errorMessage = GForms::getInstance()->getErrorMessage($form['id']);
+                        $text = esc_html(GForms::getInstance()->getCheckboxText($form['id']));
+                        $errorMessage = esc_html(GForms::getInstance()->getErrorMessage($form['id']));
                         $output .= '<li>';
                         $output .= '<div class="wpgdprc-checkbox">';
                         $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form['id'] . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, $enabled, false) . ' />';
@@ -149,8 +153,9 @@ class Integrations {
                         $output .= '</p>';
                         $output .= '<p class="wpgdprc-setting">';
                         $output .= '<label for="' . $errorSettingId . '">' . __('Error message', WP_GDPR_C_SLUG) . '</label>';
-                        $output .= '<input type="text" name="' . $optionNameErrorMessage  . '[' . $form['id'] . ']' .  '" class="regular-text" id="' . $errorSettingId . '" placeholder="' . $errorMessage . '" value="' . $errorMessage . '" />';
+                        $output .= '<input type="text" name="' . $optionNameErrorMessage . '[' . $form['id'] . ']' . '" class="regular-text" id="' . $errorSettingId . '" placeholder="' . $errorMessage . '" value="' . $errorMessage . '" />';
                         $output .= '</p>';
+                        $output .= Helpers::getAllowedHTMLTagsOutput();
                         $output .= '</li>';
                     }
                     $output .= '</ul>';
@@ -161,8 +166,8 @@ class Integrations {
             default :
                 $optionNameText = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text';
                 $optionNameErrorMessage = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message';
-                $text = self::getCheckboxText($plugin);
-                $errorMessage = self::getErrorMessage($plugin);
+                $text = esc_html(self::getCheckboxText($plugin));
+                $errorMessage = esc_html(self::getErrorMessage($plugin));
                 $output .= '<ul class="wpgdprc-checklist-options">';
                 $output .= '<li>';
                 $output .= '<p class="wpgdprc-setting">';
@@ -173,6 +178,7 @@ class Integrations {
                 $output .= '<label for="' . $optionNameErrorMessage . '">' . __('Error message', WP_GDPR_C_SLUG) . '</label>';
                 $output .= '<input type="text" name="' . $optionNameErrorMessage . '" class="regular-text" id="' . $optionNameErrorMessage . '" placeholder="' . $errorMessage . '" value="' . $errorMessage . '" />';
                 $output .= '</p>';
+                $output .= Helpers::getAllowedHTMLTagsOutput();
                 $output .= '</li>';
                 $output .= '</ul>';
                 break;
@@ -189,7 +195,7 @@ class Integrations {
         if (empty($option)) {
             return __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
         }
-        return esc_html($option);
+        return wp_kses($option, Helpers::getAllowedHTMLTags());
     }
 
     /**
@@ -201,7 +207,7 @@ class Integrations {
         if (empty($option)) {
             return __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
         }
-        return esc_html($option);
+        return wp_kses($option, Helpers::getAllowedHTMLTags());
     }
 
     /**

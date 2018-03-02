@@ -41,6 +41,7 @@ class Pages {
     public function generatePage() {
         $pluginData = Helpers::getPluginData();
         $activatedPlugins = Helpers::getActivatedPlugins();
+        $daysLeftToComply = Helpers::getDaysLeftToComply();
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -84,9 +85,9 @@ class Pages {
 
                                                     <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
                                                         <?php if (!empty($description)) : ?>
-                                                        <div class="wpgdprc-checklist-description">
-                                                            <?php echo $description; ?>
-                                                        </div>
+                                                            <div class="wpgdprc-checklist-description">
+                                                                <?php echo $description; ?>
+                                                            </div>
                                                         <?php endif; ?>
                                                         <?php echo $options; ?>
                                                     </div>
@@ -137,11 +138,11 @@ class Pages {
                                             </div>
 
                                             <?php if (!empty($description)) : ?>
-                                            <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
-                                                <div class="wpgdprc-checklist-description">
-                                                    <?php echo $description; ?>
+                                                <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
+                                                    <div class="wpgdprc-checklist-description">
+                                                        <?php echo $description; ?>
+                                                    </div>
                                                 </div>
-                                            </div>
                                             <?php endif; ?>
                                         </li>
                                     <?php
@@ -161,6 +162,15 @@ class Pages {
                 </div>
 
                 <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background. We assist website and webshop owners in being compliant with the General Data Protection Regulation (GDPR) but recommend contacting a law firm for rock solid legal advice.', WP_GDPR_C_SLUG); ?></p>
+
+                <?php if ($daysLeftToComply > 0) : ?>
+                    <div class="wpgdprc-countdown">
+                        <div class="wpgdprc-countdown-inner">
+                            <h2><?php echo date(get_option('date_format'), strtotime('25 May 2018')); ?></h2>
+                            <p><?php printf(__('You have %s left to comply with GDPR.', WP_GDPR_C_SLUG), sprintf(_n('%s day', '%s days', $daysLeftToComply, WP_GDPR_C_SLUG), number_format_i18n($daysLeftToComply))); ?></p>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <div class="wpgdprc-background"><?php include(WP_GDPR_C_DIR_SVG . '/inline-waves.svg.php'); ?></div>
             </div>

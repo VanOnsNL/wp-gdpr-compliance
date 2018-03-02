@@ -7,11 +7,78 @@ namespace WPGDPRC\Includes;
  * @package WPGDPRC\Includes
  */
 class Helpers {
+    /** @var null */
+    private static $instance = null;
+
+    /**
+     * @return null|Helpers
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
     /**
      * @return array
      */
     public static function getPluginData() {
         return get_plugin_data(WP_GDPR_C_ROOT_FILE);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllowedHTMLTags() {
+        return array(
+            'a' => array(
+                'class' => array(),
+                'href' => array(),
+                'hreflang' => array(),
+                'title' => array(),
+                'target' => array(),
+                'rel' => array(),
+            ),
+            'br' => array(),
+            'em' => array(),
+            'strong' => array(),
+            'u' => array(),
+            'strike' => array(),
+            'span' => array(
+                'class' => array(),
+            ),
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public static function getAllowedHTMLTagsOutput() {
+        $tags = self::getAllowedHTMLTags();
+        $output = '';
+        foreach ($tags as $tag => $attributes) {
+            $output .= ' <' . $tag;
+            if (!empty($attributes)) {
+                foreach ($attributes as $attribute => $data) {
+                    $output .= ' ' . $attribute . '=""';
+                }
+            }
+            $output .= '>';
+        }
+        return '<div class="wpgdprc-allowed-tags">' . sprintf(__('You can use: %s', WP_GDPR_C_SLUG), '<pre>' . esc_html($output) . '</pre>') . '</div>';
+    }
+
+    /**
+     * @return float|int
+     */
+    public static function getDaysLeftToComply() {
+        $date = mktime(0, 0, 0, 5, 25, 2018);
+        $difference = $date - time();
+        if ($difference < 0) {
+            return 0;
+        }
+        return floor($difference / 60 / 60 / 24);
     }
 
     /**
@@ -69,8 +136,8 @@ class Helpers {
     public static function getActivatedPlugins() {
         $output = array();
 
-        $activePlugins = (array) get_option('active_plugins', array());
-        $activeNetworkPlugins = (array) get_site_option('active_sitewide_plugins', array());
+        $activePlugins = (array)get_option('active_plugins', array());
+        $activeNetworkPlugins = (array)get_site_option('active_sitewide_plugins', array());
         if (!empty($activeNetworkPlugins)) {
             foreach ($activeNetworkPlugins as $file => $timestamp) {
                 if (!in_array($file, $activePlugins)) {
@@ -115,5 +182,20 @@ class Helpers {
             }
         }
         return $output;
+    }
+
+    /**
+     * @param $data
+     * @return string
+     */
+    public function sanitizeData($data) {
+        if (is_array($data)) {
+            foreach ($data as &$value) {
+                $value = sanitize_text_field($value);
+            }
+        } else {
+            $data = sanitize_text_field($data);
+        }
+        return $data;
     }
 }

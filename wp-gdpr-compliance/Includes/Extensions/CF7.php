@@ -82,7 +82,7 @@ class CF7 {
      * @return string
      */
     public function addFormTagHandler($tag) {
-        $tag = (is_array($tag)) ? new \WPCF7_FormTag($tag): $tag;
+        $tag = (is_array($tag)) ? new \WPCF7_FormTag($tag) : $tag;
         $output = '';
         switch ($tag->type) {
             case 'wpgdprc' :
@@ -140,9 +140,8 @@ class CF7 {
      * @return \WPCF7_Validation
      */
     public function validateField(\WPCF7_Validation $result, $tag) {
-        $tag = (gettype($tag) == 'array') ? new \WPCF7_FormTag($tag): $tag;
-        $formId = (isset($_POST['_wpcf7'])) ? $_POST['_wpcf7']: '';
-
+        $tag = (gettype($tag) == 'array') ? new \WPCF7_FormTag($tag) : $tag;
+        $formId = (isset($_POST['_wpcf7']) && is_numeric($_POST['_wpcf7'])) ? (int) $_POST['_wpcf7'] : 0;
         switch ($tag->type) {
             case 'wpgdprc' :
                 $tag->name = 'wpgdprc';
@@ -182,6 +181,13 @@ class CF7 {
     }
 
     /**
+     * @return array
+     */
+    public function getFormErrorMessages() {
+        return (array)get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_error_message', array());
+    }
+
+    /**
      * @param int $formId
      * @return string
      */
@@ -196,19 +202,12 @@ class CF7 {
     }
 
     /**
-     * @return array
-     */
-    public function getFormErrorMessage() {
-        return (array)get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_error_message', array());
-    }
-
-    /**
      * @param int $formId
      * @return string
      */
     public function getErrorMessage($formId = 0) {
         if (!empty($formId)) {
-            $errors = $this->getFormErrorMessage();
+            $errors = $this->getFormErrorMessages();
             if (!empty($errors[$formId])) {
                 return esc_html($errors[$formId]);
             }
