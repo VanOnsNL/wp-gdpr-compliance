@@ -33,7 +33,7 @@ class Pages {
             $pluginData['Name'],
             $pluginData['Name'],
             'manage_options',
-            'wp_gdpr_compliance',
+            str_replace('-', '_', WP_GDPR_C_SLUG),
             array($this, 'generatePage')
         );
     }
