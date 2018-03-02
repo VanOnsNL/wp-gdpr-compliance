@@ -82,6 +82,28 @@ class GForms {
     }
 
     /**
+     * @param array $validation_result
+     *
+     * @return array
+     */
+    public function customValidation ($validation_result = array()) {
+        $form = $validation_result["form"];
+
+        foreach ($form['fields'] as &$field) {
+            if (isset($field["wpgdprc"]) && $field["wpgdprc"] === true) {
+
+                var_dump($field);
+                if (isset($field["failed_validation"]) && $field["failed_validation"] === true) {
+                    $field["validation_message"] = sprintf(Integrations::getErrorMessage(self::ID));
+                }
+            }
+        }
+
+        $validation_result["form"] = $form;
+        return $validation_result;
+    }
+
+    /**
      * @param array $form
      */
     public function removeField($form = array()) {
