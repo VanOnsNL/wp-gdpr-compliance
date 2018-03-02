@@ -7,6 +7,19 @@ namespace WPGDPRC\Includes;
  * @package WPGDPRC\Includes
  */
 class Helpers {
+    /** @var null */
+    private static $instance = null;
+
+    /**
+     * @return null|Helpers
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
     /**
      * @return array
      */
@@ -169,5 +182,20 @@ class Helpers {
             }
         }
         return $output;
+    }
+
+    /**
+     * @param $data
+     * @return string
+     */
+    public function sanitizeData($data) {
+        if (is_array($data)) {
+            foreach ($data as &$value) {
+                $value = sanitize_text_field($value);
+            }
+        } else {
+            $data = sanitize_text_field($data);
+        }
+        return $data;
     }
 }

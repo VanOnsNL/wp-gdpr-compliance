@@ -85,9 +85,9 @@ class Pages {
 
                                                     <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
                                                         <?php if (!empty($description)) : ?>
-                                                        <div class="wpgdprc-checklist-description">
-                                                            <?php echo $description; ?>
-                                                        </div>
+                                                            <div class="wpgdprc-checklist-description">
+                                                                <?php echo $description; ?>
+                                                            </div>
                                                         <?php endif; ?>
                                                         <?php echo $options; ?>
                                                     </div>
@@ -138,11 +138,11 @@ class Pages {
                                             </div>
 
                                             <?php if (!empty($description)) : ?>
-                                            <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
-                                                <div class="wpgdprc-checklist-description">
-                                                    <?php echo $description; ?>
+                                                <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
+                                                    <div class="wpgdprc-checklist-description">
+                                                        <?php echo $description; ?>
+                                                    </div>
                                                 </div>
-                                            </div>
                                             <?php endif; ?>
                                         </li>
                                     <?php
