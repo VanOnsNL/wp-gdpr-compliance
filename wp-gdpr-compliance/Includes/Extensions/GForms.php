@@ -46,7 +46,7 @@ class GForms {
         $choices = array(
             array(
                 'text' => self::getCheckboxText($form['id']),
-                'value' => 1,
+                'value' => 'true',
                 'isSelected' => false
             )
         );
@@ -108,6 +108,14 @@ class GForms {
             }
         }
         \GFAPI::update_form($form, $form['id']);
+    }
+
+    function hookProcess($value, $entry, $field) {
+        if (!isset($field['wpgdprc'])) {
+            return $value;
+        }
+
+        return date('Y-m-d H:i:s', time());
     }
 
     /**

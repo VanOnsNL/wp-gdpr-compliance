@@ -53,6 +53,7 @@ class Integrations {
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_forms', array(GForms::getInstance(), 'processIntegration'));
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_form_text', array(GForms::getInstance(), 'processIntegration'));
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_error_message', array(GForms::getInstance(), 'processIntegration'));
+                    add_filter( 'gform_save_field_value', array(GForms::getInstance(), 'hookProcess'), 10, 3);
                     foreach (GForms::getInstance()->getEnabledForms() as $formId) {
                         add_action('gform_validation_' . $formId, array(GForms::getInstance(), 'customValidation'));
                     }
