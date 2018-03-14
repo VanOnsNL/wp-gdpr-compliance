@@ -47,4 +47,8 @@ class WC {
             wc_add_notice(sprintf(Integrations::getErrorMessage(self::ID)), 'error');
         }
     }
+
+    public function updateMeta($order_id = 0) {
+        if (isset($_POST['wpgdprc']) && $order_id != 0) update_post_meta( $order_id, 'GDPR Accepted',  time());
+    }
 }
