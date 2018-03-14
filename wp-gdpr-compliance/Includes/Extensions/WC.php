@@ -49,6 +49,8 @@ class WC {
     }
 
     public function updateMeta($order_id = 0) {
-        if (isset($_POST['wpgdprc']) && $order_id != 0) update_post_meta( $order_id, 'GDPR Accepted',  time());
+        if (isset($_POST['wpgdprc']) && $order_id != 0) {
+            update_post_meta( $order_id, 'GDPR Accepted',  time());
+        }
     }
 }

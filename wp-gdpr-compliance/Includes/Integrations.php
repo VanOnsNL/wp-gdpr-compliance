@@ -35,6 +35,7 @@ class Integrations {
                 case WP::ID :
                     add_filter('comment_form_submit_field', array(WP::getInstance(), 'addField'), 999);
                     add_action('pre_comment_on_post', array(WP::getInstance(), 'checkPost'));
+                    add_action( 'comment_post', array(WP::getInstance(), 'updateMeta'));
                     break;
                 case CF7::ID :
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_forms', array(CF7::getInstance(), 'processIntegration'));

@@ -41,4 +41,10 @@ class WP {
             );
         }
     }
+
+    public function updateMeta( $comment_id ) {
+        if (isset($_POST['wpgdprc']) && $comment_id != 0) {
+            add_comment_meta($comment_id, 'GDPR Accepted', time());
+        }
+    }
 }
