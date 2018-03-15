@@ -33,7 +33,7 @@
     max-width: 900px;
     font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
     font-weight: normal;
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.6;
     text-rendering: optimizeLegibility;
     color: #0A0A0A;
@@ -244,6 +244,7 @@ p.wpgdprc-disclaimer {
     user-select: none;
     z-index: 1;
     font-weight: bold;
+    font-size: 1.05rem;
 }
 
 span.wpgdprc-instructions {
@@ -358,7 +359,7 @@ span.wpgdprc-instructions {
     margin-top: 10px;
     padding: 20px;
     background-color: #FAFAFA;
-    border: 2px solid #F0F0F0;
+    border: 1px solid #F0F0F0;
 }
 
 .wpgdprc-checklist-options li:first-child {
