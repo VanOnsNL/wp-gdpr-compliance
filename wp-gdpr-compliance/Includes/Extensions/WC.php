@@ -53,4 +53,13 @@ class WC {
             update_post_meta( $order_id, '_gdpr-c',  date('Y-m-d H:i:s', time()));
         }
     }
+
+    public function displayMeta($order) {
+        $date = get_post_meta( $order->id, '_gdpr-c', true );
+
+        if (empty($date)) {
+            return;
+        }
+        echo '<p><strong>GDPR Accepted:</strong><br>'.$date .'</p>';
+    }
 }
