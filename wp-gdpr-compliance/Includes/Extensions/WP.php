@@ -44,7 +44,7 @@ class WP {
 
     public function updateMeta( $comment_id ) {
         if (isset($_POST['wpgdprc']) && $comment_id != 0) {
-            add_comment_meta($comment_id, '_gdpr-c', date('Y-m-d H:i:s', time()));
+            add_comment_meta($comment_id, '_gdpr-c', time());
         }
     }
 }

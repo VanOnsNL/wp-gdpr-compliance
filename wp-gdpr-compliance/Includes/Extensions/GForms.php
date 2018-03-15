@@ -115,7 +115,7 @@ class GForms {
             return $value;
         }
 
-        return date('Y-m-d H:i:s', time());
+        return time();
     }
 
     /**
