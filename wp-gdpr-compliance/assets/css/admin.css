@@ -386,15 +386,18 @@ span.wpgdprc-instructions {
 .wpgdprc-setting input, .wpgdprc-setting select {
     margin: 0;
     width: 100%;
-    background-color: #FFFFFF;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
     font-size: inherit;
 }
 
+.wpgdprc-setting input {
+    background-color: #FFFFFF;
+}
+
 .wpgdprc-setting select {
-    background-color: #F0F0F0;
+    background-color: #FAFAFA;
 }
 
 .wpgdprc-countdown {

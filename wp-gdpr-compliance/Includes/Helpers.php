@@ -56,7 +56,7 @@ class Helpers {
      */
     public static function getAllowedHTMLTagsOutput() {
         $tags = self::getAllowedHTMLTags();
-        $output = '';
+        $output = '%privacy_policy%';
         foreach ($tags as $tag => $attributes) {
             $output .= ' <' . $tag;
             if (!empty($attributes)) {

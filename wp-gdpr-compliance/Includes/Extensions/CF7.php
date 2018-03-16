@@ -189,15 +189,15 @@ class CF7 {
 
     /**
      * @param int $formId
-     * @param bool $replace
+     * @param bool $insertPrivacyPolicyLink
      * @return string
      */
-    public function getCheckboxText($formId = 0, $replace = true) {
+    public function getCheckboxText($formId = 0, $insertPrivacyPolicyLink = true) {
         if (!empty($formId)) {
             $texts = $this->getFormTexts();
             if (!empty($texts[$formId])) {
                 $result = esc_html($texts[$formId]);
-                return ($replace === true) ? Integrations::insertPrivacyPolicyLink($result) : $result;
+                return ($insertPrivacyPolicyLink === true) ? Integrations::insertPrivacyPolicyLink($result) : $result;
             }
         }
         return Integrations::getCheckboxText();

@@ -24,8 +24,8 @@ class Pages {
         foreach (Helpers::getCheckList() as $id => $check) {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_general_' . $id, 'intval');
         }
-        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_page', 'intval');
-        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_label');
+        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_privacy_policy_page', 'intval');
+        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_privacy_policy_text', array('sanitize_callback' => array(Helpers::getInstance(), 'sanitizeData')));
     }
 
     public function addAdminMenu() {
@@ -43,6 +43,10 @@ class Pages {
     public function generatePage() {
         $pluginData = Helpers::getPluginData();
         $activatedPlugins = Helpers::getActivatedPlugins();
+        $optionNamePrivacyPolicyPage = WP_GDPR_C_PREFIX . '_settings_privacy_policy_page';
+        $optionNamePrivacyPolicyText = WP_GDPR_C_PREFIX . '_settings_privacy_policy_text';
+        $privacyPolicyPage = get_option($optionNamePrivacyPolicyPage);
+        $privacyPolicyText = get_option($optionNamePrivacyPolicyText);
         $daysLeftToComply = Helpers::getDaysLeftToComply();
         ?>
         <div class="wrap">
@@ -153,23 +157,19 @@ class Pages {
                                 </ul>
                             </div>
                             <div id="tab-settings" class="wpgdprc-tabs__panel" aria-hidden="true" aria-labelledby="tab-settings-label" role="tabpanel">
-                                <p><?php _e('Use %privacy_policy% if you want to use the link to this page in your custom GDPR checkbox text.', WP_GDPR_C_SLUG); ?></p>
-
-                                <?php
-                                $optionName = WP_GDPR_C_PREFIX . '_settings_page';
-                                $select = get_option(WP_GDPR_C_PREFIX . '_settings_page');
-                                ?>
+                                <p><?php _e('Use %privacy_policy% if you want to link your Privacy Policy page in the GDPR checkbox texts.', WP_GDPR_C_SLUG); ?></p>
                                 <p class="wpgdprc-setting">
-                                    <label for="<?php echo $optionName; ?>"><?php _e('Privacy Page', WP_GDPR_C_SLUG); ?></label>
-                                    <?php wp_dropdown_pages(array('name'=> $optionName, 'selected' => $select)); ?>
+                                    <label for="<?php echo $optionNamePrivacyPolicyPage; ?>"><?php _e('Privacy Policy', WP_GDPR_C_SLUG); ?></label>
+                                    <?php
+                                    wp_dropdown_pages(array(
+                                        'name' => $optionNamePrivacyPolicyPage,
+                                        'selected' => $privacyPolicyPage
+                                    ));
+                                    ?>
                                 </p>
-                                <?php
-                                $optionName = WP_GDPR_C_PREFIX . '_settings_label';
-                                $value = get_option(WP_GDPR_C_PREFIX . '_settings_label');
-                                ?>
                                 <p class="wpgdprc-setting">
-                                    <label for="<?php echo $optionName; ?>"><?php _e('Link Text', WP_GDPR_C_SLUG); ?></label>
-                                    <input type="text" name="<?php echo $optionName; ?>" class="regular-text" id="<?php echo $optionName; ?>" placeholder="<?php echo $value; ?>" value="<?php echo $value; ?>" />
+                                    <label for="<?php echo $optionNamePrivacyPolicyText; ?>"><?php _e('Link text', WP_GDPR_C_SLUG); ?></label>
+                                    <input type="text" name="<?php echo $optionNamePrivacyPolicyText; ?>" class="regular-text" id="<?php echo $optionNamePrivacyPolicyText; ?>" placeholder="<?php echo $privacyPolicyText; ?>" value="<?php echo $privacyPolicyText; ?>" />
                                 </p>
                             </div>
                         </div>
@@ -177,6 +177,7 @@ class Pages {
 
                     <?php submit_button(); ?>
                 </form>
+
                 <div class="wpgdprc-description">
                     <p><?php printf(__('This plugin assists website and webshop owners to comply with European privacy regulations (known as GDPR). By May 24th, 2018 your site or shop has to comply to avoid large fines. The regulation can be read here: %s.', WP_GDPR_C_SLUG), '<a target="_blank" href="//www.eugdpr.org/the-regulation.html">' . __('GDPR Key Changes', WP_GDPR_C_SLUG) . '</a>'); ?></p>
                     <p><?php printf(__('%s supports: %s.', WP_GDPR_C_SLUG), $pluginData['Name'], implode(', ', Integrations::getSupportedIntegrationsLabels())); ?></p>

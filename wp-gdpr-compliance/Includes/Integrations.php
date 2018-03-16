@@ -188,16 +188,16 @@ class Integrations {
 
     /**
      * @param string $plugin
-     * @param bool $replace
+     * @param bool $insertPrivacyPolicyLink
      * @return string
      */
-    public static function getCheckboxText($plugin = '', $replace = true) {
+    public static function getCheckboxText($plugin = '', $insertPrivacyPolicyLink = true) {
         $option = (!empty($plugin)) ? get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text') : '';
         if (empty($option)) {
             return __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
         }
         $option = wp_kses($option, Helpers::getAllowedHTMLTags());
-        return ($replace) ? self::insertPrivacyPolicyLink($option) : $option;
+        return ($insertPrivacyPolicyLink === true) ? self::insertPrivacyPolicyLink($option) : $option;
     }
 
     /**
@@ -217,12 +217,11 @@ class Integrations {
      * @return mixed|string
      */
     public static function insertPrivacyPolicyLink($content = '') {
-        $page = get_option(WP_GDPR_C_PREFIX . '_settings_page');
-        $label = get_option(WP_GDPR_C_PREFIX . '_settings_label');
-        if (empty($page) || empty($label)) {
-            return $content;
+        $page = get_option(WP_GDPR_C_PREFIX . '_settings_privacy_policy_page');
+        $label = get_option(WP_GDPR_C_PREFIX . '_settings_privacy_policy_text');
+        if (!empty($page) && !empty($label)) {
+            $content = str_replace('%privacy_policy%', sprintf('<a target="_blank" href="%s">%s</a>', get_page_link($page), esc_html($label)), $content);
         }
-        $content = str_replace('%privacy_policy%', sprintf('<a href="%s">%s</a>', get_page_link($page), esc_html($label)), $content);
         return $content;
     }
 
