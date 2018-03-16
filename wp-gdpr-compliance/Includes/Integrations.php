@@ -107,9 +107,9 @@ class Integrations {
                         $textSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text_' . $form;
                         $errorSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message_' . $form;
                         $enabled = in_array($form, $enabledForms);
-                        $text = CF7::getInstance()->getCheckboxText($form);
+                        $text = CF7::getInstance()->getCheckboxText($form, false);
                         $errorMessage = CF7::getInstance()->getErrorMessage($form);
-                        $output .= '<li>';
+                        $output .= '<li class="wpgdprc-clearfix">';
                         $output .= '<div class="wpgdprc-checkbox">';
                         $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, $enabled, false) . ' />';
                         $output .= '<label for="' . $formSettingId . '"><strong>' . sprintf(__('Form: %s', WP_GDPR_C_SLUG), get_the_title($form)) . '</strong></label>';
@@ -143,9 +143,9 @@ class Integrations {
                         $textSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_form_text_' . $form['id'];
                         $errorSettingId = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message_' . $form['id'];
                         $enabled = in_array($form['id'], $enabledForms);
-                        $text = esc_html(GForms::getInstance()->getCheckboxText($form['id']));
+                        $text = esc_html(GForms::getInstance()->getCheckboxText($form['id'], false));
                         $errorMessage = esc_html(GForms::getInstance()->getErrorMessage($form['id']));
-                        $output .= '<li>';
+                        $output .= '<li class="wpgdprc-clearfix">';
                         $output .= '<div class="wpgdprc-checkbox">';
                         $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form['id'] . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, $enabled, false) . ' />';
                         $output .= '<label for="' . $formSettingId . '"><strong>' . sprintf(__('Form: %s', WP_GDPR_C_SLUG), $form['title']) . '</strong></label>';
@@ -170,10 +170,10 @@ class Integrations {
             default :
                 $optionNameText = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text';
                 $optionNameErrorMessage = WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message';
-                $text = esc_html(self::getCheckboxText($plugin));
+                $text = esc_html(self::getCheckboxText($plugin, false));
                 $errorMessage = esc_html(self::getErrorMessage($plugin));
                 $output .= '<ul class="wpgdprc-checklist-options">';
-                $output .= '<li>';
+                $output .= '<li class="wpgdprc-clearfix">';
                 $output .= '<p class="wpgdprc-setting">';
                 $output .= '<label for="' . $optionNameText . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                 $output .= '<input type="text" name="' . $optionNameText . '" class="regular-text" id="' . $optionNameText . '" placeholder="' . $text . '" value="' . $text . '" />';
@@ -192,14 +192,16 @@ class Integrations {
 
     /**
      * @param string $plugin
+     * @param bool $insertPrivacyPolicyLink
      * @return string
      */
-    public static function getCheckboxText($plugin = '') {
+    public static function getCheckboxText($plugin = '', $insertPrivacyPolicyLink = true) {
         $option = (!empty($plugin)) ? get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text') : '';
         if (empty($option)) {
             return __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
         }
-        return wp_kses($option, Helpers::getAllowedHTMLTags());
+        $option = wp_kses($option, Helpers::getAllowedHTMLTags());
+        return ($insertPrivacyPolicyLink === true) ? self::insertPrivacyPolicyLink($option) : $option;
     }
 
     /**
@@ -212,6 +214,19 @@ class Integrations {
             return __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
         }
         return wp_kses($option, Helpers::getAllowedHTMLTags());
+    }
+
+    /**
+     * @param string $content
+     * @return mixed|string
+     */
+    public static function insertPrivacyPolicyLink($content = '') {
+        $page = get_option(WP_GDPR_C_PREFIX . '_settings_privacy_policy_page');
+        $label = get_option(WP_GDPR_C_PREFIX . '_settings_privacy_policy_text');
+        if (!empty($page) && !empty($label)) {
+            $content = str_replace('%privacy_policy%', sprintf('<a target="_blank" href="%s">%s</a>', get_page_link($page), esc_html($label)), $content);
+        }
+        return $content;
     }
 
     /**

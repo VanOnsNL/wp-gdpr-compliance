@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP GDPR Compliance\n"
-"POT-Creation-Date: 2018-03-02 17:41+0100\n"
-"PO-Revision-Date: 2018-03-02 17:42+0100\n"
+"POT-Creation-Date: 2018-03-16 14:23+0100\n"
+"PO-Revision-Date: 2018-03-16 14:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: Van Ons <info@van-ons.nl>\n"
 "Language: nl_NL\n"
@@ -117,7 +117,7 @@ msgid ""
 "mention if you will send or share the data with any 3rd-parties and which."
 msgstr ""
 
-#: Includes/Helpers.php:119 Includes/Integrations.php:208
+#: Includes/Helpers.php:119 Includes/Integrations.php:210
 msgid "Please accept the privacy checkbox."
 msgstr ""
 
@@ -144,80 +144,98 @@ msgstr ""
 msgid "No forms found."
 msgstr ""
 
-#: Includes/Integrations.php:196
+#: Includes/Integrations.php:197
 msgid ""
 "By using this form you agree with the storage and handling of your data by "
 "this website."
 msgstr ""
 
-#: Includes/Integrations.php:220
+#: Includes/Integrations.php:235
 msgid "WordPress Comments"
 msgstr ""
 
-#: Includes/Integrations.php:221
+#: Includes/Integrations.php:236
 msgid ""
 "When activated the GDPR checkbox will be added automatically just above the "
 "submit button."
 msgstr ""
 
-#: Includes/Integrations.php:235
+#: Includes/Integrations.php:250
 msgid "Contact Form 7"
 msgstr ""
 
-#: Includes/Integrations.php:236 Includes/Integrations.php:243
+#: Includes/Integrations.php:251 Includes/Integrations.php:258
 msgid "A GDPR form tag will be automatically added to every form you activate."
 msgstr ""
 
-#: Includes/Integrations.php:242
+#: Includes/Integrations.php:257
 msgid "Gravity Forms"
 msgstr ""
 
-#: Includes/Integrations.php:249
+#: Includes/Integrations.php:264
 msgid "WooCommerce"
 msgstr ""
 
-#: Includes/Integrations.php:250
+#: Includes/Integrations.php:265
 msgid ""
 "The GDPR checkbox will be added automatically at the end of your checkout "
 "page."
 msgstr ""
 
-#: Includes/Pages.php:57
+#: Includes/Pages.php:63
 msgid "Integrations"
 msgstr ""
 
-#: Includes/Pages.php:58
+#: Includes/Pages.php:64
 msgid "Checklist"
 msgstr ""
 
-#: Includes/Pages.php:77
+#: Includes/Pages.php:65 wp-gdpr-compliance.php:97
+msgid "Settings"
+msgstr ""
+
+#: Includes/Pages.php:84
 msgid "Enable compliance:"
 msgstr ""
 
-#: Includes/Pages.php:98
+#: Includes/Pages.php:105
 #, php-format
 msgid "This plugin is outdated. %s supports version %s and up."
 msgstr ""
 
-#: Includes/Pages.php:108
+#: Includes/Pages.php:115
 msgid "Couldn't find any supported plugins installed."
 msgstr ""
 
-#: Includes/Pages.php:109
+#: Includes/Pages.php:116
 msgid "The following plugins are supported as of now:"
 msgstr ""
 
-#: Includes/Pages.php:115
+#: Includes/Pages.php:122
 msgid "More plugins will be added in the future."
 msgstr ""
 
-#: Includes/Pages.php:119
+#: Includes/Pages.php:126
 msgid ""
 "Below we ask you what private data you currently collect and provide you "
 "with tips to comply."
 msgstr ""
 
 #: Includes/Pages.php:160
+msgid ""
+"Use %privacy_policy% if you want to link your Privacy Policy page in the "
+"GDPR checkbox texts."
+msgstr ""
+
+#: Includes/Pages.php:162
+msgid "Privacy Policy"
+msgstr ""
+
+#: Includes/Pages.php:171
+msgid "Link text"
+msgstr ""
+
+#: Includes/Pages.php:182
 #, php-format
 msgid ""
 "This plugin assists website and webshop owners to comply with European "
@@ -225,16 +243,16 @@ msgid ""
 "to comply to avoid large fines. The regulation can be read here: %s."
 msgstr ""
 
-#: Includes/Pages.php:160
+#: Includes/Pages.php:182
 msgid "GDPR Key Changes"
 msgstr ""
 
-#: Includes/Pages.php:161
+#: Includes/Pages.php:183
 #, php-format
 msgid "%s supports: %s."
 msgstr ""
 
-#: Includes/Pages.php:164
+#: Includes/Pages.php:186
 msgid ""
 "Disclaimer: The creators of this plugin do not have a legal background. We "
 "assist website and webshop owners in being compliant with the General Data "
@@ -242,20 +260,16 @@ msgid ""
 "solid legal advice."
 msgstr ""
 
-#: Includes/Pages.php:170
+#: Includes/Pages.php:192
 #, php-format
 msgid "You have %s left to comply with GDPR."
 msgstr ""
 
-#: Includes/Pages.php:170
+#: Includes/Pages.php:192
 #, php-format
 msgid "%s day"
 msgstr ""
 
 #: wp-gdpr-compliance.php:97
 msgid "View WP GDPR Compliance settings"
-msgstr ""
-
-#: wp-gdpr-compliance.php:97
-msgid "Settings"
 msgstr ""

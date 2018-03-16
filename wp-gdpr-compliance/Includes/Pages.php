@@ -24,6 +24,8 @@ class Pages {
         foreach (Helpers::getCheckList() as $id => $check) {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_general_' . $id, 'intval');
         }
+        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_privacy_policy_page', 'intval');
+        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_privacy_policy_text', array('sanitize_callback' => array(Helpers::getInstance(), 'sanitizeData')));
     }
 
     public function addAdminMenu() {
@@ -41,6 +43,10 @@ class Pages {
     public function generatePage() {
         $pluginData = Helpers::getPluginData();
         $activatedPlugins = Helpers::getActivatedPlugins();
+        $optionNamePrivacyPolicyPage = WP_GDPR_C_PREFIX . '_settings_privacy_policy_page';
+        $optionNamePrivacyPolicyText = WP_GDPR_C_PREFIX . '_settings_privacy_policy_text';
+        $privacyPolicyPage = get_option($optionNamePrivacyPolicyPage);
+        $privacyPolicyText = get_option($optionNamePrivacyPolicyText);
         $daysLeftToComply = Helpers::getDaysLeftToComply();
         ?>
         <div class="wrap">
@@ -53,9 +59,10 @@ class Pages {
                     <?php settings_fields(WP_GDPR_C_SLUG); ?>
 
                     <div class="wpgdprc-tabs">
-                        <div class="wpgdprc-tabs__navigation cf">
+                        <div class="wpgdprc-tabs__navigation wpgdprc-clearfix">
                             <a id="tab-integrations-label" class="active" href="#tab-integrations" aria-controls="tab-integrations" tabindex="0" role="tab"><?php _e('Integrations', WP_GDPR_C_SLUG); ?></a>
-                            <a id="tab-checklist-label" href="#tab-checklist" aria-selected="true" aria-controls="tab-checklist" tabindex="-1" role="tab"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
+                            <a id="tab-checklist-label" href="#tab-checklist" aria-controls="tab-checklist" tabindex="-1" role="tab"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
+                            <a id="tab-settings-label" href="#tab-settings" aria-controls="tab-settings" tabindex="-1" role="tab"><?php _e('Settings', WP_GDPR_C_SLUG); ?></a>
                         </div>
 
                         <div class="wpgdprc-tabs__content">
@@ -69,7 +76,7 @@ class Pages {
                                             $description = (!empty($plugin['description'])) ? apply_filters('the_content', $plugin['description']) : '';
                                             $options = Integrations::getSupportedPluginOptions($plugin['id']);
                                             ?>
-                                            <li>
+                                            <li class="wpgdprc-clearfix">
                                                 <?php if ($plugin['supported']) : ?>
                                                     <div class="wpgdprc-checkbox">
                                                         <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $optionName; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
@@ -117,7 +124,6 @@ class Pages {
                             </div>
                             <div id="tab-checklist" class="wpgdprc-tabs__panel" aria-hidden="true" aria-labelledby="tab-checklist-label" role="tabpanel">
                                 <p><?php _e('Below we ask you what private data you currently collect and provide you with tips to comply.', WP_GDPR_C_SLUG); ?></p>
-
                                 <ul class="wpgdprc-list">
                                     <?php
                                     foreach (Helpers::getCheckList() as $id => $check) :
@@ -125,7 +131,7 @@ class Pages {
                                         $checked = Helpers::isEnabled($id, 'general');
                                         $description = (!empty($check['description'])) ? esc_html($check['description']) : '';
                                         ?>
-                                        <li>
+                                        <li class="wpgdprc-clearfix">
                                             <div class="wpgdprc-checkbox">
                                                 <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $id; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
                                                 <label for="<?php echo $id; ?>"><?php echo $check['label']; ?></label>
@@ -145,10 +151,26 @@ class Pages {
                                                 </div>
                                             <?php endif; ?>
                                         </li>
-                                    <?php
+                                        <?php
                                     endforeach;
                                     ?>
                                 </ul>
+                            </div>
+                            <div id="tab-settings" class="wpgdprc-tabs__panel" aria-hidden="true" aria-labelledby="tab-settings-label" role="tabpanel">
+                                <p><?php _e('Use %privacy_policy% if you want to link your Privacy Policy page in the GDPR checkbox texts.', WP_GDPR_C_SLUG); ?></p>
+                                <p class="wpgdprc-setting">
+                                    <label for="<?php echo $optionNamePrivacyPolicyPage; ?>"><?php _e('Privacy Policy', WP_GDPR_C_SLUG); ?></label>
+                                    <?php
+                                    wp_dropdown_pages(array(
+                                        'name' => $optionNamePrivacyPolicyPage,
+                                        'selected' => $privacyPolicyPage
+                                    ));
+                                    ?>
+                                </p>
+                                <p class="wpgdprc-setting">
+                                    <label for="<?php echo $optionNamePrivacyPolicyText; ?>"><?php _e('Link text', WP_GDPR_C_SLUG); ?></label>
+                                    <input type="text" name="<?php echo $optionNamePrivacyPolicyText; ?>" class="regular-text" id="<?php echo $optionNamePrivacyPolicyText; ?>" placeholder="<?php echo $privacyPolicyText; ?>" value="<?php echo $privacyPolicyText; ?>" />
+                                </p>
                             </div>
                         </div>
                     </div>

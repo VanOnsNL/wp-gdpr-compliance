@@ -155,13 +155,15 @@ class GForms {
 
     /**
      * @param int $formId
+     * @param bool $insertPrivacyPolicyLink
      * @return string
      */
-    public function getCheckboxText($formId = 0) {
+    public function getCheckboxText($formId = 0, $insertPrivacyPolicyLink = true) {
         if (!empty($formId)) {
             $texts = $this->getFormTexts();
             if (!empty($texts[$formId])) {
-                return wp_kses($texts[$formId], Helpers::getAllowedHTMLTags());
+                $result = wp_kses($texts[$formId], Helpers::getAllowedHTMLTags());
+                return ($insertPrivacyPolicyLink === true) ? Integrations::insertPrivacyPolicyLink($result) : $result;
             }
         }
         return Integrations::getCheckboxText();
