@@ -48,19 +48,21 @@ class WC {
         }
     }
 
+    /**
+     * @param int $order_id
+     */
     public function updateMeta($order_id = 0) {
         if (isset($_POST['wpgdprc']) && $order_id != 0) {
-            update_post_meta( $order_id, '_gdpr-c', time());
+            update_post_meta($order_id, '_wpgdprc', time());
         }
     }
 
-    public function displayMeta($order) {
-        $date = get_post_meta( $order->id, '_gdpr-c', true );
-
-        if (empty($date)) {
-            return;
+    public function displayMeta(\WC_Order $order) {
+        $date = get_post_meta($order->get_id(), '_wpgdprc', true);
+        $date = time();
+        if (!empty($date)) {
+            $date = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $date);
+            echo sprintf('<p><strong>%s</strong><br />%s</p>', __('GDPR accepted on:', WP_GDPR_C_SLUG), $date);
         }
-        $date = date_i18n( get_option( 'date_format' ).' '.get_option( 'time_format' ), $date);
-        echo '<p><strong>GDPR Accepted:</strong><br>'.$date .'</p>';
     }
 }

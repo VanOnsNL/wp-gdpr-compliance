@@ -82,6 +82,80 @@ class GForms {
     }
 
     /**
+     * @param array $form
+     */
+    public function removeField($form = array()) {
+        foreach ($form['fields'] as $index => $field) {
+            if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
+                unset($form['fields'][$index]);
+            }
+        }
+        \GFAPI::update_form($form, $form['id']);
+    }
+
+    /**
+     * @param string $value
+     * @param int $formId
+     * @param int $fieldId
+     * @param array $entry
+     * @return string
+     */
+    function changeEntriesFieldValue($value = '', $formId = 0, $fieldId = 0, $entry = array()) {
+        if (empty($value)) {
+            $id = self::getFieldIdByFormId($formId);
+            if (!empty($id)) {
+                if ($fieldId === $id) {
+                    $value = (!empty($entry[$fieldId])) ? $entry[$fieldId] : __('Not accepted.', WP_GDPR_C_SLUG);
+                }
+            }
+        }
+        return $value;
+    }
+
+    /**
+     * @param $value
+     * @param array $entry
+     * @return string
+     */
+    public function changeFieldValue($value, $entry = array()) {
+        $id = self::getFieldIdByFormId($entry['form_id']);
+        if (!empty($id) && isset($value[$id])) {
+            if (empty($value[$id])) {
+                return __('Not accepted.', WP_GDPR_C_SLUG);
+            }
+        }
+        return $value;
+    }
+
+    /**
+     * @param string $value
+     * @param array $lead
+     * @param \GF_Field $field
+     * @return string
+     */
+    public function saveFieldValue($value = '', $lead = array(), \GF_Field $field) {
+        if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
+            $date = date(get_option('date_format') . ' ' . get_option('time_format'), time());
+            $date = sprintf(__('Accepted on %s.', WP_GDPR_C_SLUG), $date);
+            $value = (empty($value)) ? __('Not accepted.', WP_GDPR_C_SLUG) : $date;
+        }
+        return $value;
+    }
+
+    /**
+     * @param array $columns
+     * @param int $formId
+     * @return array
+     */
+    public function overrideColumn($columns = array(), $formId = 0) {
+        $key = array_search(self::getCheckboxText($formId), $columns);
+        if (!empty($key) && isset($columns[$key])) {
+            $columns[$key] = __('Privacy', WP_GDPR_C_SLUG);
+        }
+        return $columns;
+    }
+
+    /**
      * @param array $validation_result
      * @return array
      */
@@ -96,26 +170,6 @@ class GForms {
         }
         $validation_result['form'] = $form;
         return $validation_result;
-    }
-
-    /**
-     * @param array $form
-     */
-    public function removeField($form = array()) {
-        foreach ($form['fields'] as $index => $field) {
-            if (isset($field->wpgdprc) && $field->wpgdprc === true) {
-                unset($form['fields'][$index]);
-            }
-        }
-        \GFAPI::update_form($form, $form['id']);
-    }
-
-    function hookProcess($value, $entry, $field) {
-        if (!isset($field['wpgdprc'])) {
-            return $value;
-        }
-
-        return time();
     }
 
     /**
@@ -181,5 +235,21 @@ class GForms {
             }
         }
         return Integrations::getErrorMessage();
+    }
+
+    /**
+     * @param int $formId
+     * @return int
+     */
+    private static function getFieldIdByFormId($formId = 0) {
+        $form = \GFFormsModel::get_form_meta($formId);
+        foreach ($form['fields'] as $field) {
+            if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
+                if (isset($field['inputs'][0]['id'])) {
+                    return $field['inputs'][0]['id'];
+                }
+            }
+        }
+        return 0;
     }
 }
