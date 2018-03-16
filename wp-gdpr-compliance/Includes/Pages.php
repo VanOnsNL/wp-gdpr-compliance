@@ -53,7 +53,7 @@ class Pages {
                     <?php settings_fields(WP_GDPR_C_SLUG); ?>
 
                     <div class="wpgdprc-tabs">
-                        <div class="wpgdprc-tabs__navigation cf">
+                        <div class="wpgdprc-tabs__navigation wpgdprc-clearfix">
                             <a id="tab-integrations-label" class="active" href="#tab-integrations" aria-controls="tab-integrations" tabindex="0" role="tab"><?php _e('Integrations', WP_GDPR_C_SLUG); ?></a>
                             <a id="tab-checklist-label" href="#tab-checklist" aria-selected="true" aria-controls="tab-checklist" tabindex="-1" role="tab"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
                         </div>
@@ -69,7 +69,7 @@ class Pages {
                                             $description = (!empty($plugin['description'])) ? apply_filters('the_content', $plugin['description']) : '';
                                             $options = Integrations::getSupportedPluginOptions($plugin['id']);
                                             ?>
-                                            <li>
+                                            <li class="wpgdprc-clearfix">
                                                 <?php if ($plugin['supported']) : ?>
                                                     <div class="wpgdprc-checkbox">
                                                         <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $optionName; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
@@ -125,7 +125,7 @@ class Pages {
                                         $checked = Helpers::isEnabled($id, 'general');
                                         $description = (!empty($check['description'])) ? esc_html($check['description']) : '';
                                         ?>
-                                        <li>
+                                        <li class="wpgdprc-clearfix">
                                             <div class="wpgdprc-checkbox">
                                                 <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $id; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
                                                 <label for="<?php echo $id; ?>"><?php echo $check['label']; ?></label>
