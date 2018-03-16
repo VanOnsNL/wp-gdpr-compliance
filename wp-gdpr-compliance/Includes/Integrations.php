@@ -105,7 +105,7 @@ class Integrations {
                         $enabled = in_array($form, $enabledForms);
                         $text = CF7::getInstance()->getCheckboxText($form, false);
                         $errorMessage = CF7::getInstance()->getErrorMessage($form);
-                        $output .= '<li>';
+                        $output .= '<li class="wpgdprc-clearfix">';
                         $output .= '<div class="wpgdprc-checkbox">';
                         $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, $enabled, false) . ' />';
                         $output .= '<label for="' . $formSettingId . '"><strong>' . sprintf(__('Form: %s', WP_GDPR_C_SLUG), get_the_title($form)) . '</strong></label>';
@@ -141,7 +141,7 @@ class Integrations {
                         $enabled = in_array($form['id'], $enabledForms);
                         $text = esc_html(GForms::getInstance()->getCheckboxText($form['id'], false));
                         $errorMessage = esc_html(GForms::getInstance()->getErrorMessage($form['id']));
-                        $output .= '<li>';
+                        $output .= '<li class="wpgdprc-clearfix">';
                         $output .= '<div class="wpgdprc-checkbox">';
                         $output .= '<input type="checkbox" name="' . $optionNameForms . '[]" id="' . $formSettingId . '" value="' . $form['id'] . '" tabindex="1" data-type="save_setting" data-option="' . $optionNameForms . '" data-append="1" ' . checked(true, $enabled, false) . ' />';
                         $output .= '<label for="' . $formSettingId . '"><strong>' . sprintf(__('Form: %s', WP_GDPR_C_SLUG), $form['title']) . '</strong></label>';
@@ -169,7 +169,7 @@ class Integrations {
                 $text = esc_html(self::getCheckboxText($plugin, false));
                 $errorMessage = esc_html(self::getErrorMessage($plugin));
                 $output .= '<ul class="wpgdprc-checklist-options">';
-                $output .= '<li>';
+                $output .= '<li class="wpgdprc-clearfix">';
                 $output .= '<p class="wpgdprc-setting">';
                 $output .= '<label for="' . $optionNameText . '">' . __('Checkbox text', WP_GDPR_C_SLUG) . '</label>';
                 $output .= '<input type="text" name="' . $optionNameText . '" class="regular-text" id="' . $optionNameText . '" placeholder="' . $text . '" value="' . $text . '" />';

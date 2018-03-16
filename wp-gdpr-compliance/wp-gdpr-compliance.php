@@ -4,7 +4,7 @@
  Plugin Name: WP GDPR Compliance
  Plugin URI:  https://www.wpgdprc.com/
  Description: This plugin assists website and webshop owners to comply with European privacy regulations (known as GDPR). By May 24th, 2018 your website or shop has to comply to avoid large fines.
- Version:     1.2.1
+ Version:     1.2.2
  Author:      Van Ons
  Author URI:  https://www.van-ons.nl/
  License:     GPL2
@@ -79,12 +79,24 @@ class WPGDPRC {
             require_once(ABSPATH . 'wp-admin/includes/plugin.php');
         }
         load_plugin_textdomain(WP_GDPR_C_SLUG, false, basename(dirname(__FILE__)) . '/languages/');
+        add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'addActionLinksToPluginPage'));
         add_action('admin_init', array(Pages::getInstance(), 'registerSettings'));
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
         add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
         add_action('core_version_check_query_args', array(Actions::getInstance(), 'onlySendEssentialDataDuringUpdateCheck'));
         add_action('wp_ajax_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
         Integrations::getInstance();
+    }
+
+    /**
+     * @param array $links
+     * @return array
+     */
+    public function addActionLinksToPluginPage($links = array()) {
+        $actionLinks = array(
+            'settings' => '<a href="' . admin_url('tools.php?page=' . str_replace('-', '_', WP_GDPR_C_SLUG)) . '" aria-label="' . esc_attr__('View WP GDPR Compliance settings', WP_GDPR_C_SLUG) . '">' . esc_html__('Settings', WP_GDPR_C_SLUG) . '</a>',
+        );
+        return array_merge($actionLinks, $links);
     }
 
     public function loadAssets() {
