@@ -15,16 +15,6 @@ class GForms {
     /** @var null */
     private static $instance = null;
 
-    /**
-     * @return null|GForms
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     public function processIntegration() {
         if (!class_exists('\GFAPI')) {
             return;
@@ -60,7 +50,7 @@ class GForms {
             $lastField = array_values(array_slice($form['fields'], -1));
             $lastField = (isset($lastField[0])) ? $lastField[0] : false;
             $id = (!empty($lastField)) ? (int)$lastField['id'] + 1 : 1;
-            $form['fields'][] = array(
+            $args = array(
                 'id' => $id,
                 'type' => 'checkbox',
                 'label' => __('Privacy', WP_GDPR_C_SLUG),
@@ -77,6 +67,7 @@ class GForms {
                 ),
                 'wpgdprc' => true
             );
+            $form['fields'][] = apply_filters('wpgdprc_gforms_field_args', $args, $form);
         }
         \GFAPI::update_form($form, $form['id']);
     }
@@ -94,35 +85,48 @@ class GForms {
     }
 
     /**
+     * @param array $columns
+     * @param int $formId
+     * @return array
+     */
+    public function displayAcceptedDateColumnInEntryOverview($columns = array(), $formId = 0) {
+        $key = array_search(self::getCheckboxText($formId), $columns);
+        if (!empty($key) && isset($columns[$key])) {
+            $columns[$key] = apply_filters('wpgdprc_gforms_accepted_date_column_in_entry_overview', __('Privacy', WP_GDPR_C_SLUG), $columns[$key], $formId);
+        }
+        return $columns;
+    }
+
+    /**
      * @param string $value
      * @param int $formId
      * @param int $fieldId
      * @param array $entry
      * @return string
      */
-    function changeEntriesFieldValue($value = '', $formId = 0, $fieldId = 0, $entry = array()) {
+    public function displayAcceptedDateInEntryOverview($value = '', $formId = 0, $fieldId = 0, $entry = array()) {
         if (empty($value)) {
             $id = self::getFieldIdByFormId($formId);
-            if (!empty($id)) {
-                if ($fieldId === $id) {
-                    $value = (!empty($entry[$fieldId])) ? $entry[$fieldId] : __('Not accepted.', WP_GDPR_C_SLUG);
-                }
+            if (!empty($id) && $fieldId === $id) {
+                $value = (!empty($entry[$fieldId])) ? $entry[$fieldId] : __('Not accepted.', WP_GDPR_C_SLUG);
+                $value = apply_filters('wpgdprc_gforms_accepted_date_in_entry_overview', $value, $fieldId, $formId, $entry);
             }
         }
         return $value;
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      * @param array $entry
      * @return string
      */
-    public function changeFieldValue($value, $entry = array()) {
-        $id = self::getFieldIdByFormId($entry['form_id']);
-        if (!empty($id) && isset($value[$id])) {
-            if (empty($value[$id])) {
-                return __('Not accepted.', WP_GDPR_C_SLUG);
+    public function displayAcceptedDateInEntry($value, $entry = array()) {
+        $fieldId = self::getFieldIdByFormId($entry['form_id']);
+        if (!empty($fieldId) && isset($value[$fieldId])) {
+            if (empty($value[$fieldId])) {
+                $value = __('Not accepted.', WP_GDPR_C_SLUG);
             }
+            $value = apply_filters('wpgdprc_gforms_accepted_date_in_entry', $value, $fieldId, $entry);
         }
         return $value;
     }
@@ -133,38 +137,29 @@ class GForms {
      * @param \GF_Field $field
      * @return string
      */
-    public function saveFieldValue($value = '', $lead = array(), \GF_Field $field) {
+    public function addAcceptedDateToEntry($value = '', $lead = array(), \GF_Field $field) {
         if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
-            $date = date(get_option('date_format') . ' ' . get_option('time_format'), time());
-            $date = sprintf(__('Accepted on %s.', WP_GDPR_C_SLUG), $date);
-            $value = (empty($value)) ? __('Not accepted.', WP_GDPR_C_SLUG) : $date;
+            if (!empty($value)) {
+                $date = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), time());
+                $value = sprintf(__('Accepted on %s.', WP_GDPR_C_SLUG), $date);
+            } else {
+                $value = __('Not accepted.', WP_GDPR_C_SLUG);
+            }
+            $value = apply_filters('wpgdprc_gforms_accepted_date_to_entry', $value, $field, $lead);
         }
         return $value;
-    }
-
-    /**
-     * @param array $columns
-     * @param int $formId
-     * @return array
-     */
-    public function overrideColumn($columns = array(), $formId = 0) {
-        $key = array_search(self::getCheckboxText($formId), $columns);
-        if (!empty($key) && isset($columns[$key])) {
-            $columns[$key] = __('Privacy', WP_GDPR_C_SLUG);
-        }
-        return $columns;
     }
 
     /**
      * @param array $validation_result
      * @return array
      */
-    public function customValidation($validation_result = array()) {
+    public function overwriteValidationMessage($validation_result = array()) {
         $form = $validation_result['form'];
         foreach ($form['fields'] as &$field) {
             if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
                 if (isset($field['failed_validation']) && $field['failed_validation'] === true) {
-                    $field['validation_message'] = sprintf(self::getErrorMessage($form['id']));
+                    $field['validation_message'] = apply_filters('wpgdprc_gforms_overwrite_validation_message', self::getErrorMessage($form['id']), $field, $form);
                 }
             }
         }
@@ -251,5 +246,15 @@ class GForms {
             }
         }
         return 0;
+    }
+
+    /**
+     * @return null|GForms
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 }

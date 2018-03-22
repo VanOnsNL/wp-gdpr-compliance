@@ -35,31 +35,34 @@ class Integrations {
                 case WP::ID :
                     add_filter('comment_form_submit_field', array(WP::getInstance(), 'addField'), 999);
                     add_action('pre_comment_on_post', array(WP::getInstance(), 'checkPost'));
-                    add_action( 'comment_post', array(WP::getInstance(), 'updateMeta'));
+                    add_action('comment_post', array(WP::getInstance(), 'addAcceptedDateToCommentMeta'));
+                    add_filter('manage_edit-comments_columns', array(WP::getInstance(), 'displayAcceptedDateColumnInCommentOverview'));
+                    add_action('manage_comments_custom_column', array(WP::getInstance(), 'displayAcceptedDateInCommentOverview'), 10, 2);
                     break;
                 case CF7::ID :
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_forms', array(CF7::getInstance(), 'processIntegration'));
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_form_text', array(CF7::getInstance(), 'processIntegration'));
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . CF7::ID . '_error_message', array(CF7::getInstance(), 'processIntegration'));
                     add_action('wpcf7_init', array(CF7::getInstance(), 'addFormTagSupport'));
+                    add_filter('wpcf7_before_send_mail', array(CF7::getInstance(), 'changeMailBodyOutput'), 999);
                     add_filter('wpcf7_validate_wpgdprc', array(CF7::getInstance(), 'validateField'), 10, 2);
                     break;
                 case WC::ID :
                     add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
                     add_action('woocommerce_review_order_before_submit', array(WC::getInstance(), 'addField'), 999);
-                    add_action('woocommerce_checkout_update_order_meta', array(WC::getInstance(), 'updateMeta'));
-                    add_action('woocommerce_admin_order_data_after_billing_address', array(WC::getInstance(), 'displayMeta'));
+                    add_action('woocommerce_checkout_update_order_meta', array(WC::getInstance(), 'addAcceptedDateToOrderMeta'));
+                    add_action('woocommerce_admin_order_data_after_billing_address', array(WC::getInstance(), 'displayAcceptedDateInOrderData'));
                     break;
                 case GForms::ID :
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_forms', array(GForms::getInstance(), 'processIntegration'));
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_form_text', array(GForms::getInstance(), 'processIntegration'));
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_error_message', array(GForms::getInstance(), 'processIntegration'));
-                    add_filter('gform_entries_field_value', array(GForms::getInstance(), 'changeEntriesFieldValue'), 10, 4);
-                    add_filter('gform_get_field_value', array(GForms::getInstance(), 'changeFieldValue'), 10, 2);
+                    add_filter('gform_entries_field_value', array(GForms::getInstance(), 'displayAcceptedDateInEntryOverview'), 10, 4);
+                    add_filter('gform_get_field_value', array(GForms::getInstance(), 'displayAcceptedDateInEntry'), 10, 2);
                     foreach (GForms::getInstance()->getEnabledForms() as $formId) {
-                        add_filter('gform_save_field_value_' . $formId, array(GForms::getInstance(), 'saveFieldValue'), 10, 3);
-                        add_filter('gform_entry_list_columns_' . $formId, array(GForms::getInstance(), 'overrideColumn'), 10, 2);
-                        add_action('gform_validation_' . $formId, array(GForms::getInstance(), 'customValidation'));
+                        add_filter('gform_entry_list_columns_' . $formId, array(GForms::getInstance(), 'displayAcceptedDateColumnInEntryOverview'), 10, 2);
+                        add_filter('gform_save_field_value_' . $formId, array(GForms::getInstance(), 'addAcceptedDateToEntry'), 10, 3);
+                        add_action('gform_validation_' . $formId, array(GForms::getInstance(), 'overwriteValidationMessage'));
                     }
                     break;
             }
@@ -199,12 +202,18 @@ class Integrations {
      * @return string
      */
     public static function getCheckboxText($plugin = '', $insertPrivacyPolicyLink = true) {
-        $option = (!empty($plugin)) ? get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text') : '';
-        if (empty($option)) {
-            return __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
+        $checkboxText = '';
+        if (!empty($plugin)) {
+            $checkboxText = get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text');
+            $checkboxText = apply_filters('wpgdprc_' . $plugin . '_checkbox_text', $checkboxText);
+            if ($insertPrivacyPolicyLink === true) {
+                $checkboxText = self::insertPrivacyPolicyLink($checkboxText);
+            }
         }
-        $option = wp_kses($option, Helpers::getAllowedHTMLTags());
-        return ($insertPrivacyPolicyLink === true) ? self::insertPrivacyPolicyLink($option) : $option;
+        if (empty($checkboxText)) {
+            $checkboxText = __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
+        }
+        return apply_filters('wpgdprc_checkbox_text', wp_kses($checkboxText, Helpers::getAllowedHTMLTags()));
     }
 
     /**
@@ -212,11 +221,15 @@ class Integrations {
      * @return mixed
      */
     public static function getErrorMessage($plugin = '') {
-        $option = (!empty($plugin)) ? get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message') : '';
-        if (empty($option)) {
-            return __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
+        $errorMessage = '';
+        if (!empty($plugin)) {
+            $errorMessage = get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message');
+            $errorMessage = apply_filters('wpgdprc_' . $plugin . '_error_message', $errorMessage);
         }
-        return wp_kses($option, Helpers::getAllowedHTMLTags());
+        if (empty($errorMessage)) {
+            $errorMessage = __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
+        }
+        return apply_filters('wpgdprc_error_message', wp_kses($errorMessage, Helpers::getAllowedHTMLTags()));
     }
 
     /**
@@ -225,9 +238,19 @@ class Integrations {
      */
     public static function insertPrivacyPolicyLink($content = '') {
         $page = get_option(WP_GDPR_C_PREFIX . '_settings_privacy_policy_page');
-        $label = get_option(WP_GDPR_C_PREFIX . '_settings_privacy_policy_text');
-        if (!empty($page) && !empty($label)) {
-            $content = str_replace('%privacy_policy%', sprintf('<a target="_blank" href="%s">%s</a>', get_page_link($page), esc_html($label)), $content);
+        $text = get_option(WP_GDPR_C_PREFIX . '_settings_privacy_policy_text');
+        if (!empty($page) && !empty($text)) {
+            $link = apply_filters(
+                'wpgdprc_privacy_policy_link',
+                sprintf(
+                    '<a target="_blank" href="%s">%s</a>',
+                    get_page_link($page),
+                    esc_html($text)
+                ),
+                $page,
+                $text
+            );
+            $content = str_replace('%privacy_policy%', $link, $content);
         }
         return $content;
     }

@@ -14,16 +14,6 @@ class WP {
     private static $instance = null;
 
     /**
-     * @return null|WP
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    /**
      * @param string $submitField
      * @return string
      */
@@ -35,16 +25,55 @@ class WP {
     public function checkPost() {
         if (!isset($_POST['wpgdprc'])) {
             wp_die(
-                '<p>' . sprintf(__('<strong>ERROR</strong>: %s', WP_GDPR_C_SLUG), Integrations::getErrorMessage(self::ID)) . '</p>',
+                '<p>' . sprintf(
+                    __('<strong>ERROR</strong>: %s', WP_GDPR_C_SLUG),
+                    Integrations::getErrorMessage(self::ID)
+                ) . '</p>',
                 __('Comment Submission Failure'),
                 array('back_link' => true)
             );
         }
     }
 
-    public function updateMeta( $comment_id ) {
-        if (isset($_POST['wpgdprc']) && $comment_id != 0) {
-            add_comment_meta($comment_id, '_gdpr-c', time());
+    /**
+     * @param int $commentId
+     */
+    public function addAcceptedDateToCommentMeta($commentId = 0) {
+        if (isset($_POST['wpgdprc']) && !empty($commentId)) {
+            add_comment_meta($commentId, '_wpgdprc', time());
         }
+    }
+
+    /**
+     * @param array $columns
+     * @return array
+     */
+    public function displayAcceptedDateColumnInCommentOverview($columns = array()) {
+        $columns['wpgdprc'] = apply_filters('wpgdprc_woocommerce_accepted_date_column_in_comment_overview', __('GDPR Accepted On', WP_GDPR_C_SLUG));
+        return $columns;
+    }
+
+    /**
+     * @param string $column
+     * @param int $commentId
+     * @return string
+     */
+    public function displayAcceptedDateInCommentOverview($column = '', $commentId = 0) {
+        if ($column === 'wpgdprc') {
+            $date = get_comment_meta($commentId, '_wpgdprc', true);
+            $value = (!empty($date)) ? date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $date) : __('Not accepted.', WP_GDPR_C_SLUG);
+            echo apply_filters('wpgdprc_woocommerce_accepted_date_in_comment_overview', $value, $commentId);
+        }
+        return $column;
+    }
+
+    /**
+     * @return null|WP
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 }

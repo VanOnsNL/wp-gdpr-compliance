@@ -15,28 +15,16 @@ class WC {
     private static $instance = null;
 
     /**
-     * @return null|WC
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    /**
      * Add WP GDPR field before submit button
      */
     public function addField() {
-        woocommerce_form_field(
-            'wpgdprc',
-            array(
-                'type' => 'checkbox',
-                'class' => array('wpgdprc-checkbox'),
-                'label' => Integrations::getCheckboxText(self::ID),
-                'required' => true,
-            )
+        $args = array(
+            'type' => 'checkbox',
+            'class' => array('wpgdprc-checkbox'),
+            'label' => Integrations::getCheckboxText(self::ID),
+            'required' => true,
         );
+        woocommerce_form_field('wpgdprc', apply_filters('wpgdprc_woocommerce_field_args', $args));
     }
 
     /**
@@ -44,25 +32,42 @@ class WC {
      */
     public function checkPost() {
         if (!isset($_POST['wpgdprc'])) {
-            wc_add_notice(sprintf(Integrations::getErrorMessage(self::ID)), 'error');
+            wc_add_notice(Integrations::getErrorMessage(self::ID), 'error');
         }
     }
 
     /**
-     * @param int $order_id
+     * @param int $orderId
      */
-    public function updateMeta($order_id = 0) {
-        if (isset($_POST['wpgdprc']) && $order_id != 0) {
-            update_post_meta($order_id, '_wpgdprc', time());
+    public function addAcceptedDateToOrderMeta($orderId = 0) {
+        if (isset($_POST['wpgdprc']) && !empty($orderId)) {
+            update_post_meta($orderId, '_wpgdprc', time());
         }
     }
 
-    public function displayMeta(\WC_Order $order) {
+    /**
+     * @param \WC_Order $order
+     */
+    public function displayAcceptedDateInOrderData(\WC_Order $order) {
+        $label = __('GDPR accepted on:', WP_GDPR_C_SLUG);
         $date = get_post_meta($order->get_id(), '_wpgdprc', true);
-        $date = time();
-        if (!empty($date)) {
-            $date = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $date);
-            echo sprintf('<p><strong>%s</strong><br />%s</p>', __('GDPR accepted on:', WP_GDPR_C_SLUG), $date);
+        $value = (!empty($date)) ? date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $date) : __('Not accepted.', WP_GDPR_C_SLUG);
+        echo apply_filters(
+            'wpgdprc_woocommerce_accepted_date_in_order_data',
+            sprintf('<p><strong>%s</strong><br />%s</p>', $label, $value),
+            $label,
+            $value,
+            $order
+        );
+    }
+
+    /**
+     * @return null|WC
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
         }
+        return self::$instance;
     }
 }

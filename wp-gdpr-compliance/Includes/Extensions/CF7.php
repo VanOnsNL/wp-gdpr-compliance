@@ -27,13 +27,15 @@ class CF7 {
 
     public function processIntegration() {
         $this->removeFormTagFromForms();
+        $this->removeAcceptedDateFromForms();
         if (Helpers::isEnabled(self::ID)) {
             $this->addFormTagToForms();
+            $this->addAcceptedDateToForms();
         }
     }
 
     /**
-     * Add [WPGDPRC] string to enabled forms
+     * Add [wpgdprc] string to enabled forms
      */
     public function addFormTagToForms() {
         foreach ($this->getEnabledForms() as $formId) {
@@ -56,25 +58,62 @@ class CF7 {
     }
 
     /**
-     * Remove [WPGDPRC] string from disabled forms
+     * Add [wpgdprc] string to enabled forms
+     */
+    public function addAcceptedDateToForms() {
+        foreach ($this->getEnabledForms() as $formId) {
+            $output = get_post_meta($formId, '_mail', true);
+            if (!empty($output)) {
+                $tag = '[wpgdprc]';
+                $body = $output['body'];
+                preg_match('/(\[wpgdprc\])/', $body, $matches);
+                if (empty($matches)) {
+                    $pattern = '/(--)/';
+                    preg_match($pattern, $body, $matches);
+                    if (!empty($matches)) {
+                        $body = preg_replace($pattern, "$tag\n\n" . $matches[0], $body);
+                    } else {
+                        $body = $body . "\n\n$tag";
+                    }
+                }
+                $output['body'] = $body;
+                update_post_meta($formId, '_mail', $output);
+            }
+        }
+    }
+
+    /**
+     * Remove [wpgdprc] string from disabled forms
      */
     public function removeFormTagFromForms() {
-        foreach (CF7::getInstance()->getForms() as $form) {
-            $output = get_post_meta($form, '_form', true);
+        foreach (CF7::getInstance()->getForms() as $formId) {
+            $output = get_post_meta($formId, '_form', true);
             $pattern = '/(\n\n\[wpgdprc?.*\])/';
             preg_match($pattern, $output, $matches);
             if (!empty($matches)) {
                 $output = preg_replace($pattern, '', $output);
-                update_post_meta($form, '_form', $output);
+                update_post_meta($formId, '_form', $output);
+            }
+        }
+    }
+
+    /**
+     * Remove [wpgdprc] string from disabled forms
+     */
+    public function removeAcceptedDateFromForms() {
+        foreach (CF7::getInstance()->getForms() as $formId) {
+            $output = get_post_meta($formId, '_mail', true);
+            $pattern = '/(\n\n\[wpgdprc\])/';
+            preg_match($pattern, $output['body'], $matches);
+            if (!empty($matches)) {
+                $output['body'] = preg_replace($pattern, '', $output['body']);
+                update_post_meta($formId, '_mail', $output);
             }
         }
     }
 
     public function addFormTagSupport() {
-        wpcf7_add_form_tag(
-            'wpgdprc',
-            array($this, 'addFormTagHandler')
-        );
+        wpcf7_add_form_tag('wpgdprc', array($this, 'addFormTagHandler'));
     }
 
     /**
@@ -135,13 +174,41 @@ class CF7 {
     }
 
     /**
+     * @param \WPCF7_ContactForm $contactForm
+     * @return \WPCF7_ContactForm
+     */
+    public function changeMailBodyOutput(\WPCF7_ContactForm $contactForm) {
+        $mail = $contactForm->prop('mail');
+        if (!empty($mail['body'])) {
+            $submission = \WPCF7_Submission::get_instance();
+            if (!empty($submission)) {
+                $data = $submission->get_posted_data();
+                if (isset($data['wpgdprc']) && $data['wpgdprc'] == 1) {
+                    $value = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), time());
+                } else {
+                    $value = __('Not accepted.', WP_GDPR_C_SLUG);
+                }
+                $output = apply_filters(
+                    'wpgdprc_cf7_mail_body_output',
+                    __('GDPR accepted on:', WP_GDPR_C_SLUG) . "\n$value",
+                    $data,
+                    $submission
+                );
+                $mail['body'] = str_replace('[wpgdprc]', $output, $mail['body']);
+                $contactForm->set_properties(array('mail' => $mail));
+            }
+        }
+        return $contactForm;
+    }
+
+    /**
      * @param \WPCF7_Validation $result
      * @param \WPCF7_FormTag|array $tag
      * @return \WPCF7_Validation
      */
     public function validateField(\WPCF7_Validation $result, $tag) {
         $tag = (gettype($tag) == 'array') ? new \WPCF7_FormTag($tag) : $tag;
-        $formId = (isset($_POST['_wpcf7']) && is_numeric($_POST['_wpcf7'])) ? (int) $_POST['_wpcf7'] : 0;
+        $formId = (isset($_POST['_wpcf7']) && is_numeric($_POST['_wpcf7'])) ? (int)$_POST['_wpcf7'] : 0;
         switch ($tag->type) {
             case 'wpgdprc' :
                 $tag->name = 'wpgdprc';
