@@ -2,6 +2,7 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
+use WPGDPRC\Includes\Helpers;
 use WPGDPRC\Includes\Integrations;
 
 /**
@@ -51,10 +52,10 @@ class WC {
     public function displayAcceptedDateInOrderData(\WC_Order $order) {
         $label = __('GDPR accepted on:', WP_GDPR_C_SLUG);
         $date = get_post_meta($order->get_id(), '_wpgdprc', true);
-        $value = (!empty($date)) ? date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $date) : __('Not accepted.', WP_GDPR_C_SLUG);
+        $value = (!empty($date)) ? Helpers::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), $date) : __('Not accepted.', WP_GDPR_C_SLUG);
         echo apply_filters(
             'wpgdprc_woocommerce_accepted_date_in_order_data',
-            sprintf('<p><strong>%s</strong><br />%s</p>', $label, $value),
+            sprintf('<p class="form-field form-field-wide wpgdprc-accepted-date"><strong>%s</strong><br />%s</p>', $label, $value),
             $label,
             $value,
             $order

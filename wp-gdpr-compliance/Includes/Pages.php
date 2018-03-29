@@ -46,7 +46,7 @@ class Pages {
         $optionNamePrivacyPolicyPage = WP_GDPR_C_PREFIX . '_settings_privacy_policy_page';
         $optionNamePrivacyPolicyText = WP_GDPR_C_PREFIX . '_settings_privacy_policy_text';
         $privacyPolicyPage = get_option($optionNamePrivacyPolicyPage);
-        $privacyPolicyText = get_option($optionNamePrivacyPolicyText);
+        $privacyPolicyText = esc_html(Integrations::getPrivacyPolicyText());
         $daysLeftToComply = Helpers::getDaysLeftToComply();
         ?>
         <div class="wrap">
@@ -81,7 +81,7 @@ class Pages {
                                                     <div class="wpgdprc-checkbox">
                                                         <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $optionName; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
                                                         <label for="<?php echo $optionName; ?>"><?php echo $plugin['name']; ?></label>
-                                                        <span class="wpgdprc-instructions"><?php _e('Enable compliance:', WP_GDPR_C_SLUG); ?></span>
+                                                        <span class="wpgdprc-instructions"><?php _e('Enable:', WP_GDPR_C_SLUG); ?></span>
                                                         <div class="wpgdprc-switch" aria-hidden="true">
                                                             <div class="wpgdprc-switch-label">
                                                                 <div class="wpgdprc-switch-inner"></div>
@@ -179,11 +179,11 @@ class Pages {
                 </form>
 
                 <div class="wpgdprc-description">
-                    <p><?php printf(__('This plugin assists website and webshop owners to comply with European privacy regulations (known as GDPR). By May 24th, 2018 your site or shop has to comply to avoid large fines. The regulation can be read here: %s.', WP_GDPR_C_SLUG), '<a target="_blank" href="//www.eugdpr.org/the-regulation.html">' . __('GDPR Key Changes', WP_GDPR_C_SLUG) . '</a>'); ?></p>
-                    <p><?php printf(__('%s supports: %s.', WP_GDPR_C_SLUG), $pluginData['Name'], implode(', ', Integrations::getSupportedIntegrationsLabels())); ?></p>
+                    <p><?php printf(__('This plugin assists website and webshop owners to comply with European privacy regulations known as GDPR. By May 24th, 2018 your site or shop has to comply to avoid large fines. The regulation can be read here: %s.', WP_GDPR_C_SLUG), '<a target="_blank" href="//www.eugdpr.org/the-regulation.html">' . __('GDPR Key Changes', WP_GDPR_C_SLUG) . '</a>'); ?></p>
+                    <p><?php printf(__('%s currently supports %s.', WP_GDPR_C_SLUG), $pluginData['Name'], implode(', ', Integrations::getSupportedIntegrationsLabels())); ?></p>
                 </div>
 
-                <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background. We assist website and webshop owners in being compliant with the General Data Protection Regulation (GDPR) but recommend contacting a law firm for rock solid legal advice.', WP_GDPR_C_SLUG); ?></p>
+                <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background please contact a law firm for rock solid legal advice.', WP_GDPR_C_SLUG); ?></p>
 
                 <?php if ($daysLeftToComply > 0) : ?>
                     <div class="wpgdprc-countdown">

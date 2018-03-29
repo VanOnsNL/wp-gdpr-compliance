@@ -140,7 +140,7 @@ class GForms {
     public function addAcceptedDateToEntry($value = '', $lead = array(), \GF_Field $field) {
         if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
             if (!empty($value)) {
-                $date = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), time());
+                $date = Helpers::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), time());
                 $value = sprintf(__('Accepted on %s.', WP_GDPR_C_SLUG), $date);
             } else {
                 $value = __('Not accepted.', WP_GDPR_C_SLUG);
@@ -159,7 +159,7 @@ class GForms {
         foreach ($form['fields'] as &$field) {
             if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
                 if (isset($field['failed_validation']) && $field['failed_validation'] === true) {
-                    $field['validation_message'] = apply_filters('wpgdprc_gforms_overwrite_validation_message', self::getErrorMessage($form['id']), $field, $form);
+                    $field['validation_message'] = apply_filters('wpgdprc_gforms_validation_message', self::getErrorMessage($form['id']), $field, $form);
                 }
             }
         }
@@ -211,8 +211,9 @@ class GForms {
         if (!empty($formId)) {
             $texts = $this->getFormTexts();
             if (!empty($texts[$formId])) {
-                $result = wp_kses($texts[$formId], Helpers::getAllowedHTMLTags());
-                return ($insertPrivacyPolicyLink === true) ? Integrations::insertPrivacyPolicyLink($result) : $result;
+                $result = wp_kses($texts[$formId], Helpers::getAllowedHTMLTags(self::ID));
+                $result = ($insertPrivacyPolicyLink === true) ? Integrations::insertPrivacyPolicyLink($result) : $result;
+                return apply_filters('wpgdprc_gforms_checkbox_text', $result, $formId);
             }
         }
         return Integrations::getCheckboxText();
@@ -226,7 +227,8 @@ class GForms {
         if (!empty($formId)) {
             $errors = $this->getFormErrorMessages();
             if (!empty($errors[$formId])) {
-                return wp_kses($errors[$formId], Helpers::getAllowedHTMLTags());
+                $result = wp_kses($errors[$formId], Helpers::getAllowedHTMLTags(self::ID));
+                return apply_filters('wpgdprc_gforms_error_message', $result, $formId);
             }
         }
         return Integrations::getErrorMessage();

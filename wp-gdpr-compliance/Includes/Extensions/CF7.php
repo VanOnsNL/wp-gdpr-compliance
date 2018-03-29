@@ -184,7 +184,7 @@ class CF7 {
             if (!empty($submission)) {
                 $data = $submission->get_posted_data();
                 if (isset($data['wpgdprc']) && $data['wpgdprc'] == 1) {
-                    $value = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), time());
+                    $value = Helpers::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), time());
                 } else {
                     $value = __('Not accepted.', WP_GDPR_C_SLUG);
                 }
@@ -264,7 +264,8 @@ class CF7 {
             $texts = $this->getFormTexts();
             if (!empty($texts[$formId])) {
                 $result = esc_html($texts[$formId]);
-                return ($insertPrivacyPolicyLink === true) ? Integrations::insertPrivacyPolicyLink($result) : $result;
+                $result = ($insertPrivacyPolicyLink === true) ? Integrations::insertPrivacyPolicyLink($result) : $result;
+                return apply_filters('wpgdprc_cf7_checkbox_text', $result, $formId);
             }
         }
         return Integrations::getCheckboxText();
@@ -278,7 +279,8 @@ class CF7 {
         if (!empty($formId)) {
             $errors = $this->getFormErrorMessages();
             if (!empty($errors[$formId])) {
-                return esc_html($errors[$formId]);
+                $result = esc_html($errors[$formId]);
+                return apply_filters('wpgdprc_cf7_error_message', $result, $formId);
             }
         }
         return Integrations::getErrorMessage();

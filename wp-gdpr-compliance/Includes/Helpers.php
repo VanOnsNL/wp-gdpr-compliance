@@ -2,6 +2,8 @@
 
 namespace WPGDPRC\Includes;
 
+use WPGDPRC\Includes\Extensions\CF7;
+
 /**
  * Class Helpers
  * @package WPGDPRC\Includes
@@ -28,45 +30,69 @@ class Helpers {
     }
 
     /**
-     * @return array
+     * @param string $plugin
+     * @return mixed
      */
-    public static function getAllowedHTMLTags() {
-        return array(
-            'a' => array(
-                'class' => array(),
-                'href' => array(),
-                'hreflang' => array(),
-                'title' => array(),
-                'target' => array(),
-                'rel' => array(),
-            ),
-            'br' => array(),
-            'em' => array(),
-            'strong' => array(),
-            'u' => array(),
-            'strike' => array(),
-            'span' => array(
-                'class' => array(),
-            ),
-        );
+    public static function getAllowedHTMLTags($plugin = '') {
+        switch ($plugin) {
+            case CF7::ID :
+                $output = '';
+                break;
+            default :
+                $output = array(
+                    'a' => array(
+                        'class' => array(),
+                        'href' => array(),
+                        'hreflang' => array(),
+                        'title' => array(),
+                        'target' => array(),
+                        'rel' => array(),
+                    ),
+                    'br' => array(),
+                    'em' => array(),
+                    'strong' => array(),
+                    'u' => array(),
+                    'strike' => array(),
+                    'span' => array(
+                        'class' => array(),
+                    ),
+                );
+                break;
+        }
+        return apply_filters('wpgdprc_allowed_html_tags', $output, $plugin);
     }
 
     /**
+     * @param string $plugin
      * @return string
      */
-    public static function getAllowedHTMLTagsOutput() {
-        $tags = self::getAllowedHTMLTags();
-        $output = '%privacy_policy%';
-        foreach ($tags as $tag => $attributes) {
-            $output .= ' <' . $tag;
-            if (!empty($attributes)) {
-                foreach ($attributes as $attribute => $data) {
-                    $output .= ' ' . $attribute . '=""';
+    public static function getAllowedHTMLTagsOutput($plugin = '') {
+        $allowedTags = self::getAllowedHTMLTags($plugin);
+        $output = '<div class="wpgdprc-allowed-tags">';
+        if (!empty($allowedTags)) {
+            $tags = '%privacy_policy%';
+            foreach ($allowedTags as $tag => $attributes) {
+                $tags .= ' <' . $tag;
+                if (!empty($attributes)) {
+                    foreach ($attributes as $attribute => $data) {
+                        $tags .= ' ' . $attribute . '=""';
+                    }
                 }
+                $tags .= '>';
             }
-            $output .= '>';
+            $output .= sprintf(
+                __('You can use: %s', WP_GDPR_C_SLUG),
+                sprintf('<pre>%s</pre>', esc_html($tags))
+            );
+        } else {
+            $output .= sprintf(
+                '<strong>%s:</strong> %s',
+                strtoupper(__('Note', WP_GDPR_C_SLUG)),
+                __('No HTML allowed due to plugin limitations.', WP_GDPR_C_SLUG)
+            );
         }
-        return '<div class="wpgdprc-allowed-tags">' . sprintf(__('You can use: %s', WP_GDPR_C_SLUG), '<pre>' . esc_html($output) . '</pre>') . '</div>';
+        $output .= '</div>';
+        return $output;
     }
 
     /**
@@ -110,18 +136,6 @@ class Helpers {
     }
 
     /**
-     * @param bool $return_default
-     * @return mixed
-     */
-    public static function getErrorMessage($return_default = true) {
-        $option = get_option(WP_GDPR_C_PREFIX . '_advanced_error');
-        if (empty($option) && $return_default === true) {
-            return __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
-        }
-        return esc_html($option);
-    }
-
-    /**
      * @param string $plugin
      * @param string $type
      * @return bool
@@ -137,6 +151,8 @@ class Helpers {
         $output = array();
 
         $activePlugins = (array)get_option('active_plugins', array());
+
+        // Catch network activated plugins
         $activeNetworkPlugins = (array)get_site_option('active_sitewide_plugins', array());
         if (!empty($activeNetworkPlugins)) {
             foreach ($activeNetworkPlugins as $file => $timestamp) {
@@ -197,5 +213,17 @@ class Helpers {
             $data = sanitize_text_field($data);
         }
         return $data;
+    }
+
+    /**
+     * @param string $format
+     * @param int $timestamp
+     * @return string
+     */
+    public static function localDateFormat($format = '', $timestamp = 0) {
+        $date = new \DateTime(null, new \DateTimeZone(get_option('timezone_string', 'UTC')));
+        $date->setTimestamp($timestamp);
+        $date = new \DateTime($date->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
+        return date_i18n($format, $date->getTimestamp(), true);
     }
 }

@@ -4,7 +4,7 @@ Tags: gdpr, law, regulations, compliance, data, protection, privacy, data protec
 Requires at least: 4.5
 Tested up to: 4.9.4
 Requires PHP: 5.2.4
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,9 +12,13 @@ This plugin assists website owners to comply with European privacy regulations (
 
 == Description ==
 
-This plugin assists website and webshop owners to comply with European privacy regulations (known as GDPR). By May 24th, 2018 your site or shop has to comply to avoid large fines.
+ACTIVATION THIS PLUGIN DOES NOT GUARANTEE YOU FULLY COMPLY WITH GDPR. PLEASE CONTACT A GDPR CONSULTANT OR LAW FIRM TO ASSESS NECESSARY MEASURES.
+
+This plugin assists website and webshop owners to comply with European privacy regulations known as GDPR. By May 24th, 2018 your site or shop has to comply to avoid large fines.
 
 WP GDPR Compliance currently supports Contact Form 7 (>= 4.6), Gravity Forms (>= 1.9), WooCommerce (>= 2.5.0) and WordPress Comments. Additional plugin support will follow soon.
+
+We constantly update this plugin to take care of more GDPR related issues. To check our development roadmap please visit [wpgdprc.com](https://www.wpgdprc.com/roadmap/ "Roadmap").
 
 == Installation ==
 
@@ -28,10 +32,19 @@ You'll find answers to many of your questions on [wpgdprc.com](https://www.wpgdp
 
 == Screenshots ==
 
-1. We provide you with tips based on the private data you currently collect in order to comply with the GDPR regulations.
-2. Automatically add GDPR checkboxes to some of your existing plugins, such as Contact Form 7, Gravity Forms, WooCommerce or WordPress Comments.
+1. Automatically add GDPR checkboxes to some of your existing plugins, such as Contact Form 7, Gravity Forms, WooCommerce or WordPress Comments.
+2. We provide you with tips based on the private data you currently collect in order to comply with the GDPR regulations.
 
 == Changelog ==
+
+= 1.2.3 =
+*Release date: March 29th, 2018*
+* Storage of explicit consent timestamp
+* Return of the settings tab
+* Added ability to include your privacy policy page
+* Added a couple of apply_filters()
+* Small styling changes
+* Added .POT file to translate this plugin (Thanks for translating!)
 
 = 1.2.2 =
 *Release date: March 2nd, 2018*

@@ -51,7 +51,7 @@ class Integrations {
                     add_action('woocommerce_checkout_process', array(WC::getInstance(), 'checkPost'));
                     add_action('woocommerce_review_order_before_submit', array(WC::getInstance(), 'addField'), 999);
                     add_action('woocommerce_checkout_update_order_meta', array(WC::getInstance(), 'addAcceptedDateToOrderMeta'));
-                    add_action('woocommerce_admin_order_data_after_billing_address', array(WC::getInstance(), 'displayAcceptedDateInOrderData'));
+                    add_action('woocommerce_admin_order_data_after_order_details', array(WC::getInstance(), 'displayAcceptedDateInOrderData'));
                     break;
                 case GForms::ID :
                     add_action('update_option_' . WP_GDPR_C_PREFIX . '_integrations_' . GForms::ID . '_forms', array(GForms::getInstance(), 'processIntegration'));
@@ -129,6 +129,7 @@ class Integrations {
                         $output .= '<label for="' . $errorSettingId . '">' . __('Error message', WP_GDPR_C_SLUG) . '</label>';
                         $output .= '<input type="text" name="' . $optionNameErrorMessage . '[' . $form . ']' . '" class="regular-text" id="' . $errorSettingId . '" placeholder="' . $errorMessage . '" value="' . $errorMessage . '" />';
                         $output .= '</p>';
+                        $output .= Helpers::getAllowedHTMLTagsOutput($plugin);
                         $output .= '</li>';
                     }
                     $output .= '</ul>';
@@ -165,7 +166,7 @@ class Integrations {
                         $output .= '<label for="' . $errorSettingId . '">' . __('Error message', WP_GDPR_C_SLUG) . '</label>';
                         $output .= '<input type="text" name="' . $optionNameErrorMessage . '[' . $form['id'] . ']' . '" class="regular-text" id="' . $errorSettingId . '" placeholder="' . $errorMessage . '" value="' . $errorMessage . '" />';
                         $output .= '</p>';
-                        $output .= Helpers::getAllowedHTMLTagsOutput();
+                        $output .= Helpers::getAllowedHTMLTagsOutput($plugin);
                         $output .= '</li>';
                     }
                     $output .= '</ul>';
@@ -188,7 +189,7 @@ class Integrations {
                 $output .= '<label for="' . $optionNameErrorMessage . '">' . __('Error message', WP_GDPR_C_SLUG) . '</label>';
                 $output .= '<input type="text" name="' . $optionNameErrorMessage . '" class="regular-text" id="' . $optionNameErrorMessage . '" placeholder="' . $errorMessage . '" value="' . $errorMessage . '" />';
                 $output .= '</p>';
-                $output .= Helpers::getAllowedHTMLTagsOutput();
+                $output .= Helpers::getAllowedHTMLTagsOutput($plugin);
                 $output .= '</li>';
                 $output .= '</ul>';
                 break;
@@ -202,18 +203,17 @@ class Integrations {
      * @return string
      */
     public static function getCheckboxText($plugin = '', $insertPrivacyPolicyLink = true) {
-        $checkboxText = '';
+        $output = '';
         if (!empty($plugin)) {
-            $checkboxText = get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text');
-            $checkboxText = apply_filters('wpgdprc_' . $plugin . '_checkbox_text', $checkboxText);
-            if ($insertPrivacyPolicyLink === true) {
-                $checkboxText = self::insertPrivacyPolicyLink($checkboxText);
-            }
+            $output = get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_text');
+            $output = ($insertPrivacyPolicyLink === true) ? self::insertPrivacyPolicyLink($output) : $output;
+            $output = apply_filters('wpgdprc_' . $plugin . '_checkbox_text', $output);
         }
-        if (empty($checkboxText)) {
-            $checkboxText = __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
+        if (empty($output)) {
+            $output = __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
         }
-        return apply_filters('wpgdprc_checkbox_text', wp_kses($checkboxText, Helpers::getAllowedHTMLTags()));
+        $output = wp_kses($output, Helpers::getAllowedHTMLTags($plugin));
+        return apply_filters('wpgdprc_checkbox_text', $output);
     }
 
     /**
@@ -221,15 +221,26 @@ class Integrations {
      * @return mixed
      */
     public static function getErrorMessage($plugin = '') {
-        $errorMessage = '';
+        $output = '';
         if (!empty($plugin)) {
-            $errorMessage = get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message');
-            $errorMessage = apply_filters('wpgdprc_' . $plugin . '_error_message', $errorMessage);
+            $output = get_option(WP_GDPR_C_PREFIX . '_integrations_' . $plugin . '_error_message');
+            $output = apply_filters('wpgdprc_' . $plugin . '_error_message', $output);
         }
-        if (empty($errorMessage)) {
-            $errorMessage = __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
+        if (empty($output)) {
+            $output = __('Please accept the privacy checkbox.', WP_GDPR_C_SLUG);
         }
-        return apply_filters('wpgdprc_error_message', wp_kses($errorMessage, Helpers::getAllowedHTMLTags()));
+        return apply_filters('wpgdprc_error_message', wp_kses($output, Helpers::getAllowedHTMLTags($plugin)));
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function getPrivacyPolicyText() {
+        $output = get_option(WP_GDPR_C_PREFIX . '_settings_privacy_policy_text');
+        if (empty($output)) {
+            $output = __('Privacy Policy', WP_GDPR_C_SLUG);
+        }
+        return apply_filters('wpgdprc_privacy_policy_text', $output);
     }
 
     /**
@@ -238,7 +249,7 @@ class Integrations {
      */
     public static function insertPrivacyPolicyLink($content = '') {
         $page = get_option(WP_GDPR_C_PREFIX . '_settings_privacy_policy_page');
-        $text = get_option(WP_GDPR_C_PREFIX . '_settings_privacy_policy_text');
+        $text = Integrations::getPrivacyPolicyText();
         if (!empty($page) && !empty($text)) {
             $link = apply_filters(
                 'wpgdprc_privacy_policy_link',

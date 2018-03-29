@@ -2,6 +2,7 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
+use WPGDPRC\Includes\Helpers;
 use WPGDPRC\Includes\Integrations;
 
 /**
@@ -61,7 +62,7 @@ class WP {
     public function displayAcceptedDateInCommentOverview($column = '', $commentId = 0) {
         if ($column === 'wpgdprc') {
             $date = get_comment_meta($commentId, '_wpgdprc', true);
-            $value = (!empty($date)) ? date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $date) : __('Not accepted.', WP_GDPR_C_SLUG);
+            $value = (!empty($date)) ? Helpers::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), $date) : __('Not accepted.', WP_GDPR_C_SLUG);
             echo apply_filters('wpgdprc_woocommerce_accepted_date_in_comment_overview', $value, $commentId);
         }
         return $column;

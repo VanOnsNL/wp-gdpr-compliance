@@ -441,12 +441,14 @@ span.wpgdprc-instructions {
 
 @media screen and (min-width: 768px) {
     .wpgdprc-setting label {
+        width: 100%;
         max-width: 30%;
     }
     div.wpgdprc-allowed-tags,
     .wpgdprc-setting input,
     .wpgdprc-setting select {
         float: right;
+        width: 100%;
         max-width: 70%;
     }
 }
