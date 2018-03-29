@@ -162,6 +162,7 @@ class Pages {
                                     <label for="<?php echo $optionNamePrivacyPolicyPage; ?>"><?php _e('Privacy Policy', WP_GDPR_C_SLUG); ?></label>
                                     <?php
                                     wp_dropdown_pages(array(
+                                        'show_option_none' => __('Select an option', WP_GDPR_C_SLUG),
                                         'name' => $optionNamePrivacyPolicyPage,
                                         'selected' => $privacyPolicyPage
                                     ));

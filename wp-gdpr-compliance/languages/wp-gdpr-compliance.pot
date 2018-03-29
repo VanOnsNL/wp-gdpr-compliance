@@ -247,11 +247,15 @@ msgstr ""
 msgid "Privacy Policy"
 msgstr ""
 
-#: Includes/Pages.php:171
+#: Includes/Pages.php:165
+msgid "Select an option"
+msgstr ""
+
+#: Includes/Pages.php:172
 msgid "Link text"
 msgstr ""
 
-#: Includes/Pages.php:182
+#: Includes/Pages.php:183
 #, php-format
 msgid ""
 "This plugin assists website and webshop owners to comply with European "
@@ -259,27 +263,27 @@ msgid ""
 "to comply to avoid large fines. The regulation can be read here: %s."
 msgstr ""
 
-#: Includes/Pages.php:182
+#: Includes/Pages.php:183
 msgid "GDPR Key Changes"
 msgstr ""
 
-#: Includes/Pages.php:183
+#: Includes/Pages.php:184
 #, php-format
 msgid "%s currently supports %s."
 msgstr ""
 
-#: Includes/Pages.php:186
+#: Includes/Pages.php:187
 msgid ""
 "Disclaimer: The creators of this plugin do not have a legal background "
 "please contact a law firm for rock solid legal advice."
 msgstr ""
 
-#: Includes/Pages.php:192
+#: Includes/Pages.php:193
 #, php-format
 msgid "You have %s left to comply with GDPR."
 msgstr ""
 
-#: Includes/Pages.php:192
+#: Includes/Pages.php:193
 #, php-format
 msgid "%s day"
 msgstr ""

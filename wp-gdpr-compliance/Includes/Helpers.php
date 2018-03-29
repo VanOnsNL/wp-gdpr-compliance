@@ -221,8 +221,24 @@ class Helpers {
      * @return string
      */
     public static function localDateFormat($format = '', $timestamp = 0) {
-        $date = new \DateTime(null, new \DateTimeZone(get_option('timezone_string', 'UTC')));
-        $date->setTimestamp($timestamp);
+        $gmtOffset = get_option('gmt_offset', '');
+        if ($gmtOffset !== '') {
+            $negative = ($gmtOffset < 0);
+            $gmtOffset = str_replace('-', '', $gmtOffset);
+            $hour = floor($gmtOffset);
+            $minutes = ($gmtOffset - $hour) * 60;
+            if ($negative) {
+                $hour = '-' . $hour;
+                $minutes = '-' . $minutes;
+            }
+            $date = new \DateTime(null, new \DateTimeZone('UTC'));
+            $date->setTimestamp($timestamp);
+            $date->modify($hour . ' hour');
+            $date->modify($minutes . ' minutes');
+        } else {
+            $date = new \DateTime(null, new \DateTimeZone(get_option('timezone_string', 'UTC')));
+            $date->setTimestamp($timestamp);
+        }
         $date = new \DateTime($date->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
         return date_i18n($format, $date->getTimestamp(), true);
     }
