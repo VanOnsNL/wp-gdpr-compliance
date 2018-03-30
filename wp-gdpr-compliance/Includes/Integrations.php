@@ -16,16 +16,6 @@ class Integrations {
     private static $instance = null;
 
     /**
-     * @return null|Integrations
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    /**
      * Integrations constructor.
      */
     public function __construct() {
@@ -325,5 +315,15 @@ class Integrations {
             $output[] = $supportedIntegration['name'];
         }
         return $output;
+    }
+
+    /**
+     * @return null|Integrations
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 }

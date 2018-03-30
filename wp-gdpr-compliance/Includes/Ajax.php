@@ -10,16 +10,6 @@ class Ajax {
     /** @var null */
     private static $instance = null;
 
-    /**
-     * @return null|Ajax
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     public function processAction() {
         check_ajax_referer('wpgdprc', 'security');
 
@@ -101,5 +91,15 @@ class Ajax {
             $value = esc_html($value);
         }
         return $value;
+    }
+
+    /**
+     * @return null|Ajax
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 }

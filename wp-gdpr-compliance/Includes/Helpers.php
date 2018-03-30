@@ -13,16 +13,6 @@ class Helpers {
     private static $instance = null;
 
     /**
-     * @return null|Helpers
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    /**
      * @return array
      */
     public static function getPluginData() {
@@ -241,5 +231,37 @@ class Helpers {
         }
         $date = new \DateTime($date->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
         return date_i18n($format, $date->getTimestamp(), true);
+    }
+
+    /**
+     * @param string $emailAddress
+     * @param string $type
+     * @return array
+     */
+    public static function getUserDataByEmailAddress($emailAddress = '', $type = '') {
+        $output = array();
+        if (!empty($emailAddress) && !empty($type)) {
+            global $wpdb;
+            switch ($type) {
+                case 'comments' :
+                    if (is_multisite()) {
+                        $sites = get_sites();
+                        var_dump($sites);
+                    }
+                    $query = "SELECT * FROM ";
+                    break;
+            }
+        }
+        return $output;
+    }
+
+    /**
+     * @return null|Helpers
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 }

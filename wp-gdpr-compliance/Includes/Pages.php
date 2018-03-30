@@ -10,16 +10,6 @@ class Pages {
     /** @var null */
     private static $instance = null;
 
-    /**
-     * @return null|Pages
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     public function registerSettings() {
         foreach (Helpers::getCheckList() as $id => $check) {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_general_' . $id, 'intval');
@@ -48,6 +38,15 @@ class Pages {
         $privacyPolicyPage = get_option($optionNamePrivacyPolicyPage);
         $privacyPolicyText = esc_html(Integrations::getPrivacyPolicyText());
         $daysLeftToComply = Helpers::getDaysLeftToComply();
+
+        $userData = new Data();
+        $userData->setEmailAddress('donny@van-ons.nl');
+        $comments = $userData->getComments();
+        $users = $userData->getUsers();
+        $posts = $userData->getPosts();
+        echo '<pre>';
+        var_dump($posts);
+        die();
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -199,5 +198,15 @@ class Pages {
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * @return null|Pages
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 }
