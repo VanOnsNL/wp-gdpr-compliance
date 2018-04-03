@@ -15,16 +15,6 @@ class CF7 {
     /** @var null */
     private static $instance = null;
 
-    /**
-     * @return null|CF7
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     public function processIntegration() {
         $this->removeFormTagFromForms();
         $this->removeAcceptedDateFromForms();
@@ -133,6 +123,7 @@ class CF7 {
                     $class .= ' wpcf7-not-valid';
                 }
                 $label_first = $tag->has_option('label_first');
+                $use_label_element = $tag->has_option('use_label_element');
                 $atts = wpcf7_format_atts(array(
                     'class' => $tag->get_class_option($class),
                     'id' => $tag->get_id_option(),
@@ -160,7 +151,11 @@ class CF7 {
                     );
                 }
 
-                $output = '<span class="wpcf7-list-item"><label>' . $output . '</label></span>';
+                if ($use_label_element) {
+                    $output = '<label>' . $output . '</label>';
+                }
+
+                $output = '<span class="wpcf7-list-item">' . $output . '</span>';
                 $output = sprintf(
                     '<span class="wpcf7-form-control-wrap %1$s"><span %2$s>%3$s</span>%4$s</span>',
                     sanitize_html_class($tag->name),
@@ -284,5 +279,15 @@ class CF7 {
             }
         }
         return Integrations::getErrorMessage();
+    }
+
+    /**
+     * @return null|CF7
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 }
