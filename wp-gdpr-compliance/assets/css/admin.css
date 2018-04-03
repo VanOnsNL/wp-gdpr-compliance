@@ -71,6 +71,29 @@ div.wpgdprc-allowed-tags {
     color: #8A8A8A;
 }
 
+div.wpgdrc-message {
+    padding: 10px;
+    border: 1px solid transparent;
+}
+
+div.wpgdrc-message--notice {
+    background: #FFF3D9;
+    border-color: #e7d996;
+}
+
+div.wpgdrc-message--notice .wpgdprc__message {
+    color: #b39f3d;
+}
+
+div.wpgdrc-message--error {
+    background: #F7E4E1;
+    border-color: #CC4B37;
+}
+
+div.wpgdrc-message--error .wpgdprc__message {
+    color: #CC4B37;
+}
+
 .wpgdprc p.submit .button.button-primary {
     vertical-align: top;
     height: 34px;
@@ -202,16 +225,6 @@ p.wpgdprc-disclaimer {
     position: relative;
 }
 
-.wpgdrc-checkbox--error {
-    padding: 10px;
-    background: #F7E4E1;
-    border: 1px solid #CC4B37;
-}
-
-.wpgdrc-checkbox--error .wpgdprc-checklist-description {
-    color: #CC4B37;
-}
-
 .wpgdprc-checkbox input[type="checkbox"] {
     display: none;
 }
@@ -335,6 +348,10 @@ span.wpgdprc-instructions {
 
 .wpgdprc-checklist-description {
     color: #8A8A8A;
+}
+
+.wpgdprc-checklist-description + .wpgdrc-message {
+    margin-top: 10px;
 }
 
 .wpgdprc-checklist-options {

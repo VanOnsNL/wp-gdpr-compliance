@@ -86,6 +86,29 @@ class Helpers {
     }
 
     /**
+     * @param string $plugin
+     * @return string
+     */
+    public static function getNotices($plugin = '') {
+        $output = '';
+        switch ($plugin) {
+            case 'wordpress' :
+                if (self::isPluginEnabled('jetpack/jetpack.php')) {
+                    $activeModules = (array)get_option('jetpack_active_modules');
+                    if (in_array('comments', $activeModules)) {
+                        $output .= sprintf(
+                            '<strong>%s:</strong> %s',
+                            strtoupper(__('Note', WP_GDPR_C_SLUG)),
+                            __('Please disable the custom comments form in Jetpack to make your WordPress Comments GDPR compliant.', WP_GDPR_C_SLUG)
+                        );
+                    }
+                }
+                break;
+        }
+        return $output;
+    }
+
+    /**
      * @return float|int
      */
     public static function getDaysLeftToComply() {
@@ -127,6 +150,15 @@ class Helpers {
 
     /**
      * @param string $plugin
+     * @return bool
+     */
+    public static function isPluginEnabled($plugin = '') {
+        $activatePlugins = (array)self::getActivePlugins();
+        return (in_array($plugin, $activatePlugins));
+    }
+
+    /**
+     * @param string $plugin
      * @param string $type
      * @return bool
      */
@@ -137,11 +169,8 @@ class Helpers {
     /**
      * @return array
      */
-    public static function getActivatedPlugins() {
-        $output = array();
-
+    public static function getActivePlugins() {
         $activePlugins = (array)get_option('active_plugins', array());
-
         // Catch network activated plugins
         $activeNetworkPlugins = (array)get_site_option('active_sitewide_plugins', array());
         if (!empty($activeNetworkPlugins)) {
@@ -151,7 +180,15 @@ class Helpers {
                 }
             }
         }
+        return $activePlugins;
+    }
 
+    /**
+     * @return array
+     */
+    public static function getActivatedPlugins() {
+        $output = array();
+        $activePlugins = self::getActivePlugins();
         // Loop through supported plugins
         foreach (Integrations::getSupportedPlugins() as $plugin) {
             if (in_array($plugin['file'], $activePlugins)) {
@@ -231,28 +268,6 @@ class Helpers {
         }
         $date = new \DateTime($date->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
         return date_i18n($format, $date->getTimestamp(), true);
-    }
-
-    /**
-     * @param string $emailAddress
-     * @param string $type
-     * @return array
-     */
-    public static function getUserDataByEmailAddress($emailAddress = '', $type = '') {
-        $output = array();
-        if (!empty($emailAddress) && !empty($type)) {
-            global $wpdb;
-            switch ($type) {
-                case 'comments' :
-                    if (is_multisite()) {
-                        $sites = get_sites();
-                        var_dump($sites);
-                    }
-                    $query = "SELECT * FROM ";
-                    break;
-            }
-        }
-        return $output;
     }
 
     /**

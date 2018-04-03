@@ -4,7 +4,7 @@
  Plugin Name: WP GDPR Compliance
  Plugin URI:  https://www.wpgdprc.com/
  Description: This plugin assists website and webshop owners to comply with European privacy regulations known as GDPR. By May 24th, 2018 your website or shop has to comply to avoid large fines.
- Version:     1.2.3
+ Version:     1.2.4
  Author:      Van Ons
  Author URI:  https://www.van-ons.nl/
  License:     GPL2

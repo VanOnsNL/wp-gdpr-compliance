@@ -15,16 +15,6 @@ class CF7 {
     /** @var null */
     private static $instance = null;
 
-    /**
-     * @return null|CF7
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     public function processIntegration() {
         $this->removeFormTagFromForms();
         $this->removeAcceptedDateFromForms();
@@ -289,5 +279,15 @@ class CF7 {
             }
         }
         return Integrations::getErrorMessage();
+    }
+
+    /**
+     * @return null|CF7
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 }

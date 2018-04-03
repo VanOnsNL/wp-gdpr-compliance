@@ -1,36 +1,36 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP GDPR Compliance\n"
-"POT-Creation-Date: 2018-03-29 11:59+0200\n"
+"POT-Creation-Date: 2018-04-03 12:00+0200\n"
 "Last-Translator: \n"
 "Language-Team: Van Ons <info@van-ons.nl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Includes/Ajax.php:37
+#: Includes/Ajax.php:27
 msgid "Missing data."
 msgstr ""
 
-#: Includes/Ajax.php:41
+#: Includes/Ajax.php:31
 msgid "Missing type."
 msgstr ""
 
-#: Includes/Ajax.php:53
+#: Includes/Ajax.php:43
 msgid "Missing option name."
 msgstr ""
 
-#: Includes/Ajax.php:57
+#: Includes/Ajax.php:47
 msgid "Missing value."
 msgstr ""
 
-#: Includes/Extensions/CF7.php:189 Includes/Extensions/GForms.php:111
+#: Includes/Extensions/CF7.php:184 Includes/Extensions/GForms.php:111
 #: Includes/Extensions/GForms.php:127 Includes/Extensions/GForms.php:146
 #: Includes/Extensions/WC.php:55 Includes/Extensions/WP.php:65
 msgid "Not accepted."
 msgstr ""
 
-#: Includes/Extensions/CF7.php:193 Includes/Extensions/WC.php:53
+#: Includes/Extensions/CF7.php:188 Includes/Extensions/WC.php:53
 msgid "GDPR accepted on:"
 msgstr ""
 
@@ -56,24 +56,30 @@ msgstr ""
 msgid "GDPR Accepted On"
 msgstr ""
 
-#: Includes/Helpers.php:83
+#: Includes/Helpers.php:74
 #, php-format
 msgid "You can use: %s"
 msgstr ""
 
-#: Includes/Helpers.php:89
+#: Includes/Helpers.php:80 Includes/Helpers.php:101
 msgid "Note"
 msgstr ""
 
-#: Includes/Helpers.php:90
+#: Includes/Helpers.php:81
 msgid "No HTML allowed due to plugin limitations."
 msgstr ""
 
-#: Includes/Helpers.php:115
+#: Includes/Helpers.php:102
+msgid ""
+"Please disable the custom comments form in Jetpack to make your WordPress "
+"Comments GDPR compliant."
+msgstr ""
+
+#: Includes/Helpers.php:129
 msgid "Do you have a contact form?"
 msgstr ""
 
-#: Includes/Helpers.php:116
+#: Includes/Helpers.php:130
 msgid ""
 "Make sure you add a checkbox specifically asking the user of the form if "
 "they consent to you storing and using their personal information to get back "
@@ -81,11 +87,11 @@ msgid ""
 "if you will send or share the data with any 3rd-parties and which."
 msgstr ""
 
-#: Includes/Helpers.php:119
+#: Includes/Helpers.php:133
 msgid "Can visitors comment anywhere on your website?"
 msgstr ""
 
-#: Includes/Helpers.php:120
+#: Includes/Helpers.php:134
 msgid ""
 "Make sure you add a checkbox specifically asking the user of the comment "
 "section if they consent to storing their message attached to the e-mail "
@@ -94,11 +100,11 @@ msgid ""
 "which."
 msgstr ""
 
-#: Includes/Helpers.php:123
+#: Includes/Helpers.php:137
 msgid "Is there an order form on your website or webshop present?"
 msgstr ""
 
-#: Includes/Helpers.php:124
+#: Includes/Helpers.php:138
 msgid ""
 "Make sure you add a checkbox specifically asking the user of the form if "
 "they consent to you storing and using their personal information to ship the "
@@ -108,11 +114,11 @@ msgid ""
 "which."
 msgstr ""
 
-#: Includes/Helpers.php:127
+#: Includes/Helpers.php:141
 msgid "Do you provide a forum or message board?"
 msgstr ""
 
-#: Includes/Helpers.php:128
+#: Includes/Helpers.php:142
 msgid ""
 "Make sure you add a checkbox specifically asking forum / board users if they "
 "consent to you storing and using their personal information and messages. "
@@ -120,11 +126,11 @@ msgid ""
 "share the data with any 3rd-parties and which."
 msgstr ""
 
-#: Includes/Helpers.php:131
+#: Includes/Helpers.php:145
 msgid "Can visitors chat with your company directly?"
 msgstr ""
 
-#: Includes/Helpers.php:132
+#: Includes/Helpers.php:146
 msgid ""
 "Make sure you add a checkbox specifically asking chat users if they consent "
 "to you storing and using their personal information and messages. The "
@@ -133,84 +139,88 @@ msgid ""
 "mention if you will send or share the data with any 3rd-parties and which."
 msgstr ""
 
-#: Includes/Integrations.php:121 Includes/Integrations.php:158
+#: Includes/Integrations.php:111 Includes/Integrations.php:148
 #, php-format
 msgid "Form: %s"
 msgstr ""
 
-#: Includes/Integrations.php:122 Includes/Integrations.php:159
+#: Includes/Integrations.php:112 Includes/Integrations.php:149
 msgid "Activate for this form:"
 msgstr ""
 
-#: Includes/Integrations.php:125 Includes/Integrations.php:162
-#: Includes/Integrations.php:185
+#: Includes/Integrations.php:115 Includes/Integrations.php:152
+#: Includes/Integrations.php:175
 msgid "Checkbox text"
 msgstr ""
 
-#: Includes/Integrations.php:129 Includes/Integrations.php:166
-#: Includes/Integrations.php:189
+#: Includes/Integrations.php:119 Includes/Integrations.php:156
+#: Includes/Integrations.php:179
 msgid "Error message"
 msgstr ""
 
-#: Includes/Integrations.php:137 Includes/Integrations.php:174
+#: Includes/Integrations.php:127 Includes/Integrations.php:164
 msgid "No forms found."
 msgstr ""
 
-#: Includes/Integrations.php:213
+#: Includes/Integrations.php:203
 msgid ""
 "By using this form you agree with the storage and handling of your data by "
 "this website."
 msgstr ""
 
-#: Includes/Integrations.php:230
+#: Includes/Integrations.php:220
 msgid "Please accept the privacy checkbox."
 msgstr ""
 
-#: Includes/Integrations.php:265
-msgid "WordPress Comments"
+#: Includes/Integrations.php:231 Includes/Pages.php:162
+msgid "Privacy Policy"
 msgstr ""
 
 #: Includes/Integrations.php:266
+msgid "WordPress Comments"
+msgstr ""
+
+#: Includes/Integrations.php:267
 msgid ""
 "When activated the GDPR checkbox will be added automatically just above the "
 "submit button."
 msgstr ""
 
-#: Includes/Integrations.php:280
+#: Includes/Integrations.php:281
 msgid "Contact Form 7"
 msgstr ""
 
-#: Includes/Integrations.php:281 Includes/Integrations.php:288
+#: Includes/Integrations.php:282 Includes/Integrations.php:289
 msgid "A GDPR form tag will be automatically added to every form you activate."
 msgstr ""
 
-#: Includes/Integrations.php:287
+#: Includes/Integrations.php:288
 msgid "Gravity Forms"
 msgstr ""
 
-#: Includes/Integrations.php:294
+#: Includes/Integrations.php:295
 msgid "WooCommerce"
 msgstr ""
 
-#: Includes/Integrations.php:295
+#: Includes/Integrations.php:296
 msgid ""
 "The GDPR checkbox will be added automatically at the end of your checkout "
 "page."
 msgstr ""
 
-#: Includes/Pages.php:63
+#: Includes/Pages.php:53
 msgid "Integrations"
 msgstr ""
 
-#: Includes/Pages.php:64
+#: Includes/Pages.php:54
 msgid "Checklist"
 msgstr ""
 
-#: Includes/Pages.php:65 wp-gdpr-compliance.php:97
+#: Includes/Pages.php:55 wp-gdpr-compliance.php:97
 msgid "Settings"
 msgstr ""
 
-#: Includes/Pages.php:84
+#: Includes/Pages.php:76
 msgid "Enable:"
 msgstr ""
 
@@ -241,10 +251,6 @@ msgstr ""
 msgid ""
 "Use %privacy_policy% if you want to link your Privacy Policy page in the "
 "GDPR checkbox texts."
-msgstr ""
-
-#: Includes/Integrations.php:241 Includes/Pages.php:162
-msgid "Privacy Policy"
 msgstr ""
 
 #: Includes/Pages.php:165

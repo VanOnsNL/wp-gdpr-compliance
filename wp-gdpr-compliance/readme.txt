@@ -4,7 +4,7 @@ Tags: gdpr, law, regulations, compliance, data, protection, privacy, data protec
 Requires at least: 4.5
 Tested up to: 4.9.4
 Requires PHP: 5.2.4
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,11 @@ You'll find answers to many of your questions on [wpgdprc.com](https://www.wpgdp
 2. We provide you with tips based on the private data you currently collect in order to comply with the GDPR regulations.
 
 == Changelog ==
+
+= 1.2.4 =
+*Release date: April 3rd, 2018*
+* Show a notice when Jetpack is installed
+* Fixed a bug with WordPress Comments
 
 = 1.2.3 =
 *Release date: March 29th, 2018*
