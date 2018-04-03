@@ -13,6 +13,12 @@ class Post {
     protected $id = 0;
     /** @var string */
     protected $title = '';
+    /** @var string */
+    protected $type = '';
+    /** @var string */
+    protected $status = '';
+    /** @var string */
+    protected $date = '';
 
     /**
      * @param \stdClass $row
@@ -20,6 +26,9 @@ class Post {
     public function loadByRow(\stdClass $row) {
         $this->setId($row->ID);
         $this->setTitle($row->post_title);
+        $this->setType($row->post_type);
+        $this->setStatus($row->post_status);
+        $this->setDate($row->post_date);
     }
 
     /**
@@ -58,5 +67,47 @@ class Post {
      */
     public function setTitle($title) {
         $this->title = $title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType() {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type) {
+        $this->type = $type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus() {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function setStatus($status) {
+        $this->status = $status;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDate() {
+        return $this->date;
+    }
+
+    /**
+     * @param string $date
+     */
+    public function setDate($date) {
+        $this->date = $date;
     }
 }

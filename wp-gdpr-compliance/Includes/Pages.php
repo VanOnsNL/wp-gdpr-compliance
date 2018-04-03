@@ -44,10 +44,6 @@ class Pages {
         $comments = $userData->getComments();
         $users = $userData->getUsers();
         $posts = $userData->getPosts();
-        $integrations = $userData->getBySupportedIntegrations();
-        echo '<pre>';
-        var_dump($posts);
-        die();
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -63,6 +59,7 @@ class Pages {
                             <a id="tab-integrations-label" class="active" href="#tab-integrations" aria-controls="tab-integrations" tabindex="0" role="tab"><?php _e('Integrations', WP_GDPR_C_SLUG); ?></a>
                             <a id="tab-checklist-label" href="#tab-checklist" aria-controls="tab-checklist" tabindex="-1" role="tab"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
                             <a id="tab-settings-label" href="#tab-settings" aria-controls="tab-settings" tabindex="-1" role="tab"><?php _e('Settings', WP_GDPR_C_SLUG); ?></a>
+                            <a id="tab-requests-label" href="#tab-requests" aria-controls="tab-requests" tabindex="-1" role="tab"><?php _e('Requests', WP_GDPR_C_SLUG); ?></a>
                         </div>
 
                         <div class="wpgdprc-tabs__content">
@@ -182,6 +179,29 @@ class Pages {
                                     <label for="<?php echo $optionNamePrivacyPolicyText; ?>"><?php _e('Link text', WP_GDPR_C_SLUG); ?></label>
                                     <input type="text" name="<?php echo $optionNamePrivacyPolicyText; ?>" class="regular-text" id="<?php echo $optionNamePrivacyPolicyText; ?>" placeholder="<?php echo $privacyPolicyText; ?>" value="<?php echo $privacyPolicyText; ?>" />
                                 </p>
+                            </div>
+                            <div id="tab-requests" class="wpgdprc-tabs__panel" aria-hidden="true" aria-labelledby="tab-requests-label" role="tabpanel">
+                                <table class="wpgdprc-table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col"><?php _e('Request', WP_GDPR_C_SLUG); ?></th>
+                                        <th scope="col"><?php _e('Email Address', WP_GDPR_C_SLUG); ?></th>
+                                        <th scope="col"><?php _e('Date', WP_GDPR_C_SLUG); ?></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>#1</td>
+                                        <td>donny@van-ons.nl</td>
+                                        <td>Jaja</td>
+                                    </tr>
+                                    <tr>
+                                        <td>#1</td>
+                                        <td>donny@van-ons.nl</td>
+                                        <td>Jaja</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

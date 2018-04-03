@@ -142,6 +142,25 @@ p.wpgdprc-disclaimer {
     color: #8A8A8A;
 }
 
+table.wpgdprc-table {
+    width: 100%;
+    border: 1px solid #DBD6D6;
+    table-layout: fixed;
+}
+
+table.wpgdprc-table th, table.wpgdprc-table td {
+    padding: 5px;
+}
+
+table.wpgdprc-table th {
+    background-color: #DBD6D6;
+    text-align: start;
+}
+
+table.wpgdprc-table tr:nth-child(even) {
+    background-color: #F1F1F1;
+}
+
 .wpgdprc-background {
     position: fixed;
     right: 0;

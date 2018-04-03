@@ -58,7 +58,7 @@ class Data {
     public function getPosts() {
         global $wpdb;
         $output = array();
-        $query  = "SELECT * FROM `" . $wpdb->posts . "`";
+        $query  = "SELECT `" . $wpdb->posts . "`.* FROM `" . $wpdb->posts . "`";
         $query .= " INNER JOIN `" . $wpdb->users . "` ON `" . $wpdb->users . "`.ID = `" . $wpdb->posts . "`.post_author";
         $query .= " WHERE `" . $wpdb->users . "`.user_email = '%s'";
         $results = $wpdb->get_results($wpdb->prepare($query, $this->getEmailAddress()));
@@ -72,9 +72,17 @@ class Data {
         return $output;
     }
 
+    // TODO
     public function getBySupportedIntegrations() {
+        $output = array();
         $supportedIntegrations = Integrations::getSupportedIntegrations();
-        var_dump($supportedIntegrations);
+        foreach ($supportedIntegrations as $supportedIntegration) {
+            switch ($supportedIntegration['id']) {
+                case 'woocommerce' :
+                    var_dump($supportedIntegration);
+                    break;
+            }
+        }
     }
 
     /**
