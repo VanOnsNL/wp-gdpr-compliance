@@ -13,16 +13,6 @@ class Helpers {
     private static $instance = null;
 
     /**
-     * @return null|Helpers
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    /**
      * @return array
      */
     public static function getPluginData() {
@@ -96,6 +86,28 @@ class Helpers {
     }
 
     /**
+     * @param string $plugin
+     * @return string
+     */
+    public static function getAdditionalMessages($plugin = '') {
+        $output = '';
+        switch ($plugin) {
+            case 'wordpress' :
+                if (self::isPluginEnabled('jetpack/jetpack.php')) {
+                    $output .= '<div class="wpgdrc-message wpgdrc-message--notice">';
+                    $output .= sprintf(
+                        '<strong>%s:</strong> %s',
+                        strtoupper(__('Note', WP_GDPR_C_SLUG)),
+                        __('You have Jetpack installed, which means the following won\'t work if you use their custom comments form.', WP_GDPR_C_SLUG)
+                    );
+                    $output .= '</div>';
+                }
+                break;
+        }
+        return $output;
+    }
+
+    /**
      * @return float|int
      */
     public static function getDaysLeftToComply() {
@@ -137,6 +149,15 @@ class Helpers {
 
     /**
      * @param string $plugin
+     * @return bool
+     */
+    public static function isPluginEnabled($plugin = '') {
+        $activatePlugins = (array)self::getActivePlugins();
+        return (in_array($plugin, $activatePlugins));
+    }
+
+    /**
+     * @param string $plugin
      * @param string $type
      * @return bool
      */
@@ -147,11 +168,8 @@ class Helpers {
     /**
      * @return array
      */
-    public static function getActivatedPlugins() {
-        $output = array();
-
+    public static function getActivePlugins() {
         $activePlugins = (array)get_option('active_plugins', array());
-
         // Catch network activated plugins
         $activeNetworkPlugins = (array)get_site_option('active_sitewide_plugins', array());
         if (!empty($activeNetworkPlugins)) {
@@ -161,7 +179,15 @@ class Helpers {
                 }
             }
         }
+        return $activePlugins;
+    }
 
+    /**
+     * @return array
+     */
+    public static function getActivatedPlugins() {
+        $output = array();
+        $activePlugins = self::getActivePlugins();
         // Loop through supported plugins
         foreach (Integrations::getSupportedPlugins() as $plugin) {
             if (in_array($plugin['file'], $activePlugins)) {
@@ -241,5 +267,15 @@ class Helpers {
         }
         $date = new \DateTime($date->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
         return date_i18n($format, $date->getTimestamp(), true);
+    }
+
+    /**
+     * @return null|Helpers
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 }

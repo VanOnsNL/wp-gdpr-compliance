@@ -10,16 +10,6 @@ class Pages {
     /** @var null */
     private static $instance = null;
 
-    /**
-     * @return null|Pages
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     public function registerSettings() {
         foreach (Helpers::getCheckList() as $id => $check) {
             register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_general_' . $id, 'intval');
@@ -74,6 +64,7 @@ class Pages {
                                             $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'];
                                             $checked = Helpers::isEnabled($plugin['id']);
                                             $description = (!empty($plugin['description'])) ? apply_filters('the_content', $plugin['description']) : '';
+                                            $additionalMessages = Helpers::getAdditionalMessages($plugin['id']);
                                             $options = Integrations::getSupportedPluginOptions($plugin['id']);
                                             ?>
                                             <li class="wpgdprc-clearfix">
@@ -96,10 +87,11 @@ class Pages {
                                                                 <?php echo $description; ?>
                                                             </div>
                                                         <?php endif; ?>
+                                                        <?php echo $additionalMessages; ?>
                                                         <?php echo $options; ?>
                                                     </div>
                                                 <?php else : ?>
-                                                    <div class="wpgdprc-checkbox wpgdrc-checkbox--error">
+                                                    <div class="wpgdrc-message wpgdrc-message--error">
                                                         <strong><?php echo $plugin['name']; ?></strong>
                                                         <div class="wpgdprc-checklist-description">
                                                             <?php printf(__('This plugin is outdated. %s supports version %s and up.', WP_GDPR_C_SLUG), $pluginData['Name'], '<strong>' . $plugin['supported_version']  . '</strong>'); ?>
@@ -199,5 +191,15 @@ class Pages {
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * @return null|Pages
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 }
