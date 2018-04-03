@@ -44,6 +44,7 @@ class Pages {
         $comments = $userData->getComments();
         $users = $userData->getUsers();
         $posts = $userData->getPosts();
+        $integrations = $userData->getBySupportedIntegrations();
         echo '<pre>';
         var_dump($posts);
         die();

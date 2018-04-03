@@ -72,6 +72,11 @@ class Data {
         return $output;
     }
 
+    public function getBySupportedIntegrations() {
+        $supportedIntegrations = Integrations::getSupportedIntegrations();
+        var_dump($supportedIntegrations);
+    }
+
     /**
      * @return string
      */
