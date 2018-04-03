@@ -89,18 +89,19 @@ class Helpers {
      * @param string $plugin
      * @return string
      */
-    public static function getAdditionalMessages($plugin = '') {
+    public static function getNotices($plugin = '') {
         $output = '';
         switch ($plugin) {
             case 'wordpress' :
                 if (self::isPluginEnabled('jetpack/jetpack.php')) {
-                    $output .= '<div class="wpgdrc-message wpgdrc-message--notice">';
-                    $output .= sprintf(
-                        '<strong>%s:</strong> %s',
-                        strtoupper(__('Note', WP_GDPR_C_SLUG)),
-                        __('You have Jetpack installed, which means the following won\'t work if you use their custom comments form.', WP_GDPR_C_SLUG)
-                    );
-                    $output .= '</div>';
+                    $activeModules = (array)get_option('jetpack_active_modules');
+                    if (in_array('comments', $activeModules)) {
+                        $output .= sprintf(
+                            '<strong>%s:</strong> %s',
+                            strtoupper(__('Note', WP_GDPR_C_SLUG)),
+                            __('Please disable the custom comments form in Jetpack to make your WordPress Comments GDPR compliant.', WP_GDPR_C_SLUG)
+                        );
+                    }
                 }
                 break;
         }

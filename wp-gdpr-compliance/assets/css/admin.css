@@ -78,7 +78,11 @@ div.wpgdrc-message {
 
 div.wpgdrc-message--notice {
     background: #FFF3D9;
-    border-color: #E7DCA6;
+    border-color: #e7d996;
+}
+
+div.wpgdrc-message--notice .wpgdprc__message {
+    color: #b39f3d;
 }
 
 div.wpgdrc-message--error {
@@ -86,7 +90,7 @@ div.wpgdrc-message--error {
     border-color: #CC4B37;
 }
 
-div.wpgdrc-message--error .wpgdprc-checklist-description {
+div.wpgdrc-message--error .wpgdprc__message {
     color: #CC4B37;
 }
 
