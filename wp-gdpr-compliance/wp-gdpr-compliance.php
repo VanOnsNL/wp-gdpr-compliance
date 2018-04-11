@@ -34,12 +34,15 @@ use WPGDPRC\Includes\Actions;
 use WPGDPRC\Includes\Ajax;
 use WPGDPRC\Includes\Integrations;
 use WPGDPRC\Includes\Pages;
+use WPGDPRC\Includes\Request;
+use WPGDPRC\Includes\Shortcodes;
 
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
     die();
 }
 
+define('WP_GDPR_C_VERSION', '1.2.4');
 define('WP_GDPR_C_SLUG', 'wp-gdpr-compliance');
 define('WP_GDPR_C_PREFIX', 'wpgdprc');
 define('WP_GDPR_C_ROOT_FILE', __FILE__);
@@ -55,6 +58,8 @@ define('WP_GDPR_C_URI_SVG', WP_GDPR_C_URI . 'assets/svg');
 // Let's do this!
 spl_autoload_register(__NAMESPACE__ . '\\autoload');
 add_action('plugins_loaded', array(WPGDPRC::getInstance(), 'init'));
+register_activation_hook(WP_GDPR_C_ROOT_FILE, array(WPGDPRC::getInstance(), 'pluginActivated'));
+register_deactivation_hook(WP_GDPR_C_ROOT_FILE, array(WPGDPRC::getInstance(), 'pluginDeactivated'));
 
 /**
  * Class WPGDPRC
@@ -82,9 +87,12 @@ class WPGDPRC {
         add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'addActionLinksToPluginPage'));
         add_action('admin_init', array(Pages::getInstance(), 'registerSettings'));
         add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
-        add_action('admin_enqueue_scripts', array($this, 'loadAssets'), 999);
+        add_action('wp_enqueue_scripts', array($this, 'loadAssets'), 999);
+        add_action('admin_enqueue_scripts', array($this, 'loadAdminAssets'), 999);
         add_action('core_version_check_query_args', array(Actions::getInstance(), 'onlySendEssentialDataDuringUpdateCheck'));
+        add_action('wp_ajax_nopriv_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
         add_action('wp_ajax_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
+        add_shortcode('wpgdprc_request_form', array(Shortcodes::getInstance(), 'requestForm'));
         Integrations::getInstance();
     }
 
@@ -100,12 +108,42 @@ class WPGDPRC {
     }
 
     public function loadAssets() {
-        wp_enqueue_style('wpgdprc.css', WP_GDPR_C_URI_CSS . '/admin.css', array(), filemtime(WP_GDPR_C_DIR_CSS . '/admin.css'));
-        wp_enqueue_script('wpgdprc.js', WP_GDPR_C_URI_JS . '/admin.js', array(), filemtime(WP_GDPR_C_DIR_JS . '/admin.js'), true);
+        wp_enqueue_script('wpgdprc.js', WP_GDPR_C_URI_JS . '/front.js', array(), filemtime(WP_GDPR_C_DIR_JS . '/front.js'), true);
         wp_localize_script('wpgdprc.js', 'wpgdprcData', array(
             'ajaxURL' => admin_url('admin-ajax.php'),
             'ajaxSecurity' => wp_create_nonce('wpgdprc'),
         ));
+    }
+
+    public function loadAdminAssets() {
+        wp_enqueue_style('wpgdprc.admin.css', WP_GDPR_C_URI_CSS . '/admin.css', array(), filemtime(WP_GDPR_C_DIR_CSS . '/admin.css'));
+        wp_enqueue_script('wpgdprc.admin.js', WP_GDPR_C_URI_JS . '/admin.js', array(), filemtime(WP_GDPR_C_DIR_JS . '/admin.js'), true);
+        wp_localize_script('wpgdprc.admin.js', 'wpgdprcData', array(
+            'ajaxURL' => admin_url('admin-ajax.php'),
+            'ajaxSecurity' => wp_create_nonce('wpgdprc'),
+        ));
+    }
+
+    public function pluginActivated() {
+        global $wpdb;
+        if (get_site_option('wpgdprc_version') !== WP_GDPR_C_VERSION) {
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            $charsetCollate = $wpdb->get_charset_collate();
+            $sql = "CREATE TABLE IF NOT EXISTS `" . Request::getDatabaseTableName() .  "` (
+            `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+            `site_id` bigint(20) NOT NULL,
+            `session_id` varchar(255) NOT NULL,
+            `ip_address` varchar(100) NOT NULL,
+            `date_created` datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            PRIMARY KEY (`ID`)
+            ) $charsetCollate;";
+            dbDelta($sql);
+            update_site_option('wpgdprc_version', WP_GDPR_C_VERSION);
+        }
+    }
+
+    public function pluginDeactivated() {
+        // TODO: Remove DB table
     }
 }
 

@@ -71,6 +71,45 @@ class Ajax {
                         do_action($option, $value);
                     }
                     break;
+                case 'request_data' :
+                    $emailAddress = (isset($data['email']) && is_email($data['email'])) ? $data['email'] : false;
+
+                    if (!$emailAddress) {
+                        $output['error'] = __('Missing or incorrect email address.', WP_GDPR_C_SLUG);
+                    }
+
+                    // Let's do this!
+                    if (empty($output['error'])) {
+                        $request = new Request();
+                        $request->setSiteId(get_current_blog_id());
+                        $request->setSessionId(SessionHelper::getSessionId());
+                        $request->setIpAddress(Helpers::getUserIpAddress());
+                        $id = $request->save();
+                        if ($id !== false) {
+                            $siteName = get_blog_option($request->getSiteId(), 'blogname');
+                            $siteEmail = get_blog_option($request->getSiteId(), 'admin_email');
+                            $subject = __('[WPGDPRC] Your request', WP_GDPR_C_SLUG);
+                            $message = sprintf(
+                                '<a target="_blank" href="%s">%s</a>',
+                                add_query_arg(
+                                    array(
+                                        'sId' => $request->getSessionId()
+                                    ),
+                                    get_site_url($request->getSiteId())
+                                ),
+                                __('Let\'s go!', WP_GDPR_C_SLUG)
+                            );
+                            $headers = array(
+                                'Content-Type: text/html; charset=UTF-8',
+                                "From: $siteName <$siteEmail>"
+                            );
+                            $response = wp_mail($emailAddress, $subject, $message, $headers);
+                            if ($response !== false) {
+                            }
+                        }
+                    }
+
+                    break;
             }
         }
 
