@@ -274,7 +274,6 @@ class Helpers {
      * @return string
      */
     public static function getUserIpAddress() {
-        $output = '';
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $output = $_SERVER['HTTP_CLIENT_IP'];
         } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -283,6 +282,14 @@ class Helpers {
             $output = $_SERVER['REMOTE_ADDR'];
         }
         return $output;
+    }
+
+    /**
+     * @param string $ipAddress
+     * @return bool
+     */
+    public static function validateIpAddress($ipAddress = '') {
+        return self::getUserIpAddress() === $ipAddress;
     }
 
     /**

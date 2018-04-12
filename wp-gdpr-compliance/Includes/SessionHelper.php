@@ -25,6 +25,14 @@ class SessionHelper {
     }
 
     /**
+     * @param string $sessionId
+     * @return bool
+     */
+    public static function validateSession($sessionId = '') {
+        return self::getSessionId() === $sessionId;
+    }
+
+    /**
      * @param string $variable
      * @param string $value
      */

@@ -7,16 +7,51 @@ namespace WPGDPRC\Includes;
  * @package WPGDPRC\Includes
  */
 class Request {
+    /** @var null */
+    private static $instance = null;
     /** @var int */
     private $id = 0;
     /** @var int */
     private $siteId = 0;
     /** @var string */
+    private $emailAddress = '';
+    /** @var string */
     private $sessionId = '';
     /** @var string */
     private $ipAddress = '';
+    /** @var int */
+    private $active = 0;
     /** @var string */
     private $dateCreated = '';
+
+    /**
+     * Request constructor.
+     * @param int $id
+     */
+    public function __construct($id = 0) {
+        if ((int)$id > 0) {
+            $this->setId($id);
+            $this->load();
+        }
+    }
+
+    /**
+     * @param string $emailAddress
+     * @param string $sessionId
+     * @return bool|Request
+     */
+    public function getByEmailAddressAndSessionId($emailAddress = '', $sessionId = '') {
+        global $wpdb;
+        $query = "SELECT * FROM `" . self::getDatabaseTableName() . "`
+        WHERE `email_address` = '%s'
+        AND `session_id` = '%s'
+        AND `active` = '1'";
+        $row = $wpdb->get_row($wpdb->prepare($query, $emailAddress, $sessionId));
+        if ($row !== null) {
+            return new self($row->ID);
+        }
+        return false;
+    }
 
     /**
      * @param $row
@@ -24,8 +59,10 @@ class Request {
     private function loadByRow($row) {
         $this->setId($row->ID);
         $this->setSiteId($row->site_id);
+        $this->setEmailAddress($row->email_address);
         $this->setSessionId($row->session_id);
         $this->setIpAddress($row->ip_address);
+        $this->setActive($row->active);
         $this->setDateCreated($row->date_created);
     }
 
@@ -39,13 +76,13 @@ class Request {
     }
 
     /**
-     * @param int $id
+     * @param string $emailAddress
      * @return bool
      */
-    public function exists($id = 0) {
+    public function exists($emailAddress = '') {
         global $wpdb;
-        $query = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE `ID` = '%d'";
-        $row = $wpdb->get_row($wpdb->prepare($query, $id));
+        $query = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE `email_address` = '%s'";
+        $row = $wpdb->get_row($wpdb->prepare($query, $emailAddress));
         return ($row !== null);
     }
 
@@ -58,17 +95,29 @@ class Request {
             self::getDatabaseTableName(),
             array(
                 'site_id' => $this->getSiteId(),
+                'email_address' => $this->getEmailAddress(),
                 'session_id' => $this->getSessionId(),
                 'ip_address' => $this->getIpAddress(),
+                'active' => $this->getActive(),
                 'date_created' => date_i18n('Y-m-d H:i:s'),
             ),
-            array('%d', '%s', '%s', '%s')
+            array('%d', '%s', '%s', '%d', '%s')
         );
         if ($result !== false) {
             $this->setId($wpdb->insert_id);
             return $this->getId();
         }
         return false;
+    }
+
+    /**
+     * @return null|Request
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     /**
@@ -102,6 +151,20 @@ class Request {
     /**
      * @return string
      */
+    public function getEmailAddress() {
+        return $this->emailAddress;
+    }
+
+    /**
+     * @param string $emailAddress
+     */
+    public function setEmailAddress($emailAddress) {
+        $this->emailAddress = $emailAddress;
+    }
+
+    /**
+     * @return string
+     */
     public function getSessionId() {
         return $this->sessionId;
     }
@@ -125,6 +188,20 @@ class Request {
      */
     public function setIpAddress($ipAddress) {
         $this->ipAddress = $ipAddress;
+    }
+
+    /**
+     * @return int
+     */
+    public function getActive() {
+        return $this->active;
+    }
+
+    /**
+     * @param int $active
+     */
+    public function setActive($active) {
+        $this->active = $active;
     }
 
     /**

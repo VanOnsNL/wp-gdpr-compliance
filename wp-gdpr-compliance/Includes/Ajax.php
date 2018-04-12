@@ -14,8 +14,8 @@ class Ajax {
         check_ajax_referer('wpgdprc', 'security');
 
         $output = array(
+            'message' => '',
             'error' => '',
-            'redirect' => false
         );
         $data = (isset($_POST['data']) && (is_array($_POST['data']) || is_string($_POST['data']))) ? $_POST['data'] : false;
         if (is_string($data)) {
@@ -80,32 +80,48 @@ class Ajax {
 
                     // Let's do this!
                     if (empty($output['error'])) {
-                        $request = new Request();
-                        $request->setSiteId(get_current_blog_id());
-                        $request->setSessionId(SessionHelper::getSessionId());
-                        $request->setIpAddress(Helpers::getUserIpAddress());
-                        $id = $request->save();
-                        if ($id !== false) {
-                            $siteName = get_blog_option($request->getSiteId(), 'blogname');
-                            $siteEmail = get_blog_option($request->getSiteId(), 'admin_email');
-                            $subject = __('[WPGDPRC] Your request', WP_GDPR_C_SLUG);
-                            $message = sprintf(
-                                '<a target="_blank" href="%s">%s</a>',
-                                add_query_arg(
-                                    array(
-                                        'sId' => $request->getSessionId()
+                        if (!Request::getInstance()->exists($emailAddress)) {
+                            $request = new Request();
+                            $request->setSiteId(get_current_blog_id());
+                            $request->setEmailAddress($emailAddress);
+                            $request->setSessionId(SessionHelper::getSessionId());
+                            $request->setIpAddress(Helpers::getUserIpAddress());
+                            $request->setActive(1);
+                            $id = $request->save();
+                            if ($id !== false) {
+                                $siteName = get_blog_option($request->getSiteId(), 'blogname');
+                                $siteEmail = get_blog_option($request->getSiteId(), 'admin_email');
+                                $subject = __('[WPGDPRC] Your request', WP_GDPR_C_SLUG);
+                                $message = sprintf(
+                                    '<a target="_blank" href="%s">%s</a>',
+                                    add_query_arg(
+                                        array(
+                                            'wpgdprc' => base64_encode(
+                                                serialize(
+                                                    array(
+                                                        'email' => $request->getEmailAddress(),
+                                                        'sId' => $request->getSessionId()
+                                                    )
+                                                )
+                                            )
+                                        ),
+                                        get_site_url($request->getSiteId())
                                     ),
-                                    get_site_url($request->getSiteId())
-                                ),
-                                __('Let\'s go!', WP_GDPR_C_SLUG)
-                            );
-                            $headers = array(
-                                'Content-Type: text/html; charset=UTF-8',
-                                "From: $siteName <$siteEmail>"
-                            );
-                            $response = wp_mail($emailAddress, $subject, $message, $headers);
-                            if ($response !== false) {
+                                    __('Let\'s go!', WP_GDPR_C_SLUG)
+                                );
+                                $headers = array(
+                                    'Content-Type: text/html; charset=UTF-8',
+                                    "From: $siteName <$siteEmail>"
+                                );
+                                $response = wp_mail($emailAddress, $subject, $message, $headers);
+                                if ($response !== false) {
+                                    $output['message'] = __('Wooooo!', WP_GDPR_C_SLUG);
+                                }
+                            } else {
+                                $output['error'] = __('Something went wrong while saving the request.', WP_GDPR_C_SLUG);
                             }
+                        } else {
+                            $output['error'] = __('Already requested.', WP_GDPR_C_SLUG);
                         }
                     }
 

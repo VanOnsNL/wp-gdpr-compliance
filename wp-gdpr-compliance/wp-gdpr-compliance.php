@@ -32,6 +32,7 @@ namespace WPGDPRC;
 
 use WPGDPRC\Includes\Actions;
 use WPGDPRC\Includes\Ajax;
+use WPGDPRC\Includes\Filter;
 use WPGDPRC\Includes\Integrations;
 use WPGDPRC\Includes\Pages;
 use WPGDPRC\Includes\Request;
@@ -69,16 +70,6 @@ class WPGDPRC {
     /** @var null */
     private static $instance = null;
 
-    /**
-     * @return null|WPGDPRC
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     public function init() {
         if (is_admin() && !function_exists('get_plugin_data')) {
             require_once(ABSPATH . 'wp-admin/includes/plugin.php');
@@ -92,6 +83,7 @@ class WPGDPRC {
         add_action('core_version_check_query_args', array(Actions::getInstance(), 'onlySendEssentialDataDuringUpdateCheck'));
         add_action('wp_ajax_nopriv_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
         add_action('wp_ajax_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
+        add_filter('template_include', array(Filter::getInstance(), 'showUserData'));
         add_shortcode('wpgdprc_request_form', array(Shortcodes::getInstance(), 'requestForm'));
         Integrations::getInstance();
     }
@@ -102,7 +94,7 @@ class WPGDPRC {
      */
     public function addActionLinksToPluginPage($links = array()) {
         $actionLinks = array(
-            'settings' => '<a href="' . admin_url('tools.php?page=' . str_replace('-', '_', WP_GDPR_C_SLUG)) . '" aria-label="' . esc_attr__('View WP GDPR Compliance settings', WP_GDPR_C_SLUG) . '">' . esc_html__('Settings', WP_GDPR_C_SLUG) . '</a>',
+            'settings' => '<a href="' . add_query_arg(array('page' => str_replace('-', '_', WP_GDPR_C_SLUG)), admin_url('tools.php')) . '" aria-label="' . esc_attr__('View WP GDPR Compliance settings', WP_GDPR_C_SLUG) . '">' . esc_html__('Settings', WP_GDPR_C_SLUG) . '</a>',
         );
         return array_merge($actionLinks, $links);
     }
@@ -129,9 +121,10 @@ class WPGDPRC {
         if (get_site_option('wpgdprc_version') !== WP_GDPR_C_VERSION) {
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             $charsetCollate = $wpdb->get_charset_collate();
-            $sql = "CREATE TABLE IF NOT EXISTS `" . Request::getDatabaseTableName() .  "` (
+            $sql = "CREATE TABLE IF NOT EXISTS `" . Request::getDatabaseTableName() . "` (
             `ID` bigint(20) NOT NULL AUTO_INCREMENT,
             `site_id` bigint(20) NOT NULL,
+            `email_address` varchar(100) NOT NULL,
             `session_id` varchar(255) NOT NULL,
             `ip_address` varchar(100) NOT NULL,
             `date_created` datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
@@ -144,6 +137,16 @@ class WPGDPRC {
 
     public function pluginDeactivated() {
         // TODO: Remove DB table
+    }
+
+    /**
+     * @return null|WPGDPRC
+     */
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 }
 
