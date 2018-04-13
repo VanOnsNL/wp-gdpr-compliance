@@ -19,7 +19,11 @@ class WP {
      * @return string
      */
     public function addField($submitField = '') {
-        $field = apply_filters('wpgdprc_wordpress_field', '<p class="wpgdprc-checkbox"><label><input type="checkbox" name="wpgdprc" id="wpgdprc" value="1" />' . Integrations::getCheckboxText(self::ID) . ' <abbr class="required" title="required">*</abbr></label></p>', $submitField);
+        $field = apply_filters(
+            'wpgdprc_wordpress_field',
+            '<p class="wpgdprc-checkbox"><label><input type="checkbox" name="wpgdprc" id="wpgdprc" value="1" />' . Integrations::getCheckboxText(self::ID) . ' <abbr class="required" title="' . esc_attr__('required', WP_GDPR_C_SLUG) . '">*</abbr></label></p>',
+            $submitField
+        );
         return $field . $submitField;
     }
 

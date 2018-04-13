@@ -1,12 +1,20 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP GDPR Compliance\n"
-"POT-Creation-Date: 2018-04-03 12:00+0200\n"
+"POT-Creation-Date: 2018-04-13 10:12+0200\n"
 "Last-Translator: \n"
 "Language-Team: Van Ons <info@van-ons.nl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: \n"
+"X-Generator: Poedit 2.0.6\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_ngettext:1,2;_n;_ngettext_noop:1,2;_n_noop:1,2;"
+"_c;_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: .\n"
 
 #: Includes/Ajax.php:27
 msgid "Missing data."
@@ -26,7 +34,7 @@ msgstr ""
 
 #: Includes/Extensions/CF7.php:184 Includes/Extensions/GForms.php:111
 #: Includes/Extensions/GForms.php:127 Includes/Extensions/GForms.php:146
-#: Includes/Extensions/WC.php:55 Includes/Extensions/WP.php:65
+#: Includes/Extensions/WC.php:55 Includes/Extensions/WP.php:69
 msgid "Not accepted."
 msgstr ""
 
@@ -43,16 +51,20 @@ msgstr ""
 msgid "Accepted on %s."
 msgstr ""
 
-#: Includes/Extensions/WP.php:30
+#: Includes/Extensions/WP.php:24
+msgid "required"
+msgstr ""
+
+#: Includes/Extensions/WP.php:34
 #, php-format
 msgid "<strong>ERROR</strong>: %s"
 msgstr ""
 
-#: Includes/Extensions/WP.php:33
+#: Includes/Extensions/WP.php:37
 msgid "Comment Submission Failure"
 msgstr ""
 
-#: Includes/Extensions/WP.php:53
+#: Includes/Extensions/WP.php:57
 msgid "GDPR Accepted On"
 msgstr ""
 
