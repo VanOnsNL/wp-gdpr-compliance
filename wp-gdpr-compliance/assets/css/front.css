@@ -1,0 +1,18 @@
+.wpgdprc table.wpgdprc-table {
+    width: 100%;
+    border: 1px solid #DBD6D6;
+    table-layout: fixed;
+}
+
+.wpgdprc table.wpgdprc-table th, .wpgdprc table.wpgdprc-table td {
+    padding: 5px;
+}
+
+.wpgdprc table.wpgdprc-table th {
+    background-color: #DBD6D6;
+    text-align: start;
+}
+
+.wpgdprc table.wpgdprc-table tr:nth-child(even) {
+    background-color: #F1F1F1;
+}

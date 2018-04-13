@@ -44,8 +44,7 @@ class Data {
         $results = $wpdb->get_results($wpdb->prepare($query, $this->getEmailAddress()));
         if ($results !== null) {
             foreach ($results as $row) {
-                $object = new User();
-                $object->loadByRow($row);
+                $object = new User($row->ID);
                 $output[] = $object;
             }
         }
@@ -93,14 +92,13 @@ class Data {
     public static function getOutput($data = array(), $type = '') {
         $output = '';
         if (!empty($data)) {
-            $output .= '<table>';
+            $output .= '<table class="wpgdprc-table">';
             $output .= '<thead>';
             $output .= '<tr>';
             switch ($type) {
                 case 'user' :
                     $output .= sprintf('<th scope="col">%s</th>', __('ID', WP_GDPR_C_SLUG));
                     $output .= sprintf('<th scope="col">%s</th>', __('Username', WP_GDPR_C_SLUG));
-                    $output .= sprintf('<th scope="col">%s</th>', __('Nice Name', WP_GDPR_C_SLUG));
                     $output .= sprintf('<th scope="col">%s</th>', __('Display Name', WP_GDPR_C_SLUG));
                     $output .= sprintf('<th scope="col">%s</th>', __('Email Address', WP_GDPR_C_SLUG));
                     $output .= sprintf('<th scope="col">%s</th>', __('Website', WP_GDPR_C_SLUG));
@@ -111,6 +109,7 @@ class Data {
                     $output .= sprintf('<th scope="col">%s</th>', __('Title', WP_GDPR_C_SLUG));
                     $output .= sprintf('<th scope="col">%s</th>', __('Type', WP_GDPR_C_SLUG));
                     $output .= sprintf('<th scope="col">%s</th>', __('Status', WP_GDPR_C_SLUG));
+                    $output .= sprintf('<th scope="col">%s</th>', __('Author', WP_GDPR_C_SLUG));
                     $output .= sprintf('<th scope="col">%s</th>', __('Date', WP_GDPR_C_SLUG));
                     break;
             }
@@ -124,7 +123,6 @@ class Data {
                         $output .= '<tr>';
                         $output .= sprintf('<td>%d</td>', $user->getId());
                         $output .= sprintf('<td>%s</td>', $user->getUsername());
-                        $output .= sprintf('<td>%s</td>', $user->getNiceName());
                         $output .= sprintf('<td>%s</td>', $user->getDisplayName());
                         $output .= sprintf('<td>%s</td>', $user->getEmailAddress());
                         $output .= sprintf('<td>%s</td>', $user->getWebsite());
@@ -135,11 +133,20 @@ class Data {
                 case 'post' :
                     /** @var Post $post */
                     foreach ($data as $post) {
+                        $author = $post->getAuthor();
                         $output .= '<tr>';
                         $output .= sprintf('<td>%d</td>', $post->getId());
                         $output .= sprintf('<td>%s</td>', $post->getTitle());
                         $output .= sprintf('<td>%s</td>', $post->getType());
                         $output .= sprintf('<td>%s</td>', $post->getStatus());
+                        $output .= sprintf(
+                            '<td>%s</td>',
+                            sprintf(
+                                '%s (%s)',
+                                $author->getDisplayName(),
+                                $author->getEmailAddress()
+                            )
+                        );
                         $output .= sprintf('<td>%s</td>', $post->getDate());
                         $output .= '</tr>';
                     }

@@ -17,8 +17,30 @@ class Post {
     protected $type = '';
     /** @var string */
     protected $status = '';
+    /** @var User */
+    protected $author;
     /** @var string */
     protected $date = '';
+
+    /**
+     * Post constructor.
+     * @param int $id
+     */
+    public function __construct($id = 0) {
+        if ((int)$id > 0) {
+            $this->setId($id);
+            $this->load();
+        }
+    }
+
+    public function load() {
+        global $wpdb;
+        $query = "SELECT * FROM `" . $wpdb->posts . "` WHERE `ID` = '%d'";
+        $row = $wpdb->get_row($wpdb->prepare($query, $this->getId()));
+        if ($row !== null) {
+            $this->loadByRow($row);
+        }
+    }
 
     /**
      * @param \stdClass $row
@@ -29,6 +51,7 @@ class Post {
         $this->setType($row->post_type);
         $this->setStatus($row->post_status);
         $this->setDate($row->post_date);
+        $this->setAuthor(new User($row->post_author));
     }
 
     /**
@@ -95,6 +118,20 @@ class Post {
      */
     public function setStatus($status) {
         $this->status = $status;
+    }
+
+    /**
+     * @return User
+     */
+    public function getAuthor() {
+        return $this->author;
+    }
+
+    /**
+     * @param User $author
+     */
+    public function setAuthor($author) {
+        $this->author = $author;
     }
 
     /**

@@ -12,7 +12,7 @@
             };
         })(),
         $wpgdprc = $('.wpgdprc'),
-        $wpgdprcCheckbox = $('.wpgdprc-checkbox input[type="checkbox"]', $wpgdprc),
+        $wpgdprcCheckbox = $('input[type="checkbox"]', $('.wpgdprc-checkbox, .wpgdprc-setting', $wpgdprc)),
         $wpgdprcTabs = $('.wpgdprc-tabs'),
         initCheckboxes = function () {
             if (!$wpgdprcCheckbox.length) {
@@ -27,7 +27,8 @@
             if (!$wpgdprcTabs.length) {
                 return;
             }
-            var $wpgdprcTabsNavigation = $('.wpgdprc-tabs__navigation', $wpgdprcTabs),
+            var hash = window.location.hash,
+                $wpgdprcTabsNavigation = $('.wpgdprc-tabs__navigation', $wpgdprcTabs),
                 $wpgdprcTabsNavigationItem = $('a', $wpgdprcTabsNavigation),
                 $wpgdprcTabsPanel = $('.wpgdprc-tabs__panel', $wpgdprcTabs);
 
@@ -38,11 +39,16 @@
                 if (!$target.length) {
                     return;
                 }
+                window.location.hash = target;
                 $wpgdprcTabsNavigationItem.removeClass('active').attr('aria-selected', false).attr('tabindex', '-1');
                 $wpgdprcTabsPanel.removeClass('active').attr('aria-hidden', true);
                 $(this).addClass('active').attr('aria-selected', true).attr('tabindex', 0);
                 $target.addClass('active').attr('aria-hidden', false);
             });
+
+            if (hash) {
+                $('[href="' + hash + '"]', $wpgdprcTabsNavigation).trigger('click');
+            }
         },
         getElementAjaxData = function ($element) {
             var data = $element.data();

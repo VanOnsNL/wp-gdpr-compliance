@@ -66,7 +66,7 @@
     font-style: normal;
 }
 
-div.wpgdprc-allowed-tags {
+div.wpgdprc-information {
     font-size: 12px;
     color: #8A8A8A;
 }
@@ -419,7 +419,11 @@ span.wpgdprc-instructions {
     vertical-align: top;
 }
 
-.wpgdprc-setting input, .wpgdprc-setting select {
+.wpgdprc-setting label input[type="checkbox"] {
+    margin-top: 0 !important;
+}
+
+.wpgdprc-setting input[type="text"], .wpgdprc-setting select {
     margin: 0;
     width: 100%;
     -webkit-box-shadow: none;
@@ -428,7 +432,7 @@ span.wpgdprc-instructions {
     font-size: inherit;
 }
 
-.wpgdprc-setting input {
+.wpgdprc-setting input[type="text"] {
     background-color: #FFFFFF;
 }
 
@@ -480,8 +484,8 @@ span.wpgdprc-instructions {
         width: 100%;
         max-width: 30%;
     }
-    div.wpgdprc-allowed-tags,
-    .wpgdprc-setting input,
+    div.wpgdprc-information,
+    .wpgdprc-setting input[type="text"],
     .wpgdprc-setting select {
         float: right;
         width: 100%;

@@ -25,6 +25,26 @@ class Comment {
     protected $date = '';
 
     /**
+     * Comment constructor.
+     * @param int $id
+     */
+    public function __construct($id = 0) {
+        if ((int)$id > 0) {
+            $this->setId($id);
+            $this->load();
+        }
+    }
+
+    public function load() {
+        global $wpdb;
+        $query = "SELECT * FROM `" . $wpdb->users . "` WHERE `ID` = '%d'";
+        $row = $wpdb->get_row($wpdb->prepare($query, $this->getId()));
+        if ($row !== null) {
+            $this->loadByRow($row);
+        }
+    }
+
+    /**
      * @param \stdClass $row
      */
     public function loadByRow(\stdClass $row) {

@@ -58,7 +58,7 @@ class Helpers {
      */
     public static function getAllowedHTMLTagsOutput($plugin = '') {
         $allowedTags = self::getAllowedHTMLTags($plugin);
-        $output = '<div class="wpgdprc-allowed-tags">';
+        $output = '<div class="wpgdprc-information">';
         if (!empty($allowedTags)) {
             $tags = '%privacy_policy%';
             foreach ($allowedTags as $tag => $attributes) {
@@ -158,12 +158,12 @@ class Helpers {
     }
 
     /**
-     * @param string $plugin
+     * @param string $option
      * @param string $type
      * @return bool
      */
-    public static function isEnabled($plugin = '', $type = 'integrations') {
-        return filter_var(get_option(WP_GDPR_C_PREFIX . '_' . $type . '_' . $plugin), FILTER_VALIDATE_BOOLEAN);
+    public static function isEnabled($option = '', $type = 'integrations') {
+        return filter_var(get_option(WP_GDPR_C_PREFIX . '_' . $type . '_' . $option), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**

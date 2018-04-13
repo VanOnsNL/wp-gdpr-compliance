@@ -14,15 +14,40 @@ class User {
     /** @var string */
     protected $username = '';
     /** @var string */
-    protected $niceName = '';
-    /** @var string */
     protected $displayName = '';
     /** @var string */
     protected $emailAddress = '';
     /** @var string */
     protected $website = '';
+    /** @var array */
+    protected $metaData = array();
     /** @var string */
     protected $registeredDate = '';
+
+    /**
+     * User constructor.
+     * @param int $id
+     */
+    public function __construct($id = 0) {
+        if ((int)$id > 0) {
+            $this->setId($id);
+            $this->load();
+            $this->loadMetaData();
+        }
+    }
+
+    public function load() {
+        global $wpdb;
+        $query = "SELECT * FROM `" . $wpdb->users . "` WHERE `ID` = '%d'";
+        $row = $wpdb->get_row($wpdb->prepare($query, $this->getId()));
+        if ($row !== null) {
+            $this->loadByRow($row);
+        }
+    }
+
+    public function loadMetaData() {
+        $this->setMetaData($this->getMetaDataByUserId($this->getId()));
+    }
 
     /**
      * @param \stdClass $row
@@ -30,11 +55,27 @@ class User {
     public function loadByRow(\stdClass $row) {
         $this->setId($row->ID);
         $this->setUsername($row->user_login);
-        $this->setNiceName($row->user_nicename);
         $this->setDisplayName($row->display_name);
         $this->setEmailAddress($row->user_email);
         $this->setWebsite($row->user_url);
         $this->setRegisteredDate($row->user_registered);
+    }
+
+    /**
+     * @param int $userId
+     * @return array
+     */
+    public function getMetaDataByUserId($userId = 0) {
+        global $wpdb;
+        $output = array();
+        $query = "SELECT * FROM `" . $wpdb->usermeta . "` WHERE `user_id` = '%d'";
+        $results = $wpdb->get_results($wpdb->prepare($query, $userId));
+        if ($results !== null) {
+            foreach ($results as $row) {
+                $output[] = $row;
+            }
+        }
+        return $output;
     }
 
     /**
@@ -78,20 +119,6 @@ class User {
     /**
      * @return string
      */
-    public function getNiceName() {
-        return $this->niceName;
-    }
-
-    /**
-     * @param string $niceName
-     */
-    public function setNiceName($niceName) {
-        $this->niceName = $niceName;
-    }
-
-    /**
-     * @return string
-     */
     public function getDisplayName() {
         return $this->displayName;
     }
@@ -129,6 +156,20 @@ class User {
      */
     public function setWebsite($website) {
         $this->website = $website;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetaData() {
+        return $this->metaData;
+    }
+
+    /**
+     * @param array $metaData
+     */
+    public function setMetaData($metaData) {
+        $this->metaData = $metaData;
     }
 
     /**
