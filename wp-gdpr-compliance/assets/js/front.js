@@ -16,9 +16,10 @@
         $wpgdprc = document.querySelector('.wpgdprc'),
         $wpgdprcFeedback = document.querySelector('.wpgdprc-feedback'),
         $wpgdprcForm = document.getElementById('wpgdprc-form'),
-        $wpgdprcFormEmailField = document.getElementById('wpgpdrc-form__email');
+        $wpgdprcFormEmailField = document.getElementById('wpgdprc-form__email'),
+        $wpgdprcFormConsentField = document.getElementById('wpgdprc-form__consent');
 
-    if ($wpgdprc && $wpgdprcForm && $wpgdprcFormEmailField) {
+    if ($wpgdprc && $wpgdprcForm && $wpgdprcFormEmailField && $wpgdprcFormConsentField) {
         $wpgdprcForm.addEventListener('submit', function (e) {
             e.preventDefault();
             if (!ajaxLoading) {
@@ -32,7 +33,8 @@
                         security: ajaxSecurity,
                         data: {
                             type: 'request_data',
-                            email: $wpgdprcFormEmailField.value
+                            email: $wpgdprcFormEmailField.value,
+                            consent: $wpgdprcFormConsentField.checked
                         }
                     },
                     request = new XMLHttpRequest();
@@ -45,7 +47,7 @@
                     if (request.response) {
                         var response = JSON.parse(request.response);
                         if (response.message) {
-                            $wpgdprcFormEmailField.value = '';
+                            $wpgdprcForm.reset();
                             $wpgdprcFormEmailField.blur();
                             $wpgdprcFeedback.innerHTML = response.message;
                             $wpgdprcFeedback.classList.add('wpgdprc-feedback--success');

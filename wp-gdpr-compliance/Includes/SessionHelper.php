@@ -28,7 +28,7 @@ class SessionHelper {
      * @param string $sessionId
      * @return bool
      */
-    public static function validateSession($sessionId = '') {
+    public static function checkSession($sessionId = '') {
         return self::getSessionId() === $sessionId;
     }
 

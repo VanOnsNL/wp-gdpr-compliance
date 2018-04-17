@@ -260,10 +260,11 @@ class Pages {
             <table class="wpgdprc-table">
                 <thead>
                 <tr>
-                    <th scope="col"><?php _e('Request', WP_GDPR_C_SLUG); ?></th>
-                    <th scope="col"><?php _e('Email Address', WP_GDPR_C_SLUG); ?></th>
-                    <th scope="col"><?php _e('IP Address', WP_GDPR_C_SLUG); ?></th>
-                    <th scope="col"><?php _e('Date', WP_GDPR_C_SLUG); ?></th>
+                    <th scope="col" width="10%"><?php _e('Request', WP_GDPR_C_SLUG); ?></th>
+                    <th scope="col" width="42%"><?php _e('Email Address', WP_GDPR_C_SLUG); ?></th>
+                    <th scope="col" width="18%"><?php _e('IP Address', WP_GDPR_C_SLUG); ?></th>
+                    <th scope="col" width="22%"><?php _e('Date', WP_GDPR_C_SLUG); ?></th>
+                    <th scope="col" width="8%"><?php _e('Active', WP_GDPR_C_SLUG); ?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -272,10 +273,11 @@ class Pages {
                 foreach ($requests as $request) :
                     ?>
                     <tr>
-                        <td><?php echo $request->getId(); ?></td>
+                        <td><?php printf('#%d', $request->getId()); ?></td>
                         <td><?php echo $request->getEmailAddress(); ?></td>
                         <td><?php echo $request->getIpAddress(); ?></td>
                         <td><?php echo $request->getDateCreated(); ?></td>
+                        <td><span class="dashicons dashicons-<?php echo ($request->getActive()) ? 'yes' : 'no'; ?>"></span></td>
                     </tr>
                     <?php
                 endforeach;

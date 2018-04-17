@@ -25,18 +25,18 @@ class Shortcodes {
         $output .= '<div class="wpgdprc-feedback" style="display: none;"></div>';
         $output .= '<form id="wpgdprc-form" name="wpgdprc_form" method="POST">';
         $output .= '<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>';
-        $output .= apply_filters('wpgpdprc_request_form_email_field', '<p><input type="email" name="wpgpdprc_email" id="wpgpdrc-form__email" placeholder="' . esc_attr__(apply_filters('wpgpdprc_request_form_email_placeholder', __('Your Email Address', WP_GDPR_C_SLUG))) . '" required /></p>');
+        $output .= apply_filters('wpgdprc_request_form_email_field', '<p><input type="email" name="wpgdprc_email" id="wpgdprc-form__email" placeholder="' . esc_attr__(apply_filters('wpgdprc_request_form_email_placeholder', __('Your Email Address', WP_GDPR_C_SLUG))) . '" required /></p>');
         $output .= apply_filters(
-            'wpgpdprc_request_form_consent_field',
+            'wpgdprc_request_form_consent_field',
             sprintf(
-                '<p><input type="checkbox" name="wpgdprc_consent" id="wpgdprc-form__consent" required /> %s</p>',
+                '<p><input type="checkbox" name="wpgdprc_consent" id="wpgdprc-form__consent" value="1" required /> %s</p>',
                 __('Blabla ik ga akkoord en shit.', WP_GDPR_C_SLUG)
             )
         );
-        $output .= apply_filters('wpgpdprc_request_form_submit_field', '<p><input type="submit" name="wpgdprc_submit" value="' . esc_attr__(apply_filters('wpgpdprc_request_form_submit_label', __('Send', WP_GDPR_C_SLUG))) . '" /></p>');
+        $output .= apply_filters('wpgdprc_request_form_submit_field', '<p><input type="submit" name="wpgdprc_submit" value="' . esc_attr__(apply_filters('wpgdprc_request_form_submit_label', __('Send', WP_GDPR_C_SLUG))) . '" /></p>');
         $output .= '</form>';
         $output .= '</div>';
-        return apply_filters('wpgpdprc_request_form', $output);
+        return apply_filters('wpgdprc_request_form', $output);
     }
 
     /**

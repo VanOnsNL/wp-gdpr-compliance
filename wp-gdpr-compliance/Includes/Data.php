@@ -17,6 +17,127 @@ class Data {
     protected $emailAddress = '';
 
     /**
+     * Data constructor.
+     * @param string $emailAddress
+     */
+    public function __construct($emailAddress = '') {
+        if (empty($emailAddress)) {
+            wp_die(
+                '<p>' . sprintf(
+                    __('<strong>ERROR</strong>: %s', WP_GDPR_C_SLUG),
+                    __('Email Address is required.', WP_GDPR_C_SLUG)
+                ) . '</p>'
+            );
+            exit;
+        }
+        $this->setEmailAddress($emailAddress);
+    }
+
+    /**
+     * @param string $type
+     * @return array
+     */
+    private static function getOutputColumns($type = '') {
+        $output = array();
+        switch ($type) {
+            case 'user' :
+                $output = array(
+                    __('ID', WP_GDPR_C_SLUG),
+                    __('Username', WP_GDPR_C_SLUG),
+                    __('Display Name', WP_GDPR_C_SLUG),
+                    __('Email Address', WP_GDPR_C_SLUG),
+                    __('Website', WP_GDPR_C_SLUG),
+                    __('Registered on', WP_GDPR_C_SLUG)
+                );
+                break;
+            case 'post' :
+                $output = array(
+                    __('ID', WP_GDPR_C_SLUG),
+                    __('Title', WP_GDPR_C_SLUG),
+                    __('Type', WP_GDPR_C_SLUG),
+                    __('Status', WP_GDPR_C_SLUG),
+                    __('Author', WP_GDPR_C_SLUG),
+                    __('Date', WP_GDPR_C_SLUG)
+                );
+                break;
+        }
+        return $output;
+    }
+
+    /**
+     * @param array $data
+     * @param string $type
+     * @return array
+     */
+    private static function getOutputData($data = array(), $type = '') {
+        $output = array();
+        switch ($type) {
+            case 'user' :
+                /** @var User $user */
+                foreach ($data as $user) {
+                    $output[] = array(
+                        $user->getId(),
+                        $user->getUsername(),
+                        $user->getDisplayName(),
+                        $user->getEmailAddress(),
+                        $user->getWebsite(),
+                        $user->getRegisteredDate()
+                    );
+                }
+                break;
+            case 'post' :
+                /** @var Post $post */
+                foreach ($data as $post) {
+                    $author = $post->getAuthor();
+                    $output[] = array(
+                        $post->getId(),
+                        $post->getTitle(),
+                        $post->getType(),
+                        $post->getStatus(),
+                        sprintf(
+                            '%s (%s)',
+                            $author->getDisplayName(),
+                            $author->getEmailAddress()
+                        ),
+                        $post->getDate()
+                    );
+                }
+                break;
+        }
+        return $output;
+    }
+
+    /**
+     * @param array $data
+     * @param string $type
+     * @return string
+     */
+    public static function getOutput($data = array(), $type = '') {
+        $output = '';
+        if (!empty($data)) {
+            $output .= '<table class="wpgdprc-table">';
+            $output .= '<thead>';
+            $output .= '<tr>';
+            foreach (self::getOutputColumns($type) as $column) {
+                $output .= sprintf('<th scope="col">%s</th>', $column);
+            }
+            $output .= '</tr>';
+            $output .= '</thead>';
+            $output .= '<tbody>';
+            foreach (self::getOutputData($data, $type) as $row) {
+                $output .= '<tr>';
+                foreach ($row as $value) {
+                    $output .= sprintf('<td>%s</td>', $value);
+                }
+                $output .= '</tr>';
+            }
+            $output .= '</tbody>';
+            $output .= '</table>';
+        }
+        return $output;
+    }
+
+    /**
      * @return Comment[]
      */
     public function getComments() {
@@ -82,80 +203,6 @@ class Data {
                     break;
             }
         }
-    }
-
-    /**
-     * @param array $data
-     * @param string $type
-     * @return string
-     */
-    public static function getOutput($data = array(), $type = '') {
-        $output = '';
-        if (!empty($data)) {
-            $output .= '<table class="wpgdprc-table">';
-            $output .= '<thead>';
-            $output .= '<tr>';
-            switch ($type) {
-                case 'user' :
-                    $output .= sprintf('<th scope="col">%s</th>', __('ID', WP_GDPR_C_SLUG));
-                    $output .= sprintf('<th scope="col">%s</th>', __('Username', WP_GDPR_C_SLUG));
-                    $output .= sprintf('<th scope="col">%s</th>', __('Display Name', WP_GDPR_C_SLUG));
-                    $output .= sprintf('<th scope="col">%s</th>', __('Email Address', WP_GDPR_C_SLUG));
-                    $output .= sprintf('<th scope="col">%s</th>', __('Website', WP_GDPR_C_SLUG));
-                    $output .= sprintf('<th scope="col">%s</th>', __('Registered on', WP_GDPR_C_SLUG));
-                    break;
-                case 'post' :
-                    $output .= sprintf('<th scope="col">%s</th>', __('ID', WP_GDPR_C_SLUG));
-                    $output .= sprintf('<th scope="col">%s</th>', __('Title', WP_GDPR_C_SLUG));
-                    $output .= sprintf('<th scope="col">%s</th>', __('Type', WP_GDPR_C_SLUG));
-                    $output .= sprintf('<th scope="col">%s</th>', __('Status', WP_GDPR_C_SLUG));
-                    $output .= sprintf('<th scope="col">%s</th>', __('Author', WP_GDPR_C_SLUG));
-                    $output .= sprintf('<th scope="col">%s</th>', __('Date', WP_GDPR_C_SLUG));
-                    break;
-            }
-            $output .= '</tr>';
-            $output .= '</thead>';
-            $output .= '<tbody>';
-            switch ($type) {
-                case 'user' :
-                    /** @var User $user */
-                    foreach ($data as $user) {
-                        $output .= '<tr>';
-                        $output .= sprintf('<td>%d</td>', $user->getId());
-                        $output .= sprintf('<td>%s</td>', $user->getUsername());
-                        $output .= sprintf('<td>%s</td>', $user->getDisplayName());
-                        $output .= sprintf('<td>%s</td>', $user->getEmailAddress());
-                        $output .= sprintf('<td>%s</td>', $user->getWebsite());
-                        $output .= sprintf('<td>%s</td>', $user->getRegisteredDate());
-                        $output .= '</tr>';
-                    }
-                    break;
-                case 'post' :
-                    /** @var Post $post */
-                    foreach ($data as $post) {
-                        $author = $post->getAuthor();
-                        $output .= '<tr>';
-                        $output .= sprintf('<td>%d</td>', $post->getId());
-                        $output .= sprintf('<td>%s</td>', $post->getTitle());
-                        $output .= sprintf('<td>%s</td>', $post->getType());
-                        $output .= sprintf('<td>%s</td>', $post->getStatus());
-                        $output .= sprintf(
-                            '<td>%s</td>',
-                            sprintf(
-                                '%s (%s)',
-                                $author->getDisplayName(),
-                                $author->getEmailAddress()
-                            )
-                        );
-                        $output .= sprintf('<td>%s</td>', $post->getDate());
-                        $output .= '</tr>';
-                    }
-                    break;
-            }
-            $output .= '</tbody>';
-            $output .= '</table>';
-        }
-        return $output;
     }
 
     /**

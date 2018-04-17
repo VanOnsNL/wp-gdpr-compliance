@@ -20,11 +20,10 @@ class Filter {
             $request = Request::getInstance()->getByEmailAddressAndSessionId($bla['email'], $bla['sId']);
             if ($request !== false) {
                 if (
-                    SessionHelper::validateSession($request->getSessionId()) &&
-                    Helpers::validateIpAddress($request->getIpAddress())
+                    SessionHelper::checkSession($request->getSessionId()) &&
+                    Helpers::checkIpAddress($request->getIpAddress())
                 ) {
-                    $data = new Data();
-                    $data->setEmailAddress($request->getEmailAddress());
+                    $data = new Data($request->getEmailAddress());
                     echo '<h2>Users</h2>';
                     echo Data::getOutput($data->getUsers(), 'user');
                     echo '<h2>Posts</h2>';
@@ -34,8 +33,7 @@ class Filter {
                         '<p>' . sprintf(
                             __('<strong>ERROR</strong>: %s', WP_GDPR_C_SLUG),
                             __('What are you trying to do?', WP_GDPR_C_SLUG)
-                        ) . '</p>',
-                        __('Comment Submission Failure')
+                        ) . '</p>'
                     );
                     exit;
                 }

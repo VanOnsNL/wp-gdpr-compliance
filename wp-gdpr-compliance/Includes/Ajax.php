@@ -73,19 +73,24 @@ class Ajax {
                     break;
                 case 'request_data' :
                     $emailAddress = (isset($data['email']) && is_email($data['email'])) ? $data['email'] : false;
+                    $consent = (isset($data['consent'])) ? filter_var($data['consent'], FILTER_VALIDATE_BOOLEAN) : false;
 
                     if (!$emailAddress) {
                         $output['error'] = __('Missing or incorrect email address.', WP_GDPR_C_SLUG);
                     }
 
+                    if (!$consent) {
+                        $output['error'] = __('You need to accept the privacy checkbox.', WP_GDPR_C_SLUG);
+                    }
+
                     // Let's do this!
                     if (empty($output['error'])) {
-                        if (!Request::getInstance()->exists($emailAddress)) {
+                        if (!Request::getInstance()->exists($emailAddress, true)) {
                             $request = new Request();
                             $request->setSiteId(get_current_blog_id());
                             $request->setEmailAddress($emailAddress);
                             $request->setSessionId(SessionHelper::getSessionId());
-                            $request->setIpAddress(Helpers::getUserIpAddress());
+                            $request->setIpAddress(Helpers::getClientIpAddress());
                             $request->setActive(1);
                             $id = $request->save();
                             if ($id !== false) {

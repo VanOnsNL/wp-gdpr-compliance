@@ -92,11 +92,15 @@ class Request {
 
     /**
      * @param string $emailAddress
+     * @param bool $activeOnly
      * @return bool
      */
-    public function exists($emailAddress = '') {
+    public function exists($emailAddress = '', $activeOnly = false) {
         global $wpdb;
         $query = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE `email_address` = '%s'";
+        if ($activeOnly) {
+            $query .= " AND `active` = '1'";
+        }
         $row = $wpdb->get_row($wpdb->prepare($query, $emailAddress));
         return ($row !== null);
     }
@@ -116,7 +120,7 @@ class Request {
                 'active' => $this->getActive(),
                 'date_created' => date_i18n('Y-m-d H:i:s'),
             ),
-            array('%d', '%s', '%s', '%d', '%s')
+            array('%d', '%s', '%s', '%s', '%d', '%s')
         );
         if ($result !== false) {
             $this->setId($wpdb->insert_id);
