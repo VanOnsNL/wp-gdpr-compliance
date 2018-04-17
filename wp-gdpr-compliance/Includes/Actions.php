@@ -31,6 +31,7 @@ class Actions {
         $page = get_pages(array(
             'post_type' => 'page',
             'post_status' => 'publish,private,draft',
+            'number' => 1,
             'meta_key' => '_wpgdprc_request_user_data',
         ));
         $page = (!empty($page)) ? $page[0] : false;

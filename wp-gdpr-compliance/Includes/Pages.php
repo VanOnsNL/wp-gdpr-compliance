@@ -254,29 +254,36 @@ class Pages {
      * Tab: Requests
      */
     private static function getRequestsTab() {
-        ?>
-        <table class="wpgdprc-table">
-            <thead>
-            <tr>
-                <th scope="col"><?php _e('Request', WP_GDPR_C_SLUG); ?></th>
-                <th scope="col"><?php _e('Email Address', WP_GDPR_C_SLUG); ?></th>
-                <th scope="col"><?php _e('Date', WP_GDPR_C_SLUG); ?></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>#1</td>
-                <td>donny@van-ons.nl</td>
-                <td>Jaja</td>
-            </tr>
-            <tr>
-                <td>#1</td>
-                <td>donny@van-ons.nl</td>
-                <td>Jaja</td>
-            </tr>
-            </tbody>
-        </table>
-        <?php
+        $requests = Request::getInstance()->getList();
+        if (!empty($requests)) :
+            ?>
+            <table class="wpgdprc-table">
+                <thead>
+                <tr>
+                    <th scope="col"><?php _e('Request', WP_GDPR_C_SLUG); ?></th>
+                    <th scope="col"><?php _e('Email Address', WP_GDPR_C_SLUG); ?></th>
+                    <th scope="col"><?php _e('IP Address', WP_GDPR_C_SLUG); ?></th>
+                    <th scope="col"><?php _e('Date', WP_GDPR_C_SLUG); ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                /** @var Request $request */
+                foreach ($requests as $request) :
+                    ?>
+                    <tr>
+                        <td><?php echo $request->getId(); ?></td>
+                        <td><?php echo $request->getEmailAddress(); ?></td>
+                        <td><?php echo $request->getIpAddress(); ?></td>
+                        <td><?php echo $request->getDateCreated(); ?></td>
+                    </tr>
+                    <?php
+                endforeach;
+                ?>
+                </tbody>
+            </table>
+            <?php
+        endif;
     }
 
     /**

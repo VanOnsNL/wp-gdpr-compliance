@@ -53,6 +53,21 @@ class Request {
         return false;
     }
 
+    public function getList() {
+        global $wpdb;
+        $output = array();
+        $query  = "SELECT * FROM `" . self::getDatabaseTableName() . "`";
+        $results = $wpdb->get_results($query);
+        if ($results !== null) {
+            foreach ($results as $row) {
+                $object = new self;
+                $object->loadByRow($row);
+                $output[] = $object;
+            }
+        }
+        return $output;
+    }
+
     /**
      * @param $row
      */
