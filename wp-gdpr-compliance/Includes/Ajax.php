@@ -94,26 +94,30 @@ class Ajax {
                             $request->setActive(1);
                             $id = $request->save();
                             if ($id !== false) {
+                                $page = Helpers::getRequestDataPage();
                                 $siteName = get_blog_option($request->getSiteId(), 'blogname');
                                 $siteEmail = get_blog_option($request->getSiteId(), 'admin_email');
                                 $subject = __('[WPGDPRC] Your request', WP_GDPR_C_SLUG);
-                                $message = sprintf(
-                                    '<a target="_blank" href="%s">%s</a>',
-                                    add_query_arg(
-                                        array(
-                                            'wpgdprc' => base64_encode(
-                                                serialize(
-                                                    array(
-                                                        'email' => $request->getEmailAddress(),
-                                                        'sId' => $request->getSessionId()
+                                $message = '';
+                                if (!empty($page)) {
+                                    $message = sprintf(
+                                        '<a target="_blank" href="%s">%s</a>',
+                                        add_query_arg(
+                                            array(
+                                                'wpgdprc' => base64_encode(
+                                                    serialize(
+                                                        array(
+                                                            'email' => $request->getEmailAddress(),
+                                                            'sId' => $request->getSessionId()
+                                                        )
                                                     )
                                                 )
-                                            )
+                                            ),
+                                            get_permalink($page)
                                         ),
-                                        get_site_url($request->getSiteId())
-                                    ),
-                                    __('Let\'s go!', WP_GDPR_C_SLUG)
-                                );
+                                        __('Let\'s go!', WP_GDPR_C_SLUG)
+                                    );
+                                }
                                 $headers = array(
                                     'Content-Type: text/html; charset=UTF-8',
                                     "From: $siteName <$siteEmail>"

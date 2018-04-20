@@ -32,7 +32,6 @@ namespace WPGDPRC;
 
 use WPGDPRC\Includes\Actions;
 use WPGDPRC\Includes\Ajax;
-use WPGDPRC\Includes\Filter;
 use WPGDPRC\Includes\Integrations;
 use WPGDPRC\Includes\Pages;
 use WPGDPRC\Includes\Request;
@@ -83,7 +82,6 @@ class WPGDPRC {
         add_action('core_version_check_query_args', array(Actions::getInstance(), 'onlySendEssentialDataDuringUpdateCheck'));
         add_action('wp_ajax_nopriv_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
         add_action('wp_ajax_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
-        add_filter('template_include', array(Filter::getInstance(), 'showUserData'));
         add_action('update_option_' . WP_GDPR_C_PREFIX . '_settings_enable_request_user_data', array(Actions::getInstance(), 'processEnablingRequestUserData'));
         add_shortcode('wpgdprc_request_form', array(Shortcodes::getInstance(), 'requestForm'));
         Integrations::getInstance();
@@ -101,8 +99,8 @@ class WPGDPRC {
     }
 
     public function loadAssets() {
-        wp_enqueue_style('wpgdprc.css', WP_GDPR_C_URI_CSS . '/front.css', array(), filemtime(WP_GDPR_C_DIR_CSS . '/front.css'));
-        wp_enqueue_script('wpgdprc.js', WP_GDPR_C_URI_JS . '/front.js', array(), filemtime(WP_GDPR_C_DIR_JS . '/front.js'), true);
+        wp_register_style('wpgdprc.css', WP_GDPR_C_URI_CSS . '/front.css', array(), filemtime(WP_GDPR_C_DIR_CSS . '/front.css'));
+        wp_register_script('wpgdprc.js', WP_GDPR_C_URI_JS . '/front.js', array(), filemtime(WP_GDPR_C_DIR_JS . '/front.js'), true);
         wp_localize_script('wpgdprc.js', 'wpgdprcData', array(
             'ajaxURL' => admin_url('admin-ajax.php'),
             'ajaxSecurity' => wp_create_nonce('wpgdprc'),
@@ -129,6 +127,7 @@ class WPGDPRC {
             `email_address` varchar(100) NOT NULL,
             `session_id` varchar(255) NOT NULL,
             `ip_address` varchar(100) NOT NULL,
+            `active` tinyint(1) DEFAULT '1' NOT NULL,
             `date_created` datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             PRIMARY KEY (`ID`)
             ) $charsetCollate;";

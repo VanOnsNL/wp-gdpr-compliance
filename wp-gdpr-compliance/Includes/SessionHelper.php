@@ -20,7 +20,7 @@ class SessionHelper {
      */
     public static function startSession() {
         if (!session_id()) {
-            session_start();
+            @session_start();
         }
     }
 

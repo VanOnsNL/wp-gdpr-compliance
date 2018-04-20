@@ -271,6 +271,23 @@ class Helpers {
     }
 
     /**
+     * @param string $string
+     * @param int $length
+     * @param string $more
+     * @return string
+     */
+    public static function shortenStringByWords($string = '', $length = 20, $more = '...') {
+        $words = preg_split("/[\n\r\t ]+/", $string, $length + 1, PREG_SPLIT_NO_EMPTY);
+        if (count($words) > $length) {
+            array_pop($words);
+            $output = implode(' ', $words) . $more;
+        } else {
+            $output = implode(' ', $words);
+        }
+        return $output;
+    }
+
+    /**
      * Ensures an ip address is both a valid IP and does not fall within
      * a private network range.
      * 
@@ -351,6 +368,25 @@ class Helpers {
      */
     public static function checkIpAddress($ipAddress = '') {
         return self::getClientIpAddress() === $ipAddress;
+    }
+
+    /**
+     * @return bool|\WP_Post
+     */
+    public static function getRequestDataPage() {
+        $output = false;
+        $page = get_pages(array(
+            'post_type' => 'page',
+            'post_status' => 'publish,private,draft',
+            'number' => 1,
+            'meta_key' => '_wpgdprc_request_user_data',
+            'meta_value' => '1'
+        ));
+        if (!empty($page)) {
+            /** @var \WP_Post $output */
+            $output = $page[0];
+        }
+        return $output;
     }
 
     /**

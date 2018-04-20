@@ -34,6 +34,7 @@ class Pages {
     public function generatePage() {
         $pluginData = Helpers::getPluginData();
         $daysLeftToComply = Helpers::getDaysLeftToComply();
+        $enableRequestUserData = Helpers::isEnabled('enable_request_user_data', 'settings');
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -47,23 +48,27 @@ class Pages {
                     <div class="wpgdprc-tabs">
                         <div class="wpgdprc-tabs__navigation wpgdprc-clearfix">
                             <a id="tab-integrations-label" class="active" href="#tab-integrations" aria-controls="tab-integrations" tabindex="0" role="tab"><?php _e('Integrations', WP_GDPR_C_SLUG); ?></a>
+                            <?php if ($enableRequestUserData) : ?>
+                                <a id="tab-requests-label" href="#tab-requests" aria-controls="tab-requests" tabindex="-1" role="tab"><?php _e('Requests', WP_GDPR_C_SLUG); ?></a>
+                            <?php endif; ?>
                             <a id="tab-checklist-label" href="#tab-checklist" aria-controls="tab-checklist" tabindex="-1" role="tab"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
                             <a id="tab-settings-label" href="#tab-settings" aria-controls="tab-settings" tabindex="-1" role="tab"><?php _e('Settings', WP_GDPR_C_SLUG); ?></a>
-                            <a id="tab-requests-label" href="#tab-requests" aria-controls="tab-requests" tabindex="-1" role="tab"><?php _e('Requests', WP_GDPR_C_SLUG); ?></a>
                         </div>
 
                         <div class="wpgdprc-tabs__content">
                             <div id="tab-integrations" class="wpgdprc-tabs__panel wpgdprc-clearfix active" aria-labelledby="tab-integrations-label" role="tabpanel">
                                 <?php self::getIntegrationsTab(); ?>
                             </div>
+                            <?php if ($enableRequestUserData) : ?>
+                                <div id="tab-requests" class="wpgdprc-tabs__panel wpgdprc-clearfix" aria-hidden="true" aria-labelledby="tab-requests-label" role="tabpanel">
+                                    <?php self::getRequestsTab(); ?>
+                                </div>
+                            <?php endif; ?>
                             <div id="tab-checklist" class="wpgdprc-tabs__panel wpgdprc-clearfix" aria-hidden="true" aria-labelledby="tab-checklist-label" role="tabpanel">
                                 <?php self::getChecklistTab(); ?>
                             </div>
                             <div id="tab-settings" class="wpgdprc-tabs__panel wpgdprc-clearfix" aria-hidden="true" aria-labelledby="tab-settings-label" role="tabpanel">
                                 <?php self::getSettingsTab(); ?>
-                            </div>
-                            <div id="tab-requests" class="wpgdprc-tabs__panel wpgdprc-clearfix" aria-hidden="true" aria-labelledby="tab-requests-label" role="tabpanel">
-                                <?php self::getRequestsTab(); ?>
                             </div>
                         </div>
                     </div>
@@ -97,6 +102,7 @@ class Pages {
      * Tab: Integrations
      */
     private static function getIntegrationsTab() {
+        $pluginData = Helpers::getPluginData();
         $activatedPlugins = Helpers::getActivatedPlugins();
         ?>
         <?php if (!empty($activatedPlugins)) : ?>
@@ -284,6 +290,10 @@ class Pages {
                 ?>
                 </tbody>
             </table>
+            <?php
+        else :
+            ?>
+            <p><strong><?php _e('No requests found.', WP_GDPR_C_SLUG); ?></strong></p>
             <?php
         endif;
     }

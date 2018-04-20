@@ -42,7 +42,6 @@ class Data {
         switch ($type) {
             case 'user' :
                 $output = array(
-                    __('ID', WP_GDPR_C_SLUG),
                     __('Username', WP_GDPR_C_SLUG),
                     __('Display Name', WP_GDPR_C_SLUG),
                     __('Email Address', WP_GDPR_C_SLUG),
@@ -52,15 +51,22 @@ class Data {
                 break;
             case 'post' :
                 $output = array(
-                    __('ID', WP_GDPR_C_SLUG),
                     __('Title', WP_GDPR_C_SLUG),
                     __('Type', WP_GDPR_C_SLUG),
-                    __('Status', WP_GDPR_C_SLUG),
                     __('Author', WP_GDPR_C_SLUG),
                     __('Date', WP_GDPR_C_SLUG)
                 );
                 break;
+            case 'comment' :
+                $output = array(
+                    __('Author', WP_GDPR_C_SLUG),
+                    __('Content', WP_GDPR_C_SLUG),
+                    __('Email Address', WP_GDPR_C_SLUG),
+                    __('IP Address', WP_GDPR_C_SLUG)
+                );
+                break;
         }
+        $output[] = __('Action', WP_GDPR_C_SLUG);
         return $output;
     }
 
@@ -71,17 +77,18 @@ class Data {
      */
     private static function getOutputData($data = array(), $type = '') {
         $output = array();
+        $action = '<input type="checkbox" name="' . WP_GDPR_C_PREFIX . '_remove[]" id="' . WP_GDPR_C_PREFIX . '_remove" value="1" tabindex="1" />';
         switch ($type) {
             case 'user' :
                 /** @var User $user */
                 foreach ($data as $user) {
                     $output[] = array(
-                        $user->getId(),
                         $user->getUsername(),
                         $user->getDisplayName(),
                         $user->getEmailAddress(),
                         $user->getWebsite(),
-                        $user->getRegisteredDate()
+                        $user->getRegisteredDate(),
+                        $action
                     );
                 }
                 break;
@@ -90,16 +97,27 @@ class Data {
                 foreach ($data as $post) {
                     $author = $post->getAuthor();
                     $output[] = array(
-                        $post->getId(),
-                        $post->getTitle(),
+                        (!empty($post->getTitle()) ? $post->getTitle() : __('(no title)', WP_GDPR_C_SLUG)),
                         $post->getType(),
-                        $post->getStatus(),
                         sprintf(
                             '%s (%s)',
                             $author->getDisplayName(),
                             $author->getEmailAddress()
                         ),
-                        $post->getDate()
+                        $post->getDate(),
+                        $action
+                    );
+                }
+                break;
+            case 'comment' :
+                /** @var Comment $comment */
+                foreach ($data as $comment) {
+                    $output[] = array(
+                        $comment->getAuthorName(),
+                        Helpers::shortenStringByWords(wp_strip_all_tags($comment->getContent(), true), 5),
+                        $comment->getEmailAddress(),
+                        $comment->getIpAddress(),
+                        $action
                     );
                 }
                 break;
@@ -115,6 +133,7 @@ class Data {
     public static function getOutput($data = array(), $type = '') {
         $output = '';
         if (!empty($data)) {
+            $output .= '<form>';
             $output .= '<table class="wpgdprc-table">';
             $output .= '<thead>';
             $output .= '<tr>';
@@ -133,6 +152,8 @@ class Data {
             }
             $output .= '</tbody>';
             $output .= '</table>';
+            $output .= '<p><a href="#">Remove selected</a></p>';
+            $output .= '</form>';
         }
         return $output;
     }

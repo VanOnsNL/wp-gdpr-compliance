@@ -3,7 +3,7 @@ Contributors: donnyoexman, michaelvt, jeffreyvisser, van-ons
 Tags: gdpr, law, regulations, compliance, data, protection, privacy, data protection, eu, avg, comments, woocommerce, wc, contact form 7, cf7
 Requires at least: 4.5
 Tested up to: 4.9.4
-Requires PHP: 5.2.4
+Requires PHP: 5.3
 Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html

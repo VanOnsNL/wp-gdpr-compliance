@@ -27,38 +27,28 @@ class Actions {
     }
 
     public function processEnablingRequestUserData() {
+        $page = Helpers::getRequestDataPage();
         $enabled = Helpers::isEnabled('enable_request_user_data', 'settings');
-        $page = get_pages(array(
-            'post_type' => 'page',
-            'post_status' => 'publish,private,draft',
-            'number' => 1,
-            'meta_key' => '_wpgdprc_request_user_data',
-        ));
-        $page = (!empty($page)) ? $page[0] : false;
-        if ($enabled) {
-            if (empty($page)) {
-                $result = wp_insert_post(array(
-                    'post_type' => 'page',
-                    'post_status' => 'private',
-                    'post_title' => __('[WPGDPRC] Request Data', WP_GDPR_C_SLUG),
-                    'post_content' => '[wpgdprc_request_form]',
-                    'meta_input' => array(
-                        '_wpgdprc_request_user_data' => 1,
-                    ),
-                ), true);
-            } else {
-                wp_update_post(array(
-                    'ID' => $page->ID,
-                    'post_status' => 'private'
-                ));
+        $status = ($enabled) ? 'private' : 'draft';
+        if ($enabled && $page === false) {
+            $result = wp_insert_post(array(
+                'post_type' => 'page',
+                'post_status' => $status,
+                'post_title' => __('[WPGDPRC] Request Data', WP_GDPR_C_SLUG),
+                'post_content' => '[wpgdprc_request_form]',
+                'meta_input' => array(
+                    '_wpgdprc_request_user_data' => 1,
+                ),
+            ), true);
+            if (!is_wp_error($result)) {
+                $page = get_post($result);
             }
-        } else {
-            if (!empty($page)) {
-                wp_update_post(array(
-                    'ID' => $page->ID,
-                    'post_status' => 'draft'
-                ));
-            }
+        }
+        if (!empty($page)) {
+            wp_update_post(array(
+                'ID' => $page->ID,
+                'post_status' => $status
+            ));
         }
     }
 
