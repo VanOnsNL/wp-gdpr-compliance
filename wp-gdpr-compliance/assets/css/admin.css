@@ -402,6 +402,7 @@ span.wpgdprc-instructions {
 }
 
 .wpgdprc-setting {
+    margin: 1em 0;
     *zoom: 1;
 }
 
@@ -438,6 +439,10 @@ span.wpgdprc-instructions {
 
 .wpgdprc-setting select {
     background-color: #FAFAFA;
+}
+
+.wpgdprc-setting .wpgdprc-information {
+    margin-top: .5em;
 }
 
 .wpgdprc-countdown {
@@ -484,9 +489,7 @@ span.wpgdprc-instructions {
         width: 100%;
         max-width: 30%;
     }
-    div.wpgdprc-information,
-    .wpgdprc-setting input[type="text"],
-    .wpgdprc-setting select {
+    .wpgdprc-options {
         float: right;
         width: 100%;
         max-width: 70%;

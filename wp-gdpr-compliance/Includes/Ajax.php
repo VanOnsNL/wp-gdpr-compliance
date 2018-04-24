@@ -104,14 +104,10 @@ class Ajax {
                                         '<a target="_blank" href="%s">%s</a>',
                                         add_query_arg(
                                             array(
-                                                'wpgdprc' => base64_encode(
-                                                    serialize(
-                                                        array(
-                                                            'email' => $request->getEmailAddress(),
-                                                            'sId' => $request->getSessionId()
-                                                        )
-                                                    )
-                                                )
+                                                'wpgdprc' => base64_encode(serialize(array(
+                                                    'email' => $request->getEmailAddress(),
+                                                    'sId' => $request->getSessionId()
+                                                )))
                                             ),
                                             get_permalink($page)
                                         ),
@@ -133,7 +129,19 @@ class Ajax {
                             $output['error'] = __('Already requested.', WP_GDPR_C_SLUG);
                         }
                     }
+                    break;
+                case 'delete_data' :
+                    $settings = (isset($data['settings']) && is_array($data['settings'])) ? $data['settings'] : array();
+                    $type = (isset($settings['type']) && in_array($settings['type'], Data::getPossibleDataTypes())) ? $settings['type'] : '';
+                    $value = (isset($data['value']) && is_numeric($data['value'])) ? $data['value'] : 0;
 
+                    if (empty($type)) {
+                        $output['error'] = __('Missing type.', WP_GDPR_C_SLUG);
+                    }
+
+                    if ($value === 0) {
+                        $output['error'] = __('No value selected.', WP_GDPR_C_SLUG);
+                    }
                     break;
             }
         }

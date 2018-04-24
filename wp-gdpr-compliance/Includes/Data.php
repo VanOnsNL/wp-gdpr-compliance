@@ -34,6 +34,13 @@ class Data {
     }
 
     /**
+     * @return array
+     */
+    public static function getPossibleDataTypes() {
+        return array('user', 'post', 'comment');
+    }
+
+    /**
      * @param string $type
      * @return array
      */
@@ -77,18 +84,18 @@ class Data {
      */
     private static function getOutputData($data = array(), $type = '') {
         $output = array();
-        $action = '<input type="checkbox" name="' . WP_GDPR_C_PREFIX . '_remove[]" id="' . WP_GDPR_C_PREFIX . '_remove" value="1" tabindex="1" />';
+        $action = '<input type="checkbox" name="' . WP_GDPR_C_PREFIX . '_remove[]" class="wpgdprc-checkbox" value="%d" tabindex="1" />';
         switch ($type) {
             case 'user' :
                 /** @var User $user */
                 foreach ($data as $user) {
-                    $output[] = array(
+                    $output[$user->getId()] = array(
                         $user->getUsername(),
                         $user->getDisplayName(),
                         $user->getEmailAddress(),
                         $user->getWebsite(),
                         $user->getRegisteredDate(),
-                        $action
+                        sprintf($action, $user->getId())
                     );
                 }
                 break;
@@ -96,7 +103,7 @@ class Data {
                 /** @var Post $post */
                 foreach ($data as $post) {
                     $author = $post->getAuthor();
-                    $output[] = array(
+                    $output[$post->getId()] = array(
                         (!empty($post->getTitle()) ? $post->getTitle() : __('(no title)', WP_GDPR_C_SLUG)),
                         $post->getType(),
                         sprintf(
@@ -105,19 +112,19 @@ class Data {
                             $author->getEmailAddress()
                         ),
                         $post->getDate(),
-                        $action
+                        sprintf($action, $post->getId())
                     );
                 }
                 break;
             case 'comment' :
                 /** @var Comment $comment */
                 foreach ($data as $comment) {
-                    $output[] = array(
+                    $output[$comment->getId()] = array(
                         $comment->getAuthorName(),
                         Helpers::shortenStringByWords(wp_strip_all_tags($comment->getContent(), true), 5),
                         $comment->getEmailAddress(),
                         $comment->getIpAddress(),
-                        $action
+                        sprintf($action, $comment->getId())
                     );
                 }
                 break;
@@ -133,7 +140,12 @@ class Data {
     public static function getOutput($data = array(), $type = '') {
         $output = '';
         if (!empty($data)) {
-            $output .= '<form>';
+            $output .= sprintf(
+                '<form class="wpgdprc-form" data-wpgdprc=\'%s\' method="POST" novalidate="novalidate">',
+                json_encode(array(
+                    'type' => $type
+                ))
+            );
             $output .= '<table class="wpgdprc-table">';
             $output .= '<thead>';
             $output .= '<tr>';
@@ -143,8 +155,11 @@ class Data {
             $output .= '</tr>';
             $output .= '</thead>';
             $output .= '<tbody>';
-            foreach (self::getOutputData($data, $type) as $row) {
-                $output .= '<tr>';
+            foreach (self::getOutputData($data, $type) as $id => $row) {
+                $output .= sprintf(
+                    '<tr data-id="%d">',
+                    $id
+                );
                 foreach ($row as $value) {
                     $output .= sprintf('<td>%s</td>', $value);
                 }
@@ -152,7 +167,10 @@ class Data {
             }
             $output .= '</tbody>';
             $output .= '</table>';
-            $output .= '<p><a href="#">Remove selected</a></p>';
+            $output .= sprintf(
+                '<p><input type="submit" class="wpgdprc-remove" value="Remove selected %s(s)" /></p>',
+                $type
+            );
             $output .= '</form>';
         }
         return $output;

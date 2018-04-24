@@ -225,33 +225,39 @@ class Pages {
         ?>
         <p><?php _e('Use %privacy_policy% if you want to link your Privacy Policy page in the GDPR checkbox texts.', WP_GDPR_C_SLUG); ?></p>
         <p><strong><?php _e('Privacy Policy', WP_GDPR_C_SLUG); ?></strong></p>
-        <p class="wpgdprc-setting">
+        <div class="wpgdprc-setting">
             <label for="<?php echo $optionNamePrivacyPolicyPage; ?>"><?php _e('Privacy Policy', WP_GDPR_C_SLUG); ?></label>
-            <?php
-            wp_dropdown_pages(array(
-                'show_option_none' => __('Select an option', WP_GDPR_C_SLUG),
-                'name' => $optionNamePrivacyPolicyPage,
-                'selected' => $privacyPolicyPage
-            ));
-            ?>
-        </p>
-        <p class="wpgdprc-setting">
+            <div class="wpgdprc-options">
+                <?php
+                wp_dropdown_pages(array(
+                    'show_option_none' => __('Select an option', WP_GDPR_C_SLUG),
+                    'name' => $optionNamePrivacyPolicyPage,
+                    'selected' => $privacyPolicyPage
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="wpgdprc-setting">
             <label for="<?php echo $optionNamePrivacyPolicyText; ?>"><?php _e('Link text', WP_GDPR_C_SLUG); ?></label>
-            <input type="text" name="<?php echo $optionNamePrivacyPolicyText; ?>" class="regular-text" id="<?php echo $optionNamePrivacyPolicyText; ?>" placeholder="<?php echo $privacyPolicyText; ?>" value="<?php echo $privacyPolicyText; ?>" />
-        </p>
+            <div class="wpgdprc-options">
+                <input type="text" name="<?php echo $optionNamePrivacyPolicyText; ?>" class="regular-text" id="<?php echo $optionNamePrivacyPolicyText; ?>" placeholder="<?php echo $privacyPolicyText; ?>" value="<?php echo $privacyPolicyText; ?>" />
+            </div>
+        </div>
         <p><strong><?php _e('Request User Data', WP_GDPR_C_SLUG); ?></strong></p>
-        <p class="wpgdprc-setting">
+        <div class="wpgdprc-setting">
             <label for="<?php echo $optionNameEnableRequestUserData; ?>"><?php _e('Enable', WP_GDPR_C_SLUG); ?></label>
-            <label><input type="checkbox" name="<?php echo $optionNameEnableRequestUserData; ?>" id="<?php echo $optionNameEnableRequestUserData; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionNameEnableRequestUserData; ?>" <?php checked(true, $enableRequestUserData); ?> /> <?php _e('Yes', WP_GDPR_C_SLUG); ?></label>
-        </p>
-        <div class="wpgdprc-information">
-            <?php
-            printf(
-                '<strong>%s:</strong> %s',
-                strtoupper(__('Note', WP_GDPR_C_SLUG)),
-                __('Enabling this will create a page with...', WP_GDPR_C_SLUG)
-            );
-            ?>
+            <div class="wpgdprc-options">
+                <label><input type="checkbox" name="<?php echo $optionNameEnableRequestUserData; ?>" id="<?php echo $optionNameEnableRequestUserData; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionNameEnableRequestUserData; ?>" <?php checked(true, $enableRequestUserData); ?> /> <?php _e('Yes', WP_GDPR_C_SLUG); ?></label>
+                <div class="wpgdprc-information">
+                    <?php
+                    printf(
+                        '<strong>%s:</strong> %s',
+                        strtoupper(__('Note', WP_GDPR_C_SLUG)),
+                        __('Enabling this will create a page with...', WP_GDPR_C_SLUG)
+                    );
+                    ?>
+                </div>
+            </div>
         </div>
         <?php
     }
