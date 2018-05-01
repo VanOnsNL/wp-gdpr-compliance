@@ -6,7 +6,7 @@ namespace WPGDPRC\Includes;
  * Class Requests
  * @package WPGDPRC\Includes
  */
-class Request {
+class AccessRequest {
     /** @var null */
     private static $instance = null;
     /** @var int */
@@ -38,7 +38,7 @@ class Request {
     /**
      * @param string $emailAddress
      * @param string $sessionId
-     * @return bool|Request
+     * @return bool|AccessRequest
      */
     public function getByEmailAddressAndSessionId($emailAddress = '', $sessionId = '') {
         global $wpdb;
@@ -53,10 +53,15 @@ class Request {
         return false;
     }
 
-    public function getList() {
+    /**
+     * @param array $filters
+     * @return AccessRequest[]
+     */
+    public function getList($filters = array()) {
         global $wpdb;
         $output = array();
-        $query  = "SELECT * FROM `" . self::getDatabaseTableName() . "`";
+        $query  = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE 1";
+        $query .= Helpers::getQueryByFilters($filters);
         $results = $wpdb->get_results($query);
         if ($results !== null) {
             foreach ($results as $row) {
@@ -91,11 +96,26 @@ class Request {
     }
 
     /**
+     * @param int $id
+     * @return bool
+     */
+    public function exists($id = 0) {
+        global $wpdb;
+        $row = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE `ID` = '%d'",
+                $id
+            )
+        );
+        return ($row !== null);
+    }
+
+    /**
      * @param string $emailAddress
      * @param bool $activeOnly
      * @return bool
      */
-    public function exists($emailAddress = '', $activeOnly = false) {
+    public function existsByEmailAddress($emailAddress = '', $activeOnly = false) {
         global $wpdb;
         $query = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE `email_address` = '%s'";
         if ($activeOnly) {
@@ -110,27 +130,37 @@ class Request {
      */
     public function save() {
         global $wpdb;
-        $result = $wpdb->insert(
-            self::getDatabaseTableName(),
-            array(
-                'site_id' => $this->getSiteId(),
-                'email_address' => $this->getEmailAddress(),
-                'session_id' => $this->getSessionId(),
-                'ip_address' => $this->getIpAddress(),
-                'active' => $this->getActive(),
-                'date_created' => date_i18n('Y-m-d H:i:s'),
-            ),
-            array('%d', '%s', '%s', '%s', '%d', '%s')
-        );
-        if ($result !== false) {
-            $this->setId($wpdb->insert_id);
-            return $this->getId();
+        if ($this->exists($this->getId())) {
+            $wpdb->update(
+                self::getDatabaseTableName(),
+                array('active' => $this->getActive()),
+                array('ID' => $this->getId()),
+                array('%d'),
+                array('%d')
+            );
+        } else {
+            $result = $wpdb->insert(
+                self::getDatabaseTableName(),
+                array(
+                    'site_id' => $this->getSiteId(),
+                    'email_address' => $this->getEmailAddress(),
+                    'session_id' => $this->getSessionId(),
+                    'ip_address' => $this->getIpAddress(),
+                    'active' => $this->getActive(),
+                    'date_created' => date_i18n('Y-m-d H:i:s'),
+                ),
+                array('%d', '%s', '%s', '%s', '%d', '%s')
+            );
+            if ($result !== false) {
+                $this->setId($wpdb->insert_id);
+                return $this->getId();
+            }
         }
-        return false;
+        return $this->getId();
     }
 
     /**
-     * @return null|Request
+     * @return null|AccessRequest
      */
     public static function getInstance() {
         if (!isset(self::$instance)) {
@@ -242,6 +272,6 @@ class Request {
      */
     public static function getDatabaseTableName() {
         global $wpdb;
-        return $wpdb->base_prefix . 'wpgpdrc_requests';
+        return $wpdb->base_prefix . 'wpgpdrc_access_requests';
     }
 }

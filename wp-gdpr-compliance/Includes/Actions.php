@@ -26,18 +26,18 @@ class Actions {
         return $query;
     }
 
-    public function processEnablingRequestUserData() {
-        $page = Helpers::getRequestDataPage();
-        $enabled = Helpers::isEnabled('enable_request_user_data', 'settings');
+    public function processEnableAccessRequest() {
+        $page = Helpers::getAccessRequestPage();
+        $enabled = Helpers::isEnabled('enable_access_request', 'settings');
         $status = ($enabled) ? 'private' : 'draft';
         if ($enabled && $page === false) {
             $result = wp_insert_post(array(
                 'post_type' => 'page',
                 'post_status' => $status,
-                'post_title' => __('[WPGDPRC] Request Data', WP_GDPR_C_SLUG),
-                'post_content' => '[wpgdprc_request_form]',
+                'post_title' => __('[WPGDPRC] Access Request', WP_GDPR_C_SLUG),
+                'post_content' => '[wpgdprc_access_request_form]',
                 'meta_input' => array(
-                    '_wpgdprc_request_user_data' => 1,
+                    '_wpgdprc_access_request' => 1,
                 ),
             ), true);
             if (!is_wp_error($result)) {

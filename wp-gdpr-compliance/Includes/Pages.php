@@ -16,7 +16,7 @@ class Pages {
         }
         register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_privacy_policy_page', 'intval');
         register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_privacy_policy_text', array('sanitize_callback' => array(Helpers::getInstance(), 'sanitizeData')));
-        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_enable_request_user_data', 'intval');
+        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_enable_access_request', 'intval');
     }
 
     public function addAdminMenu() {
@@ -34,7 +34,7 @@ class Pages {
     public function generatePage() {
         $pluginData = Helpers::getPluginData();
         $daysLeftToComply = Helpers::getDaysLeftToComply();
-        $enableRequestUserData = Helpers::isEnabled('enable_request_user_data', 'settings');
+        $enableAccessRequest = Helpers::isEnabled('enable_access_request', 'settings');
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -48,7 +48,7 @@ class Pages {
                     <div class="wpgdprc-tabs">
                         <div class="wpgdprc-tabs__navigation wpgdprc-clearfix">
                             <a id="tab-integrations-label" class="active" href="#tab-integrations" aria-controls="tab-integrations" tabindex="0" role="tab"><?php _e('Integrations', WP_GDPR_C_SLUG); ?></a>
-                            <?php if ($enableRequestUserData) : ?>
+                            <?php if ($enableAccessRequest) : ?>
                                 <a id="tab-requests-label" href="#tab-requests" aria-controls="tab-requests" tabindex="-1" role="tab"><?php _e('Requests', WP_GDPR_C_SLUG); ?></a>
                             <?php endif; ?>
                             <a id="tab-checklist-label" href="#tab-checklist" aria-controls="tab-checklist" tabindex="-1" role="tab"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
@@ -59,7 +59,7 @@ class Pages {
                             <div id="tab-integrations" class="wpgdprc-tabs__panel wpgdprc-clearfix active" aria-labelledby="tab-integrations-label" role="tabpanel">
                                 <?php self::getIntegrationsTab(); ?>
                             </div>
-                            <?php if ($enableRequestUserData) : ?>
+                            <?php if ($enableAccessRequest) : ?>
                                 <div id="tab-requests" class="wpgdprc-tabs__panel wpgdprc-clearfix" aria-hidden="true" aria-labelledby="tab-requests-label" role="tabpanel">
                                     <?php self::getRequestsTab(); ?>
                                 </div>
@@ -218,10 +218,10 @@ class Pages {
     private static function getSettingsTab() {
         $optionNamePrivacyPolicyPage = WP_GDPR_C_PREFIX . '_settings_privacy_policy_page';
         $optionNamePrivacyPolicyText = WP_GDPR_C_PREFIX . '_settings_privacy_policy_text';
-        $optionNameEnableRequestUserData = WP_GDPR_C_PREFIX . '_settings_enable_request_user_data';
+        $optionNameEnableAccessRequest = WP_GDPR_C_PREFIX . '_settings_enable_access_request';
         $privacyPolicyPage = get_option($optionNamePrivacyPolicyPage);
         $privacyPolicyText = esc_html(Integrations::getPrivacyPolicyText());
-        $enableRequestUserData = Helpers::isEnabled('enable_request_user_data', 'settings');
+        $enableAccessRequest = Helpers::isEnabled('enable_access_request', 'settings');
         ?>
         <p><?php _e('Use %privacy_policy% if you want to link your Privacy Policy page in the GDPR checkbox texts.', WP_GDPR_C_SLUG); ?></p>
         <p><strong><?php _e('Privacy Policy', WP_GDPR_C_SLUG); ?></strong></p>
@@ -245,9 +245,9 @@ class Pages {
         </div>
         <p><strong><?php _e('Request User Data', WP_GDPR_C_SLUG); ?></strong></p>
         <div class="wpgdprc-setting">
-            <label for="<?php echo $optionNameEnableRequestUserData; ?>"><?php _e('Enable', WP_GDPR_C_SLUG); ?></label>
+            <label for="<?php echo $optionNameEnableAccessRequest; ?>"><?php _e('Enable', WP_GDPR_C_SLUG); ?></label>
             <div class="wpgdprc-options">
-                <label><input type="checkbox" name="<?php echo $optionNameEnableRequestUserData; ?>" id="<?php echo $optionNameEnableRequestUserData; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionNameEnableRequestUserData; ?>" <?php checked(true, $enableRequestUserData); ?> /> <?php _e('Yes', WP_GDPR_C_SLUG); ?></label>
+                <label><input type="checkbox" name="<?php echo $optionNameEnableAccessRequest; ?>" id="<?php echo $optionNameEnableAccessRequest; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionNameEnableAccessRequest; ?>" <?php checked(true, $enableAccessRequest); ?> /> <?php _e('Yes', WP_GDPR_C_SLUG); ?></label>
                 <div class="wpgdprc-information">
                     <?php
                     printf(
@@ -266,7 +266,7 @@ class Pages {
      * Tab: Requests
      */
     private static function getRequestsTab() {
-        $requests = Request::getInstance()->getList();
+        $requests = AccessRequest::getInstance()->getList();
         if (!empty($requests)) :
             ?>
             <table class="wpgdprc-table">
@@ -281,7 +281,7 @@ class Pages {
                 </thead>
                 <tbody>
                 <?php
-                /** @var Request $request */
+                /** @var AccessRequest $request */
                 foreach ($requests as $request) :
                     ?>
                     <tr>

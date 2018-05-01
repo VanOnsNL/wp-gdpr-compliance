@@ -14,13 +14,13 @@ class Shortcodes {
      * @param array $attributes
      * @return string
      */
-    public function requestForm($attributes = array()) {
+    public function accessRequestForm($attributes = array()) {
         wp_enqueue_style('wpgdprc.css');
         wp_enqueue_script('wpgdprc.js');
         $output = '<div class="wpgdprc">';
         if (isset($_REQUEST['wpgdprc'])) {
             $request = unserialize(base64_decode($_REQUEST['wpgdprc']));
-            $request = Request::getInstance()->getByEmailAddressAndSessionId($request['email'], $request['sId']);
+            $request = AccessRequest::getInstance()->getByEmailAddressAndSessionId($request['email'], $request['sId']);
             if ($request !== false) {
                 if (
                     SessionHelper::checkSession($request->getSessionId()) &&

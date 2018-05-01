@@ -73,7 +73,7 @@ class Data {
                 );
                 break;
         }
-        $output[] = __('Action', WP_GDPR_C_SLUG);
+        $output[] = '<input type="checkbox" class="wpgdprc-select-all" />';
         return $output;
     }
 

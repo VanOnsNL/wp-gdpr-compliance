@@ -42,7 +42,7 @@
                 $row.classList.add('wpgdprc-processing');
                 setTimeout(function () {
                     var request = new XMLHttpRequest();
-                    data.data.values = value;
+                    data.data.value = value[0];
                     request.open('POST', ajaxURL);
                     request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8');
                     request.send(_objectToParametersString(data));
@@ -52,6 +52,7 @@
                             values.splice(0, 1);
                             loading = false;
                             $row.classList.remove('wpgdprc-processing');
+                            $row.querySelector('input').remove();
                             $row.classList.add('wpgdprc-removed');
                             _ajax(data, values, $form, 500);
                         }
@@ -65,7 +66,7 @@
             $formRequestData = document.querySelector('#wpgdprc-form'),
             $formDeleteData = document.querySelectorAll('.wpgdprc-form');
 
-        if ($formRequestData) {
+        if ($formRequestData !== null) {
             var $feedback = document.querySelector('.wpgdprc-feedback'),
                 $emailAddress = document.querySelector('#wpgdprc-form__email'),
                 $consent = document.querySelector('#wpgdprc-form__consent');
@@ -116,13 +117,14 @@
             });
         }
 
-        if ($formDeleteData) {
-            for (var i = 0; i < $formDeleteData.length; i++) {
-                var $form = $formDeleteData.item(i);
+        if ($formDeleteData.length > 0) {
+            $formDeleteData.forEach(function ($form) {
+                var $selectAll = $form.querySelector('.wpgdprc-select-all');
+
                 $form.addEventListener('submit', function (e) {
                     e.preventDefault();
                     var $this = e.target,
-                        $checkboxes = $this.querySelectorAll('input[type="checkbox"]'),
+                        $checkboxes = $this.querySelectorAll('.wpgdprc-checkbox'),
                         data = {
                             action: 'wpgdprc_process_action',
                             security: ajaxSecurity,
@@ -131,9 +133,21 @@
                                 settings: JSON.parse($this.dataset.wpgdprc)
                             }
                         };
+                    $selectAll.checked = false;
                     _ajax(data, _getValuesByCheckedBoxes($checkboxes), $this);
                 });
-            }
+
+                if ($selectAll !== null) {
+                    $selectAll.addEventListener('change', function (e) {
+                        var $this = e.target,
+                            checked = $this.checked,
+                            $checkboxes = $form.querySelectorAll('.wpgdprc-checkbox');
+                        $checkboxes.forEach(function (e) {
+                            e.checked = checked;
+                        });
+                    });
+                }
+            });
         }
     });
 })(window, document);

@@ -243,11 +243,10 @@ class Helpers {
     }
 
     /**
-     * @param string $format
      * @param int $timestamp
-     * @return string
+     * @return \DateTime
      */
-    public static function localDateFormat($format = '', $timestamp = 0) {
+    public static function localDateTime($timestamp = 0) {
         $gmtOffset = get_option('gmt_offset', '');
         if ($gmtOffset !== '') {
             $negative = ($gmtOffset < 0);
@@ -266,7 +265,16 @@ class Helpers {
             $date = new \DateTime(null, new \DateTimeZone(get_option('timezone_string', 'UTC')));
             $date->setTimestamp($timestamp);
         }
-        $date = new \DateTime($date->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
+        return new \DateTime($date->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @param string $format
+     * @param int $timestamp
+     * @return string
+     */
+    public static function localDateFormat($format = '', $timestamp = 0) {
+        $date = self::localDateTime($timestamp);
         return date_i18n($format, $date->getTimestamp(), true);
     }
 
@@ -373,18 +381,48 @@ class Helpers {
     /**
      * @return bool|\WP_Post
      */
-    public static function getRequestDataPage() {
+    public static function getAccessRequestPage() {
         $output = false;
         $page = get_pages(array(
             'post_type' => 'page',
             'post_status' => 'publish,private,draft',
             'number' => 1,
-            'meta_key' => '_wpgdprc_request_user_data',
+            'meta_key' => '_wpgdprc_access_request',
             'meta_value' => '1'
         ));
         if (!empty($page)) {
             /** @var \WP_Post $output */
             $output = $page[0];
+        }
+        return $output;
+    }
+
+    /**
+     * @param array $filters
+     * @param bool $grouped
+     * @return string
+     */
+    public static function getQueryByFilters($filters = array(), $grouped = false) {
+        $output = '';
+        if (!empty($filters)) {
+            $count = 0;
+            foreach ($filters as $column => $filter) {
+                if (isset($filter['columns'])) {
+                    $output .= " AND ( ";
+                    $output .= trim(self::getQueryByFilters($filter['columns'], true));
+                    $output .= " )";
+                } else {
+                    $value = (isset($filter['value'])) ? $filter['value'] : false;
+                    if (!empty($value)) {
+                        $or = (isset($filter['or']) && filter_var($filter['or'], FILTER_VALIDATE_BOOLEAN)) ? 'OR' : 'AND';
+                        $or = ($grouped === true && $count === 0) ? '' : $or;
+                        $compare = (isset($filter['compare'])) ? $filter['compare'] : '=';
+                        $wildcard = (isset($filter['wildcard']) && filter_var($filter['wildcard'], FILTER_VALIDATE_BOOLEAN)) ? '%' : '';
+                        $output .= " $or `$column` $compare '$wildcard$value$wildcard'";
+                    }
+                }
+                $count++;
+            }
         }
         return $output;
     }

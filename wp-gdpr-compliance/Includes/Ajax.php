@@ -85,8 +85,8 @@ class Ajax {
 
                     // Let's do this!
                     if (empty($output['error'])) {
-                        if (!Request::getInstance()->exists($emailAddress, true)) {
-                            $request = new Request();
+                        if (!AccessRequest::getInstance()->existsByEmailAddress($emailAddress, true)) {
+                            $request = new AccessRequest();
                             $request->setSiteId(get_current_blog_id());
                             $request->setEmailAddress($emailAddress);
                             $request->setSessionId(SessionHelper::getSessionId());
@@ -94,7 +94,7 @@ class Ajax {
                             $request->setActive(1);
                             $id = $request->save();
                             if ($id !== false) {
-                                $page = Helpers::getRequestDataPage();
+                                $page = Helpers::getAccessRequestPage();
                                 $siteName = get_blog_option($request->getSiteId(), 'blogname');
                                 $siteEmail = get_blog_option($request->getSiteId(), 'admin_email');
                                 $subject = __('[WPGDPRC] Your request', WP_GDPR_C_SLUG);
@@ -133,7 +133,7 @@ class Ajax {
                 case 'delete_data' :
                     $settings = (isset($data['settings']) && is_array($data['settings'])) ? $data['settings'] : array();
                     $type = (isset($settings['type']) && in_array($settings['type'], Data::getPossibleDataTypes())) ? $settings['type'] : '';
-                    $value = (isset($data['value']) && is_numeric($data['value'])) ? $data['value'] : 0;
+                    $value = (isset($data['value']) && is_numeric($data['value'])) ? (int)$data['value'] : 0;
 
                     if (empty($type)) {
                         $output['error'] = __('Missing type.', WP_GDPR_C_SLUG);
@@ -142,6 +142,12 @@ class Ajax {
                     if ($value === 0) {
                         $output['error'] = __('No value selected.', WP_GDPR_C_SLUG);
                     }
+
+                    // Let's do this!
+                    if (empty($output['error'])) {
+
+                    }
+
                     break;
             }
         }

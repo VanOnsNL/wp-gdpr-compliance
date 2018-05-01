@@ -32,9 +32,11 @@ namespace WPGDPRC;
 
 use WPGDPRC\Includes\Actions;
 use WPGDPRC\Includes\Ajax;
+use WPGDPRC\Includes\Cron;
+use WPGDPRC\Includes\Helpers;
 use WPGDPRC\Includes\Integrations;
 use WPGDPRC\Includes\Pages;
-use WPGDPRC\Includes\Request;
+use WPGDPRC\Includes\AccessRequest;
 use WPGDPRC\Includes\Shortcodes;
 
 // If this file is called directly, abort.
@@ -82,9 +84,19 @@ class WPGDPRC {
         add_action('core_version_check_query_args', array(Actions::getInstance(), 'onlySendEssentialDataDuringUpdateCheck'));
         add_action('wp_ajax_nopriv_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
         add_action('wp_ajax_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
-        add_action('update_option_' . WP_GDPR_C_PREFIX . '_settings_enable_request_user_data', array(Actions::getInstance(), 'processEnablingRequestUserData'));
-        add_shortcode('wpgdprc_request_form', array(Shortcodes::getInstance(), 'requestForm'));
+        add_action('update_option_wpgdprc_settings_enable_access_request', array(Actions::getInstance(), 'processEnableAccessRequest'));
         Integrations::getInstance();
+        if (Helpers::isEnabled('enable_access_request', 'settings')) {
+            add_shortcode('wpgdprc_access_request_form', array(Shortcodes::getInstance(), 'accessRequestForm'));
+            add_action('wpgdprc_deactivate_access_requests', array(Cron::getInstance(), 'deactivateAccessRequests'));
+            if (!wp_next_scheduled('wpgdprc_deactivate_access_requests')) {
+                wp_schedule_event(time(), 'hourly', 'wpgdprc_deactivate_access_requests');
+            }
+        } else {
+            if (wp_next_scheduled('wpgdprc_deactivate_access_requests')) {
+                wp_clear_scheduled_hook('wpgdprc_deactivate_access_requests');
+            }
+        }
     }
 
     /**
@@ -121,7 +133,7 @@ class WPGDPRC {
         if (get_site_option('wpgdprc_version') !== WP_GDPR_C_VERSION) {
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             $charsetCollate = $wpdb->get_charset_collate();
-            $sql = "CREATE TABLE IF NOT EXISTS `" . Request::getDatabaseTableName() . "` (
+            $sql = "CREATE TABLE IF NOT EXISTS `" . AccessRequest::getDatabaseTableName() . "` (
             `ID` bigint(20) NOT NULL AUTO_INCREMENT,
             `site_id` bigint(20) NOT NULL,
             `email_address` varchar(100) NOT NULL,
