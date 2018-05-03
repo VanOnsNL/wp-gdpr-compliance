@@ -66,6 +66,15 @@
     font-style: normal;
 }
 
+.wpgdprc .wpgdprc-processing {
+    opacity: .5;
+}
+
+.wpgdprc .wpgdprc-removed {
+    opacity: .2;
+    text-decoration: line-through;
+}
+
 div.wpgdprc-information {
     font-size: 12px;
     color: #8A8A8A;
@@ -76,13 +85,17 @@ div.wpgdrc-message {
     border: 1px solid transparent;
 }
 
+div.wpgdrc-message p:first-child {
+    margin-top: 0;
+}
+
 div.wpgdrc-message--notice {
     background: #FFF3D9;
-    border-color: #e7d996;
+    border-color: #E7D996;
 }
 
 div.wpgdrc-message--notice .wpgdprc__message {
-    color: #b39f3d;
+    color: #B39F3D;
 }
 
 div.wpgdrc-message--error {
@@ -94,7 +107,12 @@ div.wpgdrc-message--error .wpgdprc__message {
     color: #CC4B37;
 }
 
-.wpgdprc p.submit .button.button-primary {
+.wpgdprc p.submit {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.wpgdprc .button.button-primary {
     vertical-align: top;
     height: 34px;
     background: #4AA94F;
@@ -125,6 +143,7 @@ h1.wpgdprc-title .dashicons {
 }
 
 div.wpgdprc-description {
+    margin-top: 20px;
     padding: 10px;
     background: #F1F1F1;
 }
@@ -173,15 +192,11 @@ table.wpgdprc-table tr:nth-child(even) {
     fill: #4AA94F;
 }
 
-.wpgdprc-tabs {
-    position: relative;
+.wpgdprc-navigation {
+    border-bottom: 1px solid #DBD6D6;
 }
 
-.wpgdprc-tabs__navigation {
-    border-bottom: 1px solid #dbd6d6;
-}
-
-.wpgdprc-tabs__navigation > a {
+.wpgdprc-navigation > a {
     display: block;
     float: left;
     margin-bottom: -1px;
@@ -198,27 +213,23 @@ table.wpgdprc-table tr:nth-child(even) {
     color: inherit;
 }
 
-.wpgdprc-tabs__navigation > a.active {
+.wpgdprc-navigation > a.active {
     background-color: #fff;
     color: #4AA94F;
-    border-top-color: #dbd6d6;
-    border-right-color: #dbd6d6;
-    border-left-color: #dbd6d6;
+    border-top-color: #DBD6D6;
+    border-right-color: #DBD6D6;
+    border-left-color: #DBD6D6;
 }
 
-.wpgdprc-tabs__panel {
-    display: none;
-}
-
-.wpgdprc-tabs__panel.active {
+.wpgdprc-content {
     display: block;
     background-color: #fff;
-    border: 1px solid #dbd6d6;
+    border: 1px solid #DBD6D6;
     border-top: none;
     padding: 20px;
 }
 
-.wpgdprc-tabs__panel > p:first-child {
+.wpgdprc-content > p:first-child {
     margin-top: 0;
 }
 
@@ -470,6 +481,25 @@ span.wpgdprc-instructions {
 
 .wpgdprc-countdown h2, .wpgdprc-countdown p {
     margin: 0;
+}
+
+.wpgdprc-pagination {
+    margin-top: 20px;
+    line-height: 28px;
+}
+
+.wpgdprc-pagination .page-numbers {
+    display: inline-block;
+    vertical-align: top;
+    width: 30px;
+    background-color: #FFFFFF;
+    border: 1px solid #DBD6D6;
+    text-align: center;
+    text-decoration: none;
+}
+
+.wpgdprc-pagination .page-numbers + .wpgdprc-pagination__results {
+    margin-left: 10px;
 }
 
 @media screen and (max-width: 639px) {

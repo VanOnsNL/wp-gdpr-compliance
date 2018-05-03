@@ -25,7 +25,7 @@ class AccessRequest {
     private $dateCreated = '';
 
     /**
-     * Request constructor.
+     * AccessRequest constructor.
      * @param int $id
      */
     public function __construct($id = 0) {
@@ -55,13 +55,34 @@ class AccessRequest {
 
     /**
      * @param array $filters
+     * @return int
+     */
+    public function getTotal($filters = array()) {
+        global $wpdb;
+        $query = "SELECT COUNT(`ID`) FROM `" . self::getDatabaseTableName() . "` WHERE 1";
+        $query .= Helpers::getQueryByFilters($filters);
+        $result = $wpdb->get_var($query);
+        if ($result !== null) {
+            return absint($result);
+        }
+        return 0;
+    }
+
+    /**
+     * @param array $filters
+     * @param int $limit
+     * @param int $offset
      * @return AccessRequest[]
      */
-    public function getList($filters = array()) {
+    public function getList($filters = array(), $limit = 0, $offset = 0) {
         global $wpdb;
         $output = array();
         $query  = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE 1";
         $query .= Helpers::getQueryByFilters($filters);
+        $query .= " ORDER BY `date_created` DESC";
+        if (!empty($limit)) {
+            $query .= " LIMIT $offset, $limit";
+        }
         $results = $wpdb->get_results($query);
         if ($results !== null) {
             foreach ($results as $row) {
@@ -104,7 +125,7 @@ class AccessRequest {
         $row = $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE `ID` = '%d'",
-                $id
+                intval($id)
             )
         );
         return ($row !== null);
@@ -138,6 +159,7 @@ class AccessRequest {
                 array('%d'),
                 array('%d')
             );
+            return $this->getId();
         } else {
             $result = $wpdb->insert(
                 self::getDatabaseTableName(),
@@ -156,7 +178,7 @@ class AccessRequest {
                 return $this->getId();
             }
         }
-        return $this->getId();
+        return false;
     }
 
     /**

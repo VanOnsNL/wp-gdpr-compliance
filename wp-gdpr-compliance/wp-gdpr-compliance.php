@@ -89,6 +89,7 @@ class WPGDPRC {
         if (Helpers::isEnabled('enable_access_request', 'settings')) {
             add_shortcode('wpgdprc_access_request_form', array(Shortcodes::getInstance(), 'accessRequestForm'));
             add_action('wpgdprc_deactivate_access_requests', array(Cron::getInstance(), 'deactivateAccessRequests'));
+            add_action('wp_ajax_wpgdprc_process_delete_request', array(Ajax::getInstance(), 'processDeleteRequest'));
             if (!wp_next_scheduled('wpgdprc_deactivate_access_requests')) {
                 wp_schedule_event(time(), 'hourly', 'wpgdprc_deactivate_access_requests');
             }
@@ -113,10 +114,14 @@ class WPGDPRC {
     public function loadAssets() {
         wp_register_style('wpgdprc.css', WP_GDPR_C_URI_CSS . '/front.css', array(), filemtime(WP_GDPR_C_DIR_CSS . '/front.css'));
         wp_register_script('wpgdprc.js', WP_GDPR_C_URI_JS . '/front.js', array(), filemtime(WP_GDPR_C_DIR_JS . '/front.js'), true);
-        wp_localize_script('wpgdprc.js', 'wpgdprcData', array(
+        $data = array(
             'ajaxURL' => admin_url('admin-ajax.php'),
             'ajaxSecurity' => wp_create_nonce('wpgdprc'),
-        ));
+        );
+        if (!empty($_REQUEST['wpgdprc'])) {
+            $data['session'] = esc_html($_REQUEST['wpgdprc']);
+        }
+        wp_localize_script('wpgdprc.js', 'wpgdprcData', $data);
     }
 
     public function loadAdminAssets() {
@@ -145,6 +150,9 @@ class WPGDPRC {
             ) $charsetCollate;";
             dbDelta($sql);
             update_site_option('wpgdprc_version', WP_GDPR_C_VERSION);
+
+
+            // TODO: Add creating 'delete requests' table
         }
     }
 

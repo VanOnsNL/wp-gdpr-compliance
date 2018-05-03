@@ -11,6 +11,40 @@ class Shortcodes {
     private static $instance = null;
 
     /**
+     * @return string
+     */
+    private static function getAccessRequestData() {
+        $output = '';
+        $request = (isset($_REQUEST['wpgdprc'])) ? unserialize(base64_decode(esc_html($_REQUEST['wpgdprc']))) : false;
+        $request = (!empty($request)) ? AccessRequest::getInstance()->getByEmailAddressAndSessionId($request['email'], $request['sId']) : false;
+        if ($request !== false) {
+            if (
+                SessionHelper::checkSession($request->getSessionId()) &&
+                Helpers::checkIpAddress($request->getIpAddress())
+            ) {
+                $data = new Data($request->getEmailAddress());
+                $output .= '<h2>Users</h2>';
+                $output .= Data::getOutput($data->getUsers(), 'user');
+                $output .= '<h2>Posts</h2>';
+                $output .= Data::getOutput($data->getPosts(), 'post');
+                $output .= '<h2>Comments</h2>';
+                $output .= Data::getOutput($data->getComments(), 'comment');
+            } else {
+                wp_die(
+                    '<p>' . sprintf(
+                        __('<strong>ERROR</strong>: %s', WP_GDPR_C_SLUG),
+                        __('What are you trying to do?', WP_GDPR_C_SLUG)
+                    ) . '</p>'
+                );
+                exit;
+            }
+        } else {
+            // TODO: Nice error message.
+        }
+        return $output;
+    }
+
+    /**
      * @param array $attributes
      * @return string
      */
@@ -19,30 +53,7 @@ class Shortcodes {
         wp_enqueue_script('wpgdprc.js');
         $output = '<div class="wpgdprc">';
         if (isset($_REQUEST['wpgdprc'])) {
-            $request = unserialize(base64_decode($_REQUEST['wpgdprc']));
-            $request = AccessRequest::getInstance()->getByEmailAddressAndSessionId($request['email'], $request['sId']);
-            if ($request !== false) {
-                if (
-                    SessionHelper::checkSession($request->getSessionId()) &&
-                    Helpers::checkIpAddress($request->getIpAddress())
-                ) {
-                    $data = new Data($request->getEmailAddress());
-                    $output .= '<h2>Users</h2>';
-                    $output .= Data::getOutput($data->getUsers(), 'user');
-                    $output .= '<h2>Posts</h2>';
-                    $output .= Data::getOutput($data->getPosts(), 'post');
-                    $output .= '<h2>Comments</h2>';
-                    $output .= Data::getOutput($data->getComments(), 'comment');
-                } else {
-                    wp_die(
-                        '<p>' . sprintf(
-                            __('<strong>ERROR</strong>: %s', WP_GDPR_C_SLUG),
-                            __('What are you trying to do?', WP_GDPR_C_SLUG)
-                        ) . '</p>'
-                    );
-                    exit;
-                }
-            }
+            $output .= self::getAccessRequestData();
         } else {
             $attributes = shortcode_atts(
                 array(),
@@ -50,7 +61,7 @@ class Shortcodes {
                 'wpgdprc_request_form'
             );
             $output .= '<div class="wpgdprc-feedback" style="display: none;"></div>';
-            $output .= '<form id="wpgdprc-form" name="wpgdprc_form" method="POST">';
+            $output .= '<form class="wpgdprc-form wpgdprc-form--access-request" name="wpgdprc_form" method="POST">';
             $output .= '<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>';
             $output .= apply_filters('wpgdprc_request_form_email_field', '<p><input type="email" name="wpgdprc_email" id="wpgdprc-form__email" placeholder="' . esc_attr__(apply_filters('wpgdprc_request_form_email_placeholder', __('Your Email Address', WP_GDPR_C_SLUG))) . '" required /></p>');
             $output .= apply_filters(

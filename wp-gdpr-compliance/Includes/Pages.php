@@ -12,11 +12,11 @@ class Pages {
 
     public function registerSettings() {
         foreach (Helpers::getCheckList() as $id => $check) {
-            register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_general_' . $id, 'intval');
+            register_setting(WP_GDPR_C_SLUG . '_general', WP_GDPR_C_PREFIX . '_general_' . $id, 'intval');
         }
-        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_privacy_policy_page', 'intval');
-        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_privacy_policy_text', array('sanitize_callback' => array(Helpers::getInstance(), 'sanitizeData')));
-        register_setting(WP_GDPR_C_SLUG, WP_GDPR_C_PREFIX . '_settings_enable_access_request', 'intval');
+        register_setting(WP_GDPR_C_SLUG . '_settings', WP_GDPR_C_PREFIX . '_settings_privacy_policy_page', 'intval');
+        register_setting(WP_GDPR_C_SLUG . '_settings', WP_GDPR_C_PREFIX . '_settings_privacy_policy_text', array('sanitize_callback' => array(Helpers::getInstance(), 'sanitizeData')));
+        register_setting(WP_GDPR_C_SLUG . '_settings', WP_GDPR_C_PREFIX . '_settings_enable_access_request', 'intval');
     }
 
     public function addAdminMenu() {
@@ -32,9 +32,11 @@ class Pages {
     }
 
     public function generatePage() {
+        $type = (isset($_REQUEST['type'])) ? esc_html($_REQUEST['type']) : false;
         $pluginData = Helpers::getPluginData();
         $daysLeftToComply = Helpers::getDaysLeftToComply();
         $enableAccessRequest = Helpers::isEnabled('enable_access_request', 'settings');
+        $adminUrl = Helpers::getPluginAdminUrl();
         ?>
         <div class="wrap">
             <div class="wpgdprc">
@@ -42,39 +44,38 @@ class Pages {
 
                 <?php settings_errors(); ?>
 
-                <form method="post" action="<?php echo admin_url('options.php'); ?>" novalidate="novalidate">
-                    <?php settings_fields(WP_GDPR_C_SLUG); ?>
+                <div class="wpgdprc-navigation wpgdprc-clearfix">
+                    <a class="<?php echo (empty($type)) ? 'active' : ''; ?>" href="<?php echo $adminUrl; ?>"><?php _e('Integrations', WP_GDPR_C_SLUG); ?></a>
+                    <?php if ($enableAccessRequest) : ?>
+                        <a class="<?php echo checked('requests', $type, false) ? 'active' : ''; ?>" href="<?php echo $adminUrl; ?>&type=requests"><?php _e('Requests', WP_GDPR_C_SLUG); ?></a>
+                    <?php endif; ?>
+                    <a class="<?php echo checked('checklist', $type, false) ? 'active' : ''; ?>" href="<?php echo $adminUrl; ?>&type=checklist"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
+                    <a class="<?php echo checked('settings', $type, false) ? 'active' : ''; ?>" href="<?php echo $adminUrl; ?>&type=settings"><?php _e('Settings', WP_GDPR_C_SLUG); ?></a>
+                </div>
 
-                    <div class="wpgdprc-tabs">
-                        <div class="wpgdprc-tabs__navigation wpgdprc-clearfix">
-                            <a id="tab-integrations-label" class="active" href="#tab-integrations" aria-controls="tab-integrations" tabindex="0" role="tab"><?php _e('Integrations', WP_GDPR_C_SLUG); ?></a>
-                            <?php if ($enableAccessRequest) : ?>
-                                <a id="tab-requests-label" href="#tab-requests" aria-controls="tab-requests" tabindex="-1" role="tab"><?php _e('Requests', WP_GDPR_C_SLUG); ?></a>
-                            <?php endif; ?>
-                            <a id="tab-checklist-label" href="#tab-checklist" aria-controls="tab-checklist" tabindex="-1" role="tab"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
-                            <a id="tab-settings-label" href="#tab-settings" aria-controls="tab-settings" tabindex="-1" role="tab"><?php _e('Settings', WP_GDPR_C_SLUG); ?></a>
-                        </div>
-
-                        <div class="wpgdprc-tabs__content">
-                            <div id="tab-integrations" class="wpgdprc-tabs__panel wpgdprc-clearfix active" aria-labelledby="tab-integrations-label" role="tabpanel">
-                                <?php self::getIntegrationsTab(); ?>
-                            </div>
-                            <?php if ($enableAccessRequest) : ?>
-                                <div id="tab-requests" class="wpgdprc-tabs__panel wpgdprc-clearfix" aria-hidden="true" aria-labelledby="tab-requests-label" role="tabpanel">
-                                    <?php self::getRequestsTab(); ?>
-                                </div>
-                            <?php endif; ?>
-                            <div id="tab-checklist" class="wpgdprc-tabs__panel wpgdprc-clearfix" aria-hidden="true" aria-labelledby="tab-checklist-label" role="tabpanel">
-                                <?php self::getChecklistTab(); ?>
-                            </div>
-                            <div id="tab-settings" class="wpgdprc-tabs__panel wpgdprc-clearfix" aria-hidden="true" aria-labelledby="tab-settings-label" role="tabpanel">
-                                <?php self::getSettingsTab(); ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <?php submit_button(); ?>
-                </form>
+                <div class="wpgdprc-content wpgdprc-clearfix">
+                    <?php
+                    switch ($type) {
+                        case 'requests' :
+                            $id = (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) ? intval($_REQUEST['id']) : 0;
+                            if (!empty($id) && AccessRequest::getInstance()->exists($id)) {
+                                self::renderManageRequestPage($id);
+                            } else {
+                                self::renderRequestsPage();
+                            }
+                            break;
+                        case 'checklist' :
+                            self::renderChecklistPage();
+                            break;
+                        case 'settings' :
+                            self::renderSettingsPage();
+                            break;
+                        default :
+                            self::renderIntegrationsPage();
+                            break;
+                    }
+                    ?>
+                </div>
 
                 <div class="wpgdprc-description">
                     <p><?php printf(__('This plugin assists website and webshop owners to comply with European privacy regulations known as GDPR. By May 24th, 2018 your site or shop has to comply to avoid large fines. The regulation can be read here: %s.', WP_GDPR_C_SLUG), '<a target="_blank" href="//www.eugdpr.org/the-regulation.html">' . __('GDPR Key Changes', WP_GDPR_C_SLUG) . '</a>'); ?></p>
@@ -98,84 +99,85 @@ class Pages {
         <?php
     }
 
-    /**
-     * Tab: Integrations
-     */
-    private static function getIntegrationsTab() {
+    private static function renderIntegrationsPage() {
         $pluginData = Helpers::getPluginData();
         $activatedPlugins = Helpers::getActivatedPlugins();
         ?>
-        <?php if (!empty($activatedPlugins)) : ?>
-            <ul class="wpgdprc-list">
-                <?php
-                foreach ($activatedPlugins as $key => $plugin) :
-                    $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'];
-                    $checked = Helpers::isEnabled($plugin['id']);
-                    $description = (!empty($plugin['description'])) ? apply_filters('the_content', $plugin['description']) : '';
-                    $notices = Helpers::getNotices($plugin['id']);
-                    $options = Integrations::getSupportedPluginOptions($plugin['id']);
-                    ?>
-                    <li class="wpgdprc-clearfix">
-                        <?php if ($plugin['supported']) : ?>
-                            <?php if (empty($notices)) : ?>
-                                <div class="wpgdprc-checkbox">
-                                    <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $optionName; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
-                                    <label for="<?php echo $optionName; ?>"><?php echo $plugin['name']; ?></label>
-                                    <span class="wpgdprc-instructions"><?php _e('Enable:', WP_GDPR_C_SLUG); ?></span>
-                                    <div class="wpgdprc-switch" aria-hidden="true">
-                                        <div class="wpgdprc-switch-label">
-                                            <div class="wpgdprc-switch-inner"></div>
-                                            <div class="wpgdprc-switch-switch"></div>
+        <form method="post" action="<?php echo admin_url('options.php'); ?>" novalidate="novalidate">
+            <?php settings_fields(WP_GDPR_C_SLUG . '_integrations'); ?>
+            <?php if (!empty($activatedPlugins)) : ?>
+                <ul class="wpgdprc-list">
+                    <?php
+                    foreach ($activatedPlugins as $key => $plugin) :
+                        $optionName = WP_GDPR_C_PREFIX . '_integrations_' . $plugin['id'];
+                        $checked = Helpers::isEnabled($plugin['id']);
+                        $description = (!empty($plugin['description'])) ? apply_filters('the_content', $plugin['description']) : '';
+                        $notices = Helpers::getNotices($plugin['id']);
+                        $options = Integrations::getSupportedPluginOptions($plugin['id']);
+                        ?>
+                        <li class="wpgdprc-clearfix">
+                            <?php if ($plugin['supported']) : ?>
+                                <?php if (empty($notices)) : ?>
+                                    <div class="wpgdprc-checkbox">
+                                        <input type="checkbox" name="<?php echo $optionName; ?>" id="<?php echo $optionName; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionName; ?>" <?php checked(true, $checked); ?> />
+                                        <label for="<?php echo $optionName; ?>"><?php echo $plugin['name']; ?></label>
+                                        <span class="wpgdprc-instructions"><?php _e('Enable:', WP_GDPR_C_SLUG); ?></span>
+                                        <div class="wpgdprc-switch" aria-hidden="true">
+                                            <div class="wpgdprc-switch-label">
+                                                <div class="wpgdprc-switch-inner"></div>
+                                                <div class="wpgdprc-switch-switch"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
-                                    <?php if (!empty($description)) : ?>
-                                        <div class="wpgdprc-checklist-description">
-                                            <?php echo $description; ?>
+                                    <div class="wpgdprc-checkbox-data" <?php if (!$checked) : ?>style="display: none;"<?php endif; ?>>
+                                        <?php if (!empty($description)) : ?>
+                                            <div class="wpgdprc-checklist-description">
+                                                <?php echo $description; ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php echo $options; ?>
+                                    </div>
+                                <?php else : ?>
+                                    <div class="wpgdrc-message wpgdrc-message--notice">
+                                        <strong><?php echo $plugin['name']; ?></strong>
+                                        <div class="wpgdprc__message">
+                                            <?php echo $notices; ?>
                                         </div>
-                                    <?php endif; ?>
-                                    <?php echo $options; ?>
-                                </div>
+                                    </div>
+                                <?php endif; ?>
                             <?php else : ?>
-                                <div class="wpgdrc-message wpgdrc-message--notice">
+                                <div class="wpgdrc-message wpgdrc-message--error">
                                     <strong><?php echo $plugin['name']; ?></strong>
                                     <div class="wpgdprc__message">
-                                        <?php echo $notices; ?>
+                                        <?php printf(__('This plugin is outdated. %s supports version %s and up.', WP_GDPR_C_SLUG), $pluginData['Name'], '<strong>' . $plugin['supported_version']  . '</strong>'); ?>
                                     </div>
                                 </div>
                             <?php endif; ?>
-                        <?php else : ?>
-                            <div class="wpgdrc-message wpgdrc-message--error">
-                                <strong><?php echo $plugin['name']; ?></strong>
-                                <div class="wpgdprc__message">
-                                    <?php printf(__('This plugin is outdated. %s supports version %s and up.', WP_GDPR_C_SLUG), $pluginData['Name'], '<strong>' . $plugin['supported_version']  . '</strong>'); ?>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-                    </li>
-                <?php
-                endforeach;
-                ?>
-            </ul>
-        <?php else : ?>
-            <p><strong><?php _e('Couldn\'t find any supported plugins installed.', WP_GDPR_C_SLUG); ?></strong></p>
-            <p><?php _e('The following plugins are supported as of now:', WP_GDPR_C_SLUG); ?></p>
-            <ul class="ul-square">
-                <?php foreach (Integrations::getSupportedPlugins() as $plugin) : ?>
-                    <li><?php echo $plugin['name']; ?></li>
-                <?php endforeach; ?>
-            </ul>
-            <p><?php _e('More plugins will be added in the future.', WP_GDPR_C_SLUG); ?></p>
-        <?php endif; ?>
+                        </li>
+                    <?php
+                    endforeach;
+                    ?>
+                </ul>
+            <?php else : ?>
+                <p><strong><?php _e('Couldn\'t find any supported plugins installed.', WP_GDPR_C_SLUG); ?></strong></p>
+                <p><?php _e('The following plugins are supported as of now:', WP_GDPR_C_SLUG); ?></p>
+                <ul class="ul-square">
+                    <?php foreach (Integrations::getSupportedPlugins() as $plugin) : ?>
+                        <li><?php echo $plugin['name']; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+                <p><?php _e('More plugins will be added in the future.', WP_GDPR_C_SLUG); ?></p>
+            <?php endif; ?>
+            <?php submit_button(); ?>
+        </form>
         <?php
     }
 
     /**
-     * Tab: Checklist
+     * Page: Checklist
      */
-    private static function getChecklistTab() {
+    private static function renderChecklistPage() {
         ?>
         <p><?php _e('Below we ask you what private data you currently collect and provide you with tips to comply.', WP_GDPR_C_SLUG); ?></p>
         <ul class="wpgdprc-list">
@@ -213,9 +215,9 @@ class Pages {
     }
 
     /**
-     * Tab: Settings
+     * Page: Settings
      */
-    private static function getSettingsTab() {
+    private static function renderSettingsPage() {
         $optionNamePrivacyPolicyPage = WP_GDPR_C_PREFIX . '_settings_privacy_policy_page';
         $optionNamePrivacyPolicyText = WP_GDPR_C_PREFIX . '_settings_privacy_policy_text';
         $optionNameEnableAccessRequest = WP_GDPR_C_PREFIX . '_settings_enable_access_request';
@@ -225,55 +227,161 @@ class Pages {
         ?>
         <p><?php _e('Use %privacy_policy% if you want to link your Privacy Policy page in the GDPR checkbox texts.', WP_GDPR_C_SLUG); ?></p>
         <p><strong><?php _e('Privacy Policy', WP_GDPR_C_SLUG); ?></strong></p>
-        <div class="wpgdprc-setting">
-            <label for="<?php echo $optionNamePrivacyPolicyPage; ?>"><?php _e('Privacy Policy', WP_GDPR_C_SLUG); ?></label>
-            <div class="wpgdprc-options">
-                <?php
-                wp_dropdown_pages(array(
-                    'show_option_none' => __('Select an option', WP_GDPR_C_SLUG),
-                    'name' => $optionNamePrivacyPolicyPage,
-                    'selected' => $privacyPolicyPage
-                ));
-                ?>
-            </div>
-        </div>
-        <div class="wpgdprc-setting">
-            <label for="<?php echo $optionNamePrivacyPolicyText; ?>"><?php _e('Link text', WP_GDPR_C_SLUG); ?></label>
-            <div class="wpgdprc-options">
-                <input type="text" name="<?php echo $optionNamePrivacyPolicyText; ?>" class="regular-text" id="<?php echo $optionNamePrivacyPolicyText; ?>" placeholder="<?php echo $privacyPolicyText; ?>" value="<?php echo $privacyPolicyText; ?>" />
-            </div>
-        </div>
-        <p><strong><?php _e('Request User Data', WP_GDPR_C_SLUG); ?></strong></p>
-        <div class="wpgdprc-setting">
-            <label for="<?php echo $optionNameEnableAccessRequest; ?>"><?php _e('Enable', WP_GDPR_C_SLUG); ?></label>
-            <div class="wpgdprc-options">
-                <label><input type="checkbox" name="<?php echo $optionNameEnableAccessRequest; ?>" id="<?php echo $optionNameEnableAccessRequest; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionNameEnableAccessRequest; ?>" <?php checked(true, $enableAccessRequest); ?> /> <?php _e('Yes', WP_GDPR_C_SLUG); ?></label>
-                <div class="wpgdprc-information">
+        <form method="post" action="<?php echo admin_url('options.php'); ?>" novalidate="novalidate">
+            <?php settings_fields(WP_GDPR_C_SLUG . '_settings'); ?>
+            <div class="wpgdprc-setting">
+                <label for="<?php echo $optionNamePrivacyPolicyPage; ?>"><?php _e('Privacy Policy', WP_GDPR_C_SLUG); ?></label>
+                <div class="wpgdprc-options">
                     <?php
-                    printf(
-                        '<strong>%s:</strong> %s',
-                        strtoupper(__('Note', WP_GDPR_C_SLUG)),
-                        __('Enabling this will create a page with...', WP_GDPR_C_SLUG)
-                    );
+                    wp_dropdown_pages(array(
+                        'show_option_none' => __('Select an option', WP_GDPR_C_SLUG),
+                        'name' => $optionNamePrivacyPolicyPage,
+                        'selected' => $privacyPolicyPage
+                    ));
                     ?>
                 </div>
             </div>
-        </div>
+            <div class="wpgdprc-setting">
+                <label for="<?php echo $optionNamePrivacyPolicyText; ?>"><?php _e('Link text', WP_GDPR_C_SLUG); ?></label>
+                <div class="wpgdprc-options">
+                    <input type="text" name="<?php echo $optionNamePrivacyPolicyText; ?>" class="regular-text" id="<?php echo $optionNamePrivacyPolicyText; ?>" placeholder="<?php echo $privacyPolicyText; ?>" value="<?php echo $privacyPolicyText; ?>" />
+                </div>
+            </div>
+            <p><strong><?php _e('Request User Data', WP_GDPR_C_SLUG); ?></strong></p>
+            <div class="wpgdprc-setting">
+                <label for="<?php echo $optionNameEnableAccessRequest; ?>"><?php _e('Enable', WP_GDPR_C_SLUG); ?></label>
+                <div class="wpgdprc-options">
+                    <label><input type="checkbox" name="<?php echo $optionNameEnableAccessRequest; ?>" id="<?php echo $optionNameEnableAccessRequest; ?>" value="1" tabindex="1" data-type="save_setting" data-option="<?php echo $optionNameEnableAccessRequest; ?>" <?php checked(true, $enableAccessRequest); ?> /> <?php _e('Yes', WP_GDPR_C_SLUG); ?></label>
+                    <div class="wpgdprc-information">
+                        <?php
+                        printf(
+                            '<strong>%s:</strong> %s',
+                            strtoupper(__('Note', WP_GDPR_C_SLUG)),
+                            __('Enabling this will create a page with...', WP_GDPR_C_SLUG)
+                        );
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <?php submit_button(); ?>
+        </form>
         <?php
     }
 
     /**
-     * Tab: Requests
+     * @param int $requestId
      */
-    private static function getRequestsTab() {
-        $requests = AccessRequest::getInstance()->getList();
+    private static function renderManageRequestPage($requestId = 0) {
+        $accessRequest = new AccessRequest($requestId);
+        $filters = array(
+            'access_request_id' => array(
+                'value' => $accessRequest->getId(),
+            ),
+        );
+        $paged = (isset($_REQUEST['paged'])) ? absint($_REQUEST['paged']) : 1;
+        $limit = 20;
+        $offset = ($paged - 1) * $limit;
+        $total = DeleteRequest::getInstance()->getTotal($filters);
+        $numberOfPages = ceil($total / $limit);
+        $requests = DeleteRequest::getInstance()->getList($filters, $limit, $offset);
+        if (!empty($requests)) :
+            ?>
+            <div class="wpgdrc-message wpgdrc-message--notice">
+                <strong>Information</strong>
+                <div class="wpgdprc__message">
+                    <p>Process a request by selecting it and pressing the button below.</p>
+                </div>
+            </div>
+
+            <form class="wpgdprc-form wpgdprc-form--process-delete-requests" method="POST" novalidate="novalidate">
+                <table class="wpgdprc-table">
+                    <thead>
+                    <tr>
+                        <th scope="col" width="10%"><?php _e('ID', WP_GDPR_C_SLUG); ?></th>
+                        <th scope="col" width="10%"><?php _e('Data ID', WP_GDPR_C_SLUG); ?></th>
+                        <th scope="col" width="18%"><?php _e('Type', WP_GDPR_C_SLUG); ?></th>
+                        <th scope="col" width="18%"><?php _e('IP Address', WP_GDPR_C_SLUG); ?></th>
+                        <th scope="col" width="22%"><?php _e('Date', WP_GDPR_C_SLUG); ?></th>
+                        <th scope="col" width="12%"><?php _e('Processed', WP_GDPR_C_SLUG); ?></th>
+                        <th scope="col" width="10%">
+                            <input type="checkbox" class="wpgdprc-select-all" />
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    /** @var DeleteRequest $request */
+                    foreach ($requests as $request) :
+                        ?>
+                        <tr data-id="<?php echo $request->getType(); ?>-<?php echo $request->getDataId(); ?>">
+                            <td><?php printf('#%d', $request->getId()); ?></td>
+                            <td><?php printf('#%d', $request->getDataId()); ?></td>
+                            <td><?php echo $request->getType(); ?></td>
+                            <td><?php echo $request->getIpAddress(); ?></td>
+                            <td><?php echo $request->getDateCreated(); ?></td>
+                            <td><span class="dashicons dashicons-<?php echo ($request->getProcessed()) ? 'yes' : 'no'; ?>"></span></td>
+                            <td>
+                                <input type="checkbox" class="wpgdprc-checkbox" value="<?php echo $request->getDataId(); ?>" data-type="<?php echo $request->getType(); ?>" /> | <?php printf('<a target="_blank" href="%s">%s</a>', $request->getManageUrl(), __('View', WP_GDPR_C_SLUG)); ?>
+                            </td>
+                        </tr>
+                    <?php
+                    endforeach;
+                    ?>
+                    </tbody>
+                </table>
+                <?php submit_button(__('Process selected request(s)', WP_GDPR_C_SLUG), 'primary wpgdprc-remove'); ?>
+            </form>
+
+            <div class="wpgdprc-pagination">
+                <?php
+                    echo paginate_links(array(
+                        'base' => str_replace(
+                            999999999,
+                            '%#%',
+                            add_query_arg(
+                                array('paged' => 999999999),
+                                Helpers::getPluginAdminUrl()
+                            )
+                        ),
+                        'format' => '?paged=%#%',
+                        'current' => max(1, $paged),
+                        'total' => $numberOfPages,
+                        'prev_text' => '&lsaquo;',
+                        'next_text' => '&rsaquo;',
+                        'before_page_number' => '<span>',
+                        'after_page_number' => '</span>'
+                    ));
+                    printf('<span class="wpgdprc-pagination__results">%s</span>', sprintf(__('%d of %d results found', WP_GDPR_C_SLUG), count($requests), $total));
+                ?>
+            </div>
+            <?php
+        else :
+            ?>
+            <p><strong><?php _e('No delete requests found.', WP_GDPR_C_SLUG); ?></strong></p>
+            <?php
+        endif;
+        ?>
+        <?php
+    }
+
+    /**
+     * Page: Requests
+     */
+    private static function renderRequestsPage() {
+        $paged = (isset($_REQUEST['paged'])) ? absint($_REQUEST['paged']) : 1;
+        $limit = 20;
+        $offset = ($paged - 1) * $limit;
+        $total = AccessRequest::getInstance()->getTotal();
+        $numberOfPages = ceil($total / $limit);
+        $requests = AccessRequest::getInstance()->getList(array(), $limit, $offset);
         if (!empty($requests)) :
             ?>
             <table class="wpgdprc-table">
                 <thead>
                 <tr>
-                    <th scope="col" width="10%"><?php _e('Request', WP_GDPR_C_SLUG); ?></th>
-                    <th scope="col" width="42%"><?php _e('Email Address', WP_GDPR_C_SLUG); ?></th>
+                    <th scope="col" width="10%"><?php _e('ID', WP_GDPR_C_SLUG); ?></th>
+                    <th scope="col" width="20%"><?php _e('Requests to Process', WP_GDPR_C_SLUG); ?></th>
+                    <th scope="col" width="22%"><?php _e('Email Address', WP_GDPR_C_SLUG); ?></th>
                     <th scope="col" width="18%"><?php _e('IP Address', WP_GDPR_C_SLUG); ?></th>
                     <th scope="col" width="22%"><?php _e('Date', WP_GDPR_C_SLUG); ?></th>
                     <th scope="col" width="8%"><?php _e('Active', WP_GDPR_C_SLUG); ?></th>
@@ -283,9 +391,25 @@ class Pages {
                 <?php
                 /** @var AccessRequest $request */
                 foreach ($requests as $request) :
+                    $amountOfDeleteRequests = DeleteRequest::getInstance()->getAmountByAccessRequestId($request->getId());
+                    $url = add_query_arg(
+                        array('id' => $request->getId()),
+                        sprintf(
+                            admin_url('tools.php?page=%s&type=requests'),
+                            str_replace('-', '_', WP_GDPR_C_SLUG)
+                        )
+                    );
                     ?>
                     <tr>
                         <td><?php printf('#%d', $request->getId()); ?></td>
+                        <td>
+                            <?php printf('%d', $amountOfDeleteRequests); ?>
+                            <?php
+                            if ($amountOfDeleteRequests > 0) {
+                                printf('<a href="%s">%s</a>', $url, __('Manage', WP_GDPR_C_SLUG));
+                            }
+                            ?>
+                        </td>
                         <td><?php echo $request->getEmailAddress(); ?></td>
                         <td><?php echo $request->getIpAddress(); ?></td>
                         <td><?php echo $request->getDateCreated(); ?></td>
@@ -296,6 +420,28 @@ class Pages {
                 ?>
                 </tbody>
             </table>
+            <div class="wpgdprc-pagination">
+                <?php
+                echo paginate_links(array(
+                    'base' => str_replace(
+                        999999999,
+                        '%#%',
+                        add_query_arg(
+                            array('paged' => 999999999),
+                            Helpers::getPluginAdminUrl()
+                        )
+                    ),
+                    'format' => '?paged=%#%',
+                    'current' => max(1, $paged),
+                    'total' => $numberOfPages,
+                    'prev_text' => '&lsaquo;',
+                    'next_text' => '&rsaquo;',
+                    'before_page_number' => '<span>',
+                    'after_page_number' => '</span>'
+                ));
+                printf('<span class="wpgdprc-pagination__results">%s</span>', sprintf(__('%d of %d results found', WP_GDPR_C_SLUG), count($requests), $total));
+                ?>
+            </div>
             <?php
         else :
             ?>

@@ -32,12 +32,19 @@
             }
             return output;
         },
-        loading = false,
+        ajaxLoading = false,
         ajaxURL = wpgdprcData.ajaxURL,
+        ajaxSecurity = wpgdprcData.ajaxSecurity,
+        /**
+         * @param data
+         * @param values
+         * @param $form
+         * @param delay
+         * @private
+         */
         _ajax = function (data, values, $form, delay) {
             var value = values.slice(0, 1);
-            if (value.length > 0 && !loading) {
-                loading = true;
+            if (value.length > 0) {
                 var $row = $form.querySelector('tr[data-id="' + value[0] + '"]');
                 $row.classList.add('wpgdprc-processing');
                 setTimeout(function () {
@@ -48,11 +55,9 @@
                     request.send(_objectToParametersString(data));
                     request.addEventListener('load', function () {
                         if (request.response) {
-                            var response = JSON.parse(request.response);
                             values.splice(0, 1);
-                            loading = false;
                             $row.classList.remove('wpgdprc-processing');
-                            $row.querySelector('input').remove();
+                            $row.querySelector('input[type="checkbox"]').remove();
                             $row.classList.add('wpgdprc-removed');
                             _ajax(data, values, $form, 500);
                         }
@@ -62,19 +67,18 @@
         };
 
     document.addEventListener('DOMContentLoaded', function () {
-        var ajaxSecurity = wpgdprcData.ajaxSecurity,
-            $formRequestData = document.querySelector('#wpgdprc-form'),
-            $formDeleteData = document.querySelectorAll('.wpgdprc-form');
+        var $formAccessRequest = document.querySelector('.wpgdprc-form--access-request'),
+            $formDeleteRequest = document.querySelectorAll('.wpgdprc-form--delete-request');
 
-        if ($formRequestData !== null) {
+        if ($formAccessRequest !== null) {
             var $feedback = document.querySelector('.wpgdprc-feedback'),
                 $emailAddress = document.querySelector('#wpgdprc-form__email'),
                 $consent = document.querySelector('#wpgdprc-form__consent');
 
-            $formRequestData.addEventListener('submit', function (e) {
+            $formAccessRequest.addEventListener('submit', function (e) {
                 e.preventDefault();
-                if (!loading) {
-                    loading = true;
+                if (!ajaxLoading) {
+                    ajaxLoading = true;
                     $feedback.style.display = 'none';
                     $feedback.classList.remove('wpgdprc-feedback--success', 'wpgdprc-feedback--error');
                     $feedback.innerHTML = '';
@@ -83,7 +87,7 @@
                             action: 'wpgdprc_process_action',
                             security: ajaxSecurity,
                             data: {
-                                type: 'request_data',
+                                type: 'access_request',
                                 email: $emailAddress.value,
                                 consent: $consent.checked
                             }
@@ -98,7 +102,7 @@
                         if (request.response) {
                             var response = JSON.parse(request.response);
                             if (response.message) {
-                                $formRequestData.reset();
+                                $formAccessRequest.reset();
                                 $emailAddress.blur();
                                 $feedback.innerHTML = response.message;
                                 $feedback.classList.add('wpgdprc-feedback--success');
@@ -111,14 +115,14 @@
                                 $feedback.removeAttribute('style');
                             }
                         }
-                        loading = false;
+                        ajaxLoading = false;
                     });
                 }
             });
         }
 
-        if ($formDeleteData.length > 0) {
-            $formDeleteData.forEach(function ($form) {
+        if ($formDeleteRequest.length > 0) {
+            $formDeleteRequest.forEach(function ($form) {
                 var $selectAll = $form.querySelector('.wpgdprc-select-all');
 
                 $form.addEventListener('submit', function (e) {
@@ -129,7 +133,8 @@
                             action: 'wpgdprc_process_action',
                             security: ajaxSecurity,
                             data: {
-                                type: 'delete_data',
+                                type: 'delete_request',
+                                session: wpgdprcData.session,
                                 settings: JSON.parse($this.dataset.wpgdprc)
                             }
                         };

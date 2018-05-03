@@ -141,7 +141,7 @@ class Data {
         $output = '';
         if (!empty($data)) {
             $output .= sprintf(
-                '<form class="wpgdprc-form" data-wpgdprc=\'%s\' method="POST" novalidate="novalidate">',
+                '<form class="wpgdprc-form wpgdprc-form--delete-request" data-wpgdprc=\'%s\' method="POST" novalidate="novalidate">',
                 json_encode(array(
                     'type' => $type
                 ))

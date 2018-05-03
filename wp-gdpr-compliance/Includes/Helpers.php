@@ -20,6 +20,16 @@ class Helpers {
     }
 
     /**
+     * @return string
+     */
+    public static function getPluginAdminUrl() {
+        return admin_url(sprintf(
+            'tools.php?page=%s',
+            str_replace('-', '_', WP_GDPR_C_SLUG)
+        ));
+    }
+
+    /**
      * @param string $plugin
      * @return mixed
      */
