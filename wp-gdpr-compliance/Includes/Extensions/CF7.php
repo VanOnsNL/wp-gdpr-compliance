@@ -2,8 +2,8 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
-use WPGDPRC\Includes\Helpers;
-use WPGDPRC\Includes\Integrations;
+use WPGDPRC\Includes\Helper;
+use WPGDPRC\Includes\Integration;
 
 /**
  * Class CF7
@@ -18,7 +18,7 @@ class CF7 {
     public function processIntegration() {
         $this->removeFormTagFromForms();
         $this->removeAcceptedDateFromForms();
-        if (Helpers::isEnabled(self::ID)) {
+        if (Helper::isEnabled(self::ID)) {
             $this->addFormTagToForms();
             $this->addAcceptedDateToForms();
         }
@@ -179,7 +179,7 @@ class CF7 {
             if (!empty($submission)) {
                 $data = $submission->get_posted_data();
                 if (isset($data['wpgdprc']) && $data['wpgdprc'] == 1) {
-                    $value = Helpers::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), time());
+                    $value = Helper::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), time());
                 } else {
                     $value = __('Not accepted.', WP_GDPR_C_SLUG);
                 }
@@ -259,11 +259,11 @@ class CF7 {
             $texts = $this->getFormTexts();
             if (!empty($texts[$formId])) {
                 $result = esc_html($texts[$formId]);
-                $result = ($insertPrivacyPolicyLink === true) ? Integrations::insertPrivacyPolicyLink($result) : $result;
+                $result = ($insertPrivacyPolicyLink === true) ? Integration::insertPrivacyPolicyLink($result) : $result;
                 return apply_filters('wpgdprc_cf7_checkbox_text', $result, $formId);
             }
         }
-        return Integrations::getCheckboxText();
+        return Integration::getCheckboxText();
     }
 
     /**
@@ -278,7 +278,7 @@ class CF7 {
                 return apply_filters('wpgdprc_cf7_error_message', $result, $formId);
             }
         }
-        return Integrations::getErrorMessage();
+        return Integration::getErrorMessage();
     }
 
     /**

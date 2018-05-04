@@ -20,7 +20,7 @@ class AccessRequest {
     /** @var string */
     private $ipAddress = '';
     /** @var int */
-    private $active = 0;
+    private $expired = 0;
     /** @var string */
     private $dateCreated = '';
 
@@ -45,7 +45,7 @@ class AccessRequest {
         $query = "SELECT * FROM `" . self::getDatabaseTableName() . "`
         WHERE `email_address` = '%s'
         AND `session_id` = '%s'
-        AND `active` = '1'";
+        AND `expired` = '0'";
         $row = $wpdb->get_row($wpdb->prepare($query, $emailAddress, $sessionId));
         if ($row !== null) {
             return new self($row->ID);
@@ -60,7 +60,7 @@ class AccessRequest {
     public function getTotal($filters = array()) {
         global $wpdb;
         $query = "SELECT COUNT(`ID`) FROM `" . self::getDatabaseTableName() . "` WHERE 1";
-        $query .= Helpers::getQueryByFilters($filters);
+        $query .= Helper::getQueryByFilters($filters);
         $result = $wpdb->get_var($query);
         if ($result !== null) {
             return absint($result);
@@ -78,7 +78,7 @@ class AccessRequest {
         global $wpdb;
         $output = array();
         $query  = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE 1";
-        $query .= Helpers::getQueryByFilters($filters);
+        $query .= Helper::getQueryByFilters($filters);
         $query .= " ORDER BY `date_created` DESC";
         if (!empty($limit)) {
             $query .= " LIMIT $offset, $limit";
@@ -103,7 +103,7 @@ class AccessRequest {
         $this->setEmailAddress($row->email_address);
         $this->setSessionId($row->session_id);
         $this->setIpAddress($row->ip_address);
-        $this->setActive($row->active);
+        $this->setExpired($row->expired);
         $this->setDateCreated($row->date_created);
     }
 
@@ -133,14 +133,14 @@ class AccessRequest {
 
     /**
      * @param string $emailAddress
-     * @param bool $activeOnly
+     * @param bool $nonExpiredOnly
      * @return bool
      */
-    public function existsByEmailAddress($emailAddress = '', $activeOnly = false) {
+    public function existsByEmailAddress($emailAddress = '', $nonExpiredOnly = false) {
         global $wpdb;
         $query = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE `email_address` = '%s'";
-        if ($activeOnly) {
-            $query .= " AND `active` = '1'";
+        if ($nonExpiredOnly) {
+            $query .= " AND `expired` = '0'";
         }
         $row = $wpdb->get_row($wpdb->prepare($query, $emailAddress));
         return ($row !== null);
@@ -154,7 +154,7 @@ class AccessRequest {
         if ($this->exists($this->getId())) {
             $wpdb->update(
                 self::getDatabaseTableName(),
-                array('active' => $this->getActive()),
+                array('expired' => $this->getExpired()),
                 array('ID' => $this->getId()),
                 array('%d'),
                 array('%d')
@@ -168,7 +168,7 @@ class AccessRequest {
                     'email_address' => $this->getEmailAddress(),
                     'session_id' => $this->getSessionId(),
                     'ip_address' => $this->getIpAddress(),
-                    'active' => $this->getActive(),
+                    'expired' => $this->getExpired(),
                     'date_created' => date_i18n('Y-m-d H:i:s'),
                 ),
                 array('%d', '%s', '%s', '%s', '%d', '%s')
@@ -264,15 +264,15 @@ class AccessRequest {
     /**
      * @return int
      */
-    public function getActive() {
-        return $this->active;
+    public function getExpired() {
+        return $this->expired;
     }
 
     /**
-     * @param int $active
+     * @param int $expired
      */
-    public function setActive($active) {
-        $this->active = $active;
+    public function setExpired($expired) {
+        $this->expired = $expired;
     }
 
     /**
@@ -294,6 +294,6 @@ class AccessRequest {
      */
     public static function getDatabaseTableName() {
         global $wpdb;
-        return $wpdb->base_prefix . 'wpgpdrc_access_requests';
+        return $wpdb->base_prefix . 'wpgdprc_access_requests';
     }
 }

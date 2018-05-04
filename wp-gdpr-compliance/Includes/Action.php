@@ -3,10 +3,10 @@
 namespace WPGDPRC\Includes;
 
 /**
- * Class Actions
+ * Class Action
  * @package WPGDPRC\Includes
  */
-class Actions {
+class Action {
     /** @var null */
     private static $instance = null;
 
@@ -27,8 +27,8 @@ class Actions {
     }
 
     public function processEnableAccessRequest() {
-        $page = Helpers::getAccessRequestPage();
-        $enabled = Helpers::isEnabled('enable_access_request', 'settings');
+        $page = Helper::getAccessRequestPage();
+        $enabled = Helper::isEnabled('enable_access_request', 'settings');
         $status = ($enabled) ? 'private' : 'draft';
         if ($enabled && $page === false) {
             $result = wp_insert_post(array(
@@ -50,10 +50,39 @@ class Actions {
                 'post_status' => $status
             ));
         }
+        if ($enabled) {
+            global $wpdb;
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            $charsetCollate = $wpdb->get_charset_collate();
+            $sql = "CREATE TABLE IF NOT EXISTS `" . AccessRequest::getDatabaseTableName() . "` (
+            `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+            `site_id` bigint(20) NOT NULL,
+            `email_address` varchar(100) NOT NULL,
+            `session_id` varchar(255) NOT NULL,
+            `ip_address` varchar(100) NOT NULL,
+            `expired` tinyint(1) DEFAULT '0' NOT NULL,
+            `date_created` datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            PRIMARY KEY (`ID`)
+            ) $charsetCollate;";
+            dbDelta($sql);
+            $sql = "CREATE TABLE IF NOT EXISTS `" . DeleteRequest::getDatabaseTableName() . "` (
+            `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+            `site_id` bigint(20) NOT NULL,
+            `access_request_id` bigint(20) NOT NULL,
+            `session_id` varchar(255) NOT NULL,
+            `ip_address` varchar(100) NOT NULL,
+            `data_id` bigint(20) NOT NULL,
+            `type` varchar(255) NOT NULL,
+            `processed` tinyint(1) DEFAULT '0' NOT NULL,
+            `date_created` datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            PRIMARY KEY (`ID`)
+            ) $charsetCollate;";
+            dbDelta($sql);
+        }
     }
 
     /**
-     * @return null|Actions
+     * @return null|Action
      */
     public static function getInstance() {
         if (!isset(self::$instance)) {

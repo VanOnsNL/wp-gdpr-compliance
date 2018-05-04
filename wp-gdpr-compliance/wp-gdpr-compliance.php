@@ -30,14 +30,14 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace WPGDPRC;
 
-use WPGDPRC\Includes\Actions;
+use WPGDPRC\Includes\Action;
 use WPGDPRC\Includes\Ajax;
 use WPGDPRC\Includes\Cron;
-use WPGDPRC\Includes\Helpers;
-use WPGDPRC\Includes\Integrations;
-use WPGDPRC\Includes\Pages;
+use WPGDPRC\Includes\Helper;
+use WPGDPRC\Includes\Integration;
+use WPGDPRC\Includes\Page;
 use WPGDPRC\Includes\AccessRequest;
-use WPGDPRC\Includes\Shortcodes;
+use WPGDPRC\Includes\Shortcode;
 
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
@@ -60,8 +60,6 @@ define('WP_GDPR_C_URI_SVG', WP_GDPR_C_URI . 'assets/svg');
 // Let's do this!
 spl_autoload_register(__NAMESPACE__ . '\\autoload');
 add_action('plugins_loaded', array(WPGDPRC::getInstance(), 'init'));
-register_activation_hook(WP_GDPR_C_ROOT_FILE, array(WPGDPRC::getInstance(), 'pluginActivated'));
-register_deactivation_hook(WP_GDPR_C_ROOT_FILE, array(WPGDPRC::getInstance(), 'pluginDeactivated'));
 
 /**
  * Class WPGDPRC
@@ -77,19 +75,19 @@ class WPGDPRC {
         }
         load_plugin_textdomain(WP_GDPR_C_SLUG, false, basename(dirname(__FILE__)) . '/languages/');
         add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'addActionLinksToPluginPage'));
-        add_action('admin_init', array(Pages::getInstance(), 'registerSettings'));
-        add_action('admin_menu', array(Pages::getInstance(), 'addAdminMenu'));
+        add_action('admin_init', array(Page::getInstance(), 'registerSettings'));
+        add_action('admin_menu', array(Page::getInstance(), 'addAdminMenu'));
         add_action('wp_enqueue_scripts', array($this, 'loadAssets'), 999);
         add_action('admin_enqueue_scripts', array($this, 'loadAdminAssets'), 999);
-        add_action('core_version_check_query_args', array(Actions::getInstance(), 'onlySendEssentialDataDuringUpdateCheck'));
+        add_action('core_version_check_query_args', array(Action::getInstance(), 'onlySendEssentialDataDuringUpdateCheck'));
         add_action('wp_ajax_nopriv_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
         add_action('wp_ajax_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
-        add_action('update_option_wpgdprc_settings_enable_access_request', array(Actions::getInstance(), 'processEnableAccessRequest'));
-        Integrations::getInstance();
-        if (Helpers::isEnabled('enable_access_request', 'settings')) {
-            add_shortcode('wpgdprc_access_request_form', array(Shortcodes::getInstance(), 'accessRequestForm'));
+        add_action('update_option_wpgdprc_settings_enable_access_request', array(Action::getInstance(), 'processEnableAccessRequest'));
+        Integration::getInstance();
+        if (Helper::isEnabled('enable_access_request', 'settings')) {
             add_action('wpgdprc_deactivate_access_requests', array(Cron::getInstance(), 'deactivateAccessRequests'));
             add_action('wp_ajax_wpgdprc_process_delete_request', array(Ajax::getInstance(), 'processDeleteRequest'));
+            add_shortcode('wpgdprc_access_request_form', array(Shortcode::getInstance(), 'accessRequestForm'));
             if (!wp_next_scheduled('wpgdprc_deactivate_access_requests')) {
                 wp_schedule_event(time(), 'hourly', 'wpgdprc_deactivate_access_requests');
             }
@@ -131,33 +129,6 @@ class WPGDPRC {
             'ajaxURL' => admin_url('admin-ajax.php'),
             'ajaxSecurity' => wp_create_nonce('wpgdprc'),
         ));
-    }
-
-    public function pluginActivated() {
-        global $wpdb;
-        if (get_site_option('wpgdprc_version') !== WP_GDPR_C_VERSION) {
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            $charsetCollate = $wpdb->get_charset_collate();
-            $sql = "CREATE TABLE IF NOT EXISTS `" . AccessRequest::getDatabaseTableName() . "` (
-            `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-            `site_id` bigint(20) NOT NULL,
-            `email_address` varchar(100) NOT NULL,
-            `session_id` varchar(255) NOT NULL,
-            `ip_address` varchar(100) NOT NULL,
-            `active` tinyint(1) DEFAULT '1' NOT NULL,
-            `date_created` datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-            PRIMARY KEY (`ID`)
-            ) $charsetCollate;";
-            dbDelta($sql);
-            update_site_option('wpgdprc_version', WP_GDPR_C_VERSION);
-
-
-            // TODO: Add creating 'delete requests' table
-        }
-    }
-
-    public function pluginDeactivated() {
-        // TODO: Remove DB table
     }
 
     /**

@@ -2,8 +2,8 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
-use WPGDPRC\Includes\Helpers;
-use WPGDPRC\Includes\Integrations;
+use WPGDPRC\Includes\Helper;
+use WPGDPRC\Includes\Integration;
 
 /**
  * Class WC
@@ -22,7 +22,7 @@ class WC {
         $args = array(
             'type' => 'checkbox',
             'class' => array('wpgdprc-checkbox'),
-            'label' => Integrations::getCheckboxText(self::ID),
+            'label' => Integration::getCheckboxText(self::ID),
             'required' => true,
         );
         woocommerce_form_field('wpgdprc', apply_filters('wpgdprc_woocommerce_field_args', $args));
@@ -33,7 +33,7 @@ class WC {
      */
     public function checkPost() {
         if (!isset($_POST['wpgdprc'])) {
-            wc_add_notice(Integrations::getErrorMessage(self::ID), 'error');
+            wc_add_notice(Integration::getErrorMessage(self::ID), 'error');
         }
     }
 
@@ -52,7 +52,7 @@ class WC {
     public function displayAcceptedDateInOrderData(\WC_Order $order) {
         $label = __('GDPR accepted on:', WP_GDPR_C_SLUG);
         $date = get_post_meta($order->get_id(), '_wpgdprc', true);
-        $value = (!empty($date)) ? Helpers::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), $date) : __('Not accepted.', WP_GDPR_C_SLUG);
+        $value = (!empty($date)) ? Helper::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), $date) : __('Not accepted.', WP_GDPR_C_SLUG);
         echo apply_filters(
             'wpgdprc_woocommerce_accepted_date_in_order_data',
             sprintf('<p class="form-field form-field-wide wpgdprc-accepted-date"><strong>%s</strong><br />%s</p>', $label, $value),

@@ -5,10 +5,10 @@ namespace WPGDPRC\Includes;
 use WPGDPRC\Includes\Extensions\CF7;
 
 /**
- * Class Helpers
+ * Class Helper
  * @package WPGDPRC\Includes
  */
-class Helpers {
+class Helper {
     /** @var null */
     private static $instance = null;
 
@@ -200,7 +200,7 @@ class Helpers {
         $output = array();
         $activePlugins = self::getActivePlugins();
         // Loop through supported plugins
-        foreach (Integrations::getSupportedPlugins() as $plugin) {
+        foreach (Integration::getSupportedPlugins() as $plugin) {
             if (in_array($plugin['file'], $activePlugins)) {
                 if (is_admin()) {
                     $plugin['supported'] = true;
@@ -216,7 +216,7 @@ class Helpers {
         }
 
         // Loop through supported WordPress functionality
-        foreach (Integrations::getSupportedWordPressFunctionality() as $wp) {
+        foreach (Integration::getSupportedWordPressFunctionality() as $wp) {
             $wp['supported'] = true;
             $output[] = $wp;
         }
@@ -438,7 +438,7 @@ class Helpers {
     }
 
     /**
-     * @return null|Helpers
+     * @return null|Helper
      */
     public static function getInstance() {
         if (!isset(self::$instance)) {

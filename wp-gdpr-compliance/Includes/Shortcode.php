@@ -3,10 +3,10 @@
 namespace WPGDPRC\Includes;
 
 /**
- * Class Shortcodes
+ * Class Shortcode
  * @package WPGDPRC\Includes
  */
-class Shortcodes {
+class Shortcode {
     /** @var null */
     private static $instance = null;
 
@@ -20,15 +20,52 @@ class Shortcodes {
         if ($request !== false) {
             if (
                 SessionHelper::checkSession($request->getSessionId()) &&
-                Helpers::checkIpAddress($request->getIpAddress())
+                Helper::checkIpAddress($request->getIpAddress())
             ) {
                 $data = new Data($request->getEmailAddress());
-                $output .= '<h2>Users</h2>';
-                $output .= Data::getOutput($data->getUsers(), 'user');
-                $output .= '<h2>Posts</h2>';
-                $output .= Data::getOutput($data->getPosts(), 'post');
-                $output .= '<h2>Comments</h2>';
-                $output .= Data::getOutput($data->getComments(), 'comment');
+                $users = Data::getOutput($data->getUsers(), 'user', $request->getId());
+                $comments = Data::getOutput($data->getComments(), 'comment', $request->getId());
+                $woocommerce = Data::getOutput($data->getWooCommerce(), 'woocommerce', $request->getId());
+                $output .= sprintf(
+                    '<div class="wpgdprc-feedback wpgdprc-feedback--error">%s</div>',
+                    __('Hier een bericht over hoe het werkt enzo....', WP_GDPR_C_SLUG)
+                );
+                $output .= sprintf('<h2 class="wpgdprc-title">%s</h2>', __('Users', WP_GDPR_C_SLUG));
+                if (!empty($users)) {
+                    $output .= $users;
+                } else {
+                    $output .= sprintf(
+                        '<div class="wpgdprc-feedback wpgdprc-feedback--notice">%s</div>',
+                        sprintf(
+                            __('No users found with email address %s.', WP_GDPR_C_SLUG),
+                            sprintf('<strong>%s</strong>', $request->getEmailAddress())
+                        )
+                    );
+                }
+                $output .= sprintf('<h2 class="wpgdprc-title">%s</h2>', __('Comments', WP_GDPR_C_SLUG));
+                if (!empty($comments)) {
+                    $output .= $comments;
+                } else {
+                    $output .= sprintf(
+                        '<div class="wpgdprc-feedback wpgdprc-feedback--notice">%s</div>',
+                        sprintf(
+                            __('No comments found with email address %s.', WP_GDPR_C_SLUG),
+                            sprintf('<strong>%s</strong>', $request->getEmailAddress())
+                        )
+                    );
+                }
+                $output .= sprintf('<h2 class="wpgdprc-title">%s</h2>', __('WooCommerce', WP_GDPR_C_SLUG));
+                if (!empty($woocommerce)) {
+                    $output .= $woocommerce;
+                } else {
+                    $output .= sprintf(
+                        '<div class="wpgdprc-feedback wpgdprc-feedback--notice">%s</div>',
+                        sprintf(
+                            __('No WooCommerce user data found with email address %s.', WP_GDPR_C_SLUG),
+                            sprintf('<strong>%s</strong>', $request->getEmailAddress())
+                        )
+                    );
+                }
             } else {
                 wp_die(
                     '<p>' . sprintf(
@@ -39,29 +76,24 @@ class Shortcodes {
                 exit;
             }
         } else {
+            $output .= 'Doesn\'t exist';
             // TODO: Nice error message.
         }
         return $output;
     }
 
     /**
-     * @param array $attributes
      * @return string
      */
-    public function accessRequestForm($attributes = array()) {
+    public function accessRequestForm() {
         wp_enqueue_style('wpgdprc.css');
         wp_enqueue_script('wpgdprc.js');
         $output = '<div class="wpgdprc">';
         if (isset($_REQUEST['wpgdprc'])) {
             $output .= self::getAccessRequestData();
         } else {
-            $attributes = shortcode_atts(
-                array(),
-                $attributes,
-                'wpgdprc_request_form'
-            );
-            $output .= '<div class="wpgdprc-feedback" style="display: none;"></div>';
             $output .= '<form class="wpgdprc-form wpgdprc-form--access-request" name="wpgdprc_form" method="POST">';
+            $output .= '<div class="wpgdprc-feedback" style="display: none;"></div>';
             $output .= '<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>';
             $output .= apply_filters('wpgdprc_request_form_email_field', '<p><input type="email" name="wpgdprc_email" id="wpgdprc-form__email" placeholder="' . esc_attr__(apply_filters('wpgdprc_request_form_email_placeholder', __('Your Email Address', WP_GDPR_C_SLUG))) . '" required /></p>');
             $output .= apply_filters(
@@ -79,7 +111,7 @@ class Shortcodes {
     }
 
     /**
-     * @return null|Shortcodes
+     * @return null|Shortcode
      */
     public static function getInstance() {
         if (!isset(self::$instance)) {

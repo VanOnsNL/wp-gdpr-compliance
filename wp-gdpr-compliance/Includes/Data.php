@@ -3,8 +3,8 @@
 namespace WPGDPRC\Includes;
 
 use WPGDPRC\Includes\Data\Comment;
-use WPGDPRC\Includes\Data\Post;
 use WPGDPRC\Includes\Data\User;
+use WPGDPRC\Includes\Data\WooCommerce;
 
 /**
  * Class Data
@@ -37,7 +37,7 @@ class Data {
      * @return array
      */
     public static function getPossibleDataTypes() {
-        return array('user', 'post', 'comment');
+        return array('user', 'comment');
     }
 
     /**
@@ -56,20 +56,17 @@ class Data {
                     __('Registered on', WP_GDPR_C_SLUG)
                 );
                 break;
-            case 'post' :
-                $output = array(
-                    __('Title', WP_GDPR_C_SLUG),
-                    __('Type', WP_GDPR_C_SLUG),
-                    __('Author', WP_GDPR_C_SLUG),
-                    __('Date', WP_GDPR_C_SLUG)
-                );
-                break;
             case 'comment' :
                 $output = array(
                     __('Author', WP_GDPR_C_SLUG),
                     __('Content', WP_GDPR_C_SLUG),
                     __('Email Address', WP_GDPR_C_SLUG),
                     __('IP Address', WP_GDPR_C_SLUG)
+                );
+                break;
+            case 'woocommerce' :
+                $output = array(
+                    __('Email Address', WP_GDPR_C_SLUG),
                 );
                 break;
         }
@@ -80,51 +77,45 @@ class Data {
     /**
      * @param array $data
      * @param string $type
+     * @param int $requestId
      * @return array
      */
-    private static function getOutputData($data = array(), $type = '') {
+    private static function getOutputData($data = array(), $type = '', $requestId = 0) {
         $output = array();
         $action = '<input type="checkbox" name="' . WP_GDPR_C_PREFIX . '_remove[]" class="wpgdprc-checkbox" value="%d" tabindex="1" />';
         switch ($type) {
             case 'user' :
                 /** @var User $user */
                 foreach ($data as $user) {
+                    $request = DeleteRequest::getInstance()->getByTypeAndDataIdAndAccessRequestId($type, $user->getId(), $requestId);
                     $output[$user->getId()] = array(
                         $user->getUsername(),
                         $user->getDisplayName(),
                         $user->getEmailAddress(),
                         $user->getWebsite(),
                         $user->getRegisteredDate(),
-                        sprintf($action, $user->getId())
-                    );
-                }
-                break;
-            case 'post' :
-                /** @var Post $post */
-                foreach ($data as $post) {
-                    $author = $post->getAuthor();
-                    $output[$post->getId()] = array(
-                        (!empty($post->getTitle()) ? $post->getTitle() : __('(no title)', WP_GDPR_C_SLUG)),
-                        $post->getType(),
-                        sprintf(
-                            '%s (%s)',
-                            $author->getDisplayName(),
-                            $author->getEmailAddress()
-                        ),
-                        $post->getDate(),
-                        sprintf($action, $post->getId())
+                        (($request === false) ? sprintf($action, $user->getId()) : '&nbsp;')
                     );
                 }
                 break;
             case 'comment' :
                 /** @var Comment $comment */
                 foreach ($data as $comment) {
+                    $request = DeleteRequest::getInstance()->getByTypeAndDataIdAndAccessRequestId($type, $comment->getId(), $requestId);
                     $output[$comment->getId()] = array(
                         $comment->getAuthorName(),
-                        Helpers::shortenStringByWords(wp_strip_all_tags($comment->getContent(), true), 5),
+                        Helper::shortenStringByWords(wp_strip_all_tags($comment->getContent(), true), 5),
                         $comment->getEmailAddress(),
                         $comment->getIpAddress(),
-                        sprintf($action, $comment->getId())
+                        (($request === false) ? sprintf($action, $comment->getId()) : '&nbsp;')
+                    );
+                }
+                break;
+            case 'woocommerce' :
+                /** @var WooCommerce $woocommerce */
+                foreach ($data as $woocommerce) {
+                    $output[] = array(
+                        $woocommerce->getBillingEmailAddress()
                     );
                 }
                 break;
@@ -135,9 +126,10 @@ class Data {
     /**
      * @param array $data
      * @param string $type
+     * @param int $requestId
      * @return string
      */
-    public static function getOutput($data = array(), $type = '') {
+    public static function getOutput($data = array(), $type = '', $requestId = 0) {
         $output = '';
         if (!empty($data)) {
             $output .= sprintf(
@@ -146,6 +138,7 @@ class Data {
                     'type' => $type
                 ))
             );
+            $output .= '<div class="wpgdprc-feedback" style="display: none;"></div>';
             $output .= '<table class="wpgdprc-table">';
             $output .= '<thead>';
             $output .= '<tr>';
@@ -155,11 +148,8 @@ class Data {
             $output .= '</tr>';
             $output .= '</thead>';
             $output .= '<tbody>';
-            foreach (self::getOutputData($data, $type) as $id => $row) {
-                $output .= sprintf(
-                    '<tr data-id="%d">',
-                    $id
-                );
+            foreach (self::getOutputData($data, $type, $requestId) as $id => $row) {
+                $output .= sprintf('<tr data-id="%d">', $id);
                 foreach ($row as $value) {
                     $output .= sprintf('<td>%s</td>', $value);
                 }
@@ -172,6 +162,23 @@ class Data {
                 $type
             );
             $output .= '</form>';
+        }
+        return $output;
+    }
+
+    /**
+     * @return User[]
+     */
+    public function getUsers() {
+        global $wpdb;
+        $output = array();
+        $query = "SELECT * FROM `" . $wpdb->users . "` WHERE `user_email` = '%s'";
+        $results = $wpdb->get_results($wpdb->prepare($query, $this->getEmailAddress()));
+        if ($results !== null) {
+            foreach ($results as $row) {
+                $object = new User($row->ID);
+                $output[] = $object;
+            }
         }
         return $output;
     }
@@ -195,53 +202,21 @@ class Data {
     }
 
     /**
-     * @return User[]
+     * @return WooCommerce[]
      */
-    public function getUsers() {
+    public function getWooCommerce() {
         global $wpdb;
         $output = array();
-        $query = "SELECT * FROM `" . $wpdb->users . "` WHERE `user_email` = '%s'";
+        $query = "SELECT * FROM " . $wpdb->postmeta . " WHERE `meta_key` = '_billing_email' AND `meta_value` = '%s'";
         $results = $wpdb->get_results($wpdb->prepare($query, $this->getEmailAddress()));
         if ($results !== null) {
             foreach ($results as $row) {
-                $object = new User($row->ID);
-                $output[] = $object;
-            }
-        }
-        return $output;
-    }
-
-    /**
-     * @return Post[]
-     */
-    public function getPosts() {
-        global $wpdb;
-        $output = array();
-        $query  = "SELECT `" . $wpdb->posts . "`.* FROM `" . $wpdb->posts . "`";
-        $query .= " INNER JOIN `" . $wpdb->users . "` ON `" . $wpdb->users . "`.ID = `" . $wpdb->posts . "`.post_author";
-        $query .= " WHERE `" . $wpdb->users . "`.user_email = '%s'";
-        $results = $wpdb->get_results($wpdb->prepare($query, $this->getEmailAddress()));
-        if ($results !== null) {
-            foreach ($results as $row) {
-                $object = new Post();
+                $object = new WooCommerce();
                 $object->loadByRow($row);
                 $output[] = $object;
             }
         }
         return $output;
-    }
-
-    // TODO
-    public function getBySupportedIntegrations() {
-        $output = array();
-        $supportedIntegrations = Integrations::getSupportedIntegrations();
-        foreach ($supportedIntegrations as $supportedIntegration) {
-            switch ($supportedIntegration['id']) {
-                case 'woocommerce' :
-                    var_dump($supportedIntegration);
-                    break;
-            }
-        }
     }
 
     /**

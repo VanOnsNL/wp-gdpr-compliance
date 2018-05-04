@@ -43,10 +43,15 @@
          * @private
          */
         _ajax = function (data, values, $form, delay) {
-            var value = values.slice(0, 1);
+            var $feedback = $form.querySelector('.wpgdprc-feedback'),
+                value = values.slice(0, 1);
             if (value.length > 0) {
                 var $row = $form.querySelector('tr[data-id="' + value[0] + '"]');
-                $row.classList.add('wpgdprc-processing');
+                $row.classList.remove('wpgdprc-status--error');
+                $row.classList.add('wpgdprc-status--processing');
+                $feedback.setAttribute('style', 'display: none;');
+                $feedback.classList.remove('wpgdprc-feedback--error');
+                $feedback.innerHTML = '';
                 setTimeout(function () {
                     var request = new XMLHttpRequest();
                     data.data.value = value[0];
@@ -55,11 +60,19 @@
                     request.send(_objectToParametersString(data));
                     request.addEventListener('load', function () {
                         if (request.response) {
-                            values.splice(0, 1);
-                            $row.classList.remove('wpgdprc-processing');
-                            $row.querySelector('input[type="checkbox"]').remove();
-                            $row.classList.add('wpgdprc-removed');
-                            _ajax(data, values, $form, 500);
+                            var response = JSON.parse(request.response);
+                            $row.classList.remove('wpgdprc-status--processing');
+                            if (response.error) {
+                                $row.classList.add('wpgdprc-status--error');
+                                $feedback.innerHTML = response.error;
+                                $feedback.classList.add('wpgdprc-feedback--error');
+                                $feedback.removeAttribute('style');
+                            } else {
+                                values.splice(0, 1);
+                                $row.querySelector('input[type="checkbox"]').remove();
+                                $row.classList.add('wpgdprc-status--removed');
+                                _ajax(data, values, $form, 500);
+                            }
                         }
                     });
                 }, (delay || 0));
@@ -71,9 +84,9 @@
             $formDeleteRequest = document.querySelectorAll('.wpgdprc-form--delete-request');
 
         if ($formAccessRequest !== null) {
-            var $feedback = document.querySelector('.wpgdprc-feedback'),
-                $emailAddress = document.querySelector('#wpgdprc-form__email'),
-                $consent = document.querySelector('#wpgdprc-form__consent');
+            var $feedback = $formAccessRequest.querySelector('.wpgdprc-feedback'),
+                $emailAddress = $formAccessRequest.querySelector('#wpgdprc-form__email'),
+                $consent = $formAccessRequest.querySelector('#wpgdprc-form__consent');
 
             $formAccessRequest.addEventListener('submit', function (e) {
                 e.preventDefault();

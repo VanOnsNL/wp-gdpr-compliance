@@ -72,7 +72,7 @@ class Ajax {
                     }
                     break;
                 case 'access_request' :
-                    if (Helpers::isEnabled('enable_access_request', 'settings')) {
+                    if (Helper::isEnabled('enable_access_request', 'settings')) {
                         $emailAddress = (isset($data['email']) && is_email($data['email'])) ? $data['email'] : false;
                         $consent = (isset($data['consent'])) ? filter_var($data['consent'], FILTER_VALIDATE_BOOLEAN) : false;
 
@@ -91,13 +91,18 @@ class Ajax {
                                 $request->setSiteId(get_current_blog_id());
                                 $request->setEmailAddress($emailAddress);
                                 $request->setSessionId(SessionHelper::getSessionId());
-                                $request->setIpAddress(Helpers::getClientIpAddress());
-                                $request->setActive(1);
+                                $request->setIpAddress(Helper::getClientIpAddress());
+                                $request->setExpired(0);
                                 $id = $request->save();
                                 if ($id !== false) {
-                                    $page = Helpers::getAccessRequestPage();
-                                    $siteName = get_blog_option($request->getSiteId(), 'blogname');
-                                    $siteEmail = get_blog_option($request->getSiteId(), 'admin_email');
+                                    $page = Helper::getAccessRequestPage();
+                                    if (is_multisite()) {
+                                        $siteName = get_blog_option($request->getSiteId(), 'blogname');
+                                        $siteEmail = get_blog_option($request->getSiteId(), 'admin_email');
+                                    } else {
+                                        $siteName = get_option('blogname');
+                                        $siteEmail = get_option('admin_email');
+                                    }
                                     $subject = __('[WPGDPRC] Your request', WP_GDPR_C_SLUG);
                                     $message = '';
                                     if (!empty($page)) {
@@ -112,6 +117,7 @@ class Ajax {
                                                 ),
                                                 get_permalink($page)
                                             ),
+                                            // TODO: Better message.
                                             __('Let\'s go!', WP_GDPR_C_SLUG)
                                         );
                                     }
@@ -133,7 +139,7 @@ class Ajax {
                     }
                     break;
                 case 'delete_request' :
-                    if (Helpers::isEnabled('enable_access_request', 'settings')) {
+                    if (Helper::isEnabled('enable_access_request', 'settings')) {
                         $session = (isset($data['session'])) ? esc_html($data['session']) : '';
                         $settings = (isset($data['settings']) && is_array($data['settings'])) ? $data['settings'] : array();
                         $type = (isset($settings['type']) && in_array($settings['type'], Data::getPossibleDataTypes())) ? $settings['type'] : '';
@@ -158,7 +164,7 @@ class Ajax {
                             if ($accessRequest !== false) {
                                 if (
                                     SessionHelper::checkSession($accessRequest->getSessionId()) &&
-                                    Helpers::checkIpAddress($accessRequest->getIpAddress())
+                                    Helper::checkIpAddress($accessRequest->getIpAddress())
                                 ) {
                                     $request = new DeleteRequest();
                                     $request->setSiteId(get_current_blog_id());
@@ -168,9 +174,8 @@ class Ajax {
                                     $request->setDataId($value);
                                     $request->setType($type);
                                     $id = $request->save();
-                                    if ($id !== false) {
-                                    } else {
-                                        $output['error'] = __('Something went wrong while saving the request.', WP_GDPR_C_SLUG);
+                                    if ($id === false) {
+                                        $output['error'] = __('Something went wrong while saving this request. Please try again.', WP_GDPR_C_SLUG);
                                     }
                                 } else {
                                     $output['error'] = __('Session doesn\'t match.', WP_GDPR_C_SLUG);
@@ -197,51 +202,72 @@ class Ajax {
             'error' => '',
         );
 
-        if (!Helpers::isEnabled('enable_access_request', 'settings')) {
+        if (!Helper::isEnabled('enable_access_request', 'settings')) {
             $output['error'] = __('The access request functionality is not enabled.', WP_GDPR_C_SLUG);
-        }
-
-        if (!current_user_can('manage_posts')) {
-            $output['error'] = __('You\'re not allowed to do this.', WP_GDPR_C_SLUG);
         }
 
         $data = (isset($_POST['data']) && (is_array($_POST['data']) || is_string($_POST['data']))) ? $_POST['data'] : false;
         if (is_string($data)) {
             $data = json_decode(stripslashes($data), true);
         }
-        $type = (isset($data['type']) && is_string($data['type'])) ? esc_html($data['type']) : false;
-        $value = (isset($data['value']) && is_numeric($data['value'])) ? absint($data['value']) : 0;
+        $id = (isset($data['id']) && is_numeric($data['id'])) ? absint($data['id']) : 0;
 
         if (!$data) {
             $output['error'] = __('Missing data.', WP_GDPR_C_SLUG);
         }
 
-        if (!$type) {
-            $output['error'] = __('Missing type.', WP_GDPR_C_SLUG);
-        }
-
-        if ($value === 0) {
-            $output['error'] = __('Missing value.', WP_GDPR_C_SLUG);
+        if ($id === 0 || !DeleteRequest::getInstance()->exists($id)) {
+            $output['error'] = __('This delete request doesn\'t exist.', WP_GDPR_C_SLUG);
         }
 
         // Let's do this!
         if (empty($output['error'])) {
-            switch ($type) {
-                case 'post' :
-
-                    break;
-                case 'user' :
-                    $result = wp_update_user(array(
-                        'ID' => $value,
-                        'user_email' => 'test@test.nl'
-                    ));
-                    if (is_wp_error($result)) {
-                        $output['error'] = __('This user does not exist.', WP_GDPR_C_SLUG);
-                    }
-                    break;
-                case 'comment' :
-
-                    break;
+            $request = new DeleteRequest($id);
+            if (!$request->getProcessed()) {
+                switch ($request->getType()) {
+                    case 'user' :
+                        if (current_user_can('edit_users')) {
+                            $date = Helper::localDateTime(time());
+                            $result = wp_update_user(array(
+                                'ID' => $request->getDataId(),
+                                'display_name' => 'DISPLAY_NAME',
+                                'nickname' => 'NICKNAME',
+                                'first_name' => 'FIRST_NAME',
+                                'last_name' => 'LAST_NAME',
+                                'user_email' => $request->getDataId() . '.' . $date->format('Ymd') . '.' . $date->format('His') . '@example.org'
+                            ));
+                            if (is_wp_error($result)) {
+                                $output['error'] = __('This user doesn\'t exist.', WP_GDPR_C_SLUG);
+                            } else {
+                                $request->setProcessed(1);
+                                $request->save();
+                            }
+                        } else {
+                            $output['error'] = __('You\'re not allowed to edit users.', WP_GDPR_C_SLUG);
+                        }
+                        break;
+                    case 'comment' :
+                        if (current_user_can('edit_posts')) {
+                            $date = Helper::localDateTime(time());
+                            $result = wp_update_comment(array(
+                                'comment_ID' => $request->getDataId(),
+                                'comment_author' => 'NAME',
+                                'comment_author_email' => $request->getDataId() . '.' . $date->format('Ymd') . '.' . $date->format('His') . '@example.org',
+                                'comment_author_IP' => '127.0.0.1'
+                            ));
+                            if ($result === 0) {
+                                $output['error'] = __('This comment doesn\'t exist.', WP_GDPR_C_SLUG);
+                            } else {
+                                $request->setProcessed(1);
+                                $request->save();
+                            }
+                        } else {
+                            $output['error'] = __('You\'re not allowed to edit comments.', WP_GDPR_C_SLUG);
+                        }
+                        break;
+                }
+            } else {
+                $output['error'] = __('This delete request has already been processed.', WP_GDPR_C_SLUG);
             }
         }
 

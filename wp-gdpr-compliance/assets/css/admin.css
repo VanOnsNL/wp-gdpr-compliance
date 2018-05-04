@@ -66,13 +66,24 @@
     font-style: normal;
 }
 
-.wpgdprc .wpgdprc-processing {
+.wpgdprc .wpgdprc-status--processing,
+.wpgdprc .wpgdprc-status--removed {
+    pointer-events: none;
+}
+
+.wpgdprc .wpgdprc-status--processing {
     opacity: .5;
 }
 
-.wpgdprc .wpgdprc-removed {
+.wpgdprc .wpgdprc-status--removed {
     opacity: .2;
     text-decoration: line-through;
+}
+
+.wpgdprc .wpgdprc-status--error {
+    background-color: #F7E4E1;
+    border-color: #CC4B37;
+    color: #CC4B37;
 }
 
 div.wpgdprc-information {
@@ -80,31 +91,28 @@ div.wpgdprc-information {
     color: #8A8A8A;
 }
 
-div.wpgdrc-message {
+div.wpgdprc-message {
     padding: 10px;
     border: 1px solid transparent;
 }
 
-div.wpgdrc-message p:first-child {
+div.wpgdprc-message p:first-child {
     margin-top: 0;
 }
 
-div.wpgdrc-message--notice {
+div.wpgdprc-message--notice {
     background: #FFF3D9;
     border-color: #E7D996;
 }
 
-div.wpgdrc-message--notice .wpgdprc__message {
-    color: #B39F3D;
-}
-
-div.wpgdrc-message--error {
+div.wpgdprc-message--error {
     background: #F7E4E1;
     border-color: #CC4B37;
+    color: #CC4B37;
 }
 
-div.wpgdrc-message--error .wpgdprc__message {
-    color: #CC4B37;
+div.wpgdprc-message + form.wpgdprc-form {
+    margin-top: 20px;
 }
 
 .wpgdprc p.submit {
@@ -380,7 +388,7 @@ span.wpgdprc-instructions {
     color: #8A8A8A;
 }
 
-.wpgdprc-checklist-description + .wpgdrc-message {
+.wpgdprc-checklist-description + .wpgdprc-message {
     margin-top: 10px;
 }
 

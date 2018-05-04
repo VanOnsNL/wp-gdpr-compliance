@@ -2,8 +2,8 @@
 
 namespace WPGDPRC\Includes\Extensions;
 
-use WPGDPRC\Includes\Helpers;
-use WPGDPRC\Includes\Integrations;
+use WPGDPRC\Includes\Helper;
+use WPGDPRC\Includes\Integration;
 
 /**
  * Class GForms
@@ -20,7 +20,7 @@ class GForms {
             return;
         }
         foreach (self::getForms() as $form) {
-            if (in_array($form['id'], self::getEnabledForms()) && Helpers::isEnabled(self::ID)) {
+            if (in_array($form['id'], self::getEnabledForms()) && Helper::isEnabled(self::ID)) {
                 self::addField($form);
             } else {
                 self::removeField($form);
@@ -140,7 +140,7 @@ class GForms {
     public function addAcceptedDateToEntry($value = '', $lead = array(), \GF_Field $field) {
         if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
             if (!empty($value)) {
-                $date = Helpers::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), time());
+                $date = Helper::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), time());
                 $value = sprintf(__('Accepted on %s.', WP_GDPR_C_SLUG), $date);
             } else {
                 $value = __('Not accepted.', WP_GDPR_C_SLUG);
@@ -211,12 +211,12 @@ class GForms {
         if (!empty($formId)) {
             $texts = $this->getFormTexts();
             if (!empty($texts[$formId])) {
-                $result = wp_kses($texts[$formId], Helpers::getAllowedHTMLTags(self::ID));
-                $result = ($insertPrivacyPolicyLink === true) ? Integrations::insertPrivacyPolicyLink($result) : $result;
+                $result = wp_kses($texts[$formId], Helper::getAllowedHTMLTags(self::ID));
+                $result = ($insertPrivacyPolicyLink === true) ? Integration::insertPrivacyPolicyLink($result) : $result;
                 return apply_filters('wpgdprc_gforms_checkbox_text', $result, $formId);
             }
         }
-        return Integrations::getCheckboxText();
+        return Integration::getCheckboxText();
     }
 
     /**
@@ -227,11 +227,11 @@ class GForms {
         if (!empty($formId)) {
             $errors = $this->getFormErrorMessages();
             if (!empty($errors[$formId])) {
-                $result = wp_kses($errors[$formId], Helpers::getAllowedHTMLTags(self::ID));
+                $result = wp_kses($errors[$formId], Helper::getAllowedHTMLTags(self::ID));
                 return apply_filters('wpgdprc_gforms_error_message', $result, $formId);
             }
         }
-        return Integrations::getErrorMessage();
+        return Integration::getErrorMessage();
     }
 
     /**

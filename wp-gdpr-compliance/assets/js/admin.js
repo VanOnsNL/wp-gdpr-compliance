@@ -24,13 +24,9 @@
             if ($checkboxes.length) {
                 $checkboxes.each(function () {
                     var $this = $(this),
-                        type = $this.data('type'),
-                        value = parseInt($this.val());
+                        value = $this.val();
                     if ($this.is(':checked') && value > 0) {
-                        output.push({
-                            type: type,
-                            value: value
-                        });
+                        output.push(value);
                     }
                 });
             }
@@ -101,8 +97,13 @@
         _ajax = function (values, $form, delay) {
             var value = values.slice(0, 1);
             if (value.length > 0) {
-                var $row = $('tr[data-id="' + value[0].type + '-' + value[0].value + '"]', $form);
-                $row.addClass('wpgdprc-processing');
+                var $feedback = $('.wpgdprc-feedback', $form),
+                    $row = $('tr[data-id="' + value[0] + '"]', $form);
+                $row.removeClass('wpgdprc-status--error');
+                $row.addClass('wpgdprc-status--processing');
+                $feedback.attr('style', 'display: none;');
+                $feedback.removeClass('wpgdprc-feedback--error');
+                $feedback.empty();
                 setTimeout(function () {
                     $.ajax({
                         url: ajaxURL,
@@ -111,15 +112,26 @@
                         data: {
                             action: 'wpgdprc_process_delete_request',
                             security: ajaxSecurity,
-                            data: value[0]
+                            data: {
+                                id: value[0]
+                            }
                         },
                         success: function (response) {
                             if (response) {
-                                values.splice(0, 1);
-                                $row.removeClass('wpgdprc-processing');
-                                $('input[type="checkbox"]', $row).remove();
-                                $row.addClass('wpgdprc-removed');
-                                _ajax(values, $form, 500);
+                                $row.removeClass('wpgdprc-status--processing');
+                                if (response.error) {
+                                    $row.addClass('wpgdprc-status--error');
+                                    $feedback.html(response.error);
+                                    $feedback.addClass('wpgdprc-feedback--error');
+                                    $feedback.removeAttr('style');
+                                } else {
+                                    values.splice(0, 1);
+                                    $('input[type="checkbox"]', $row).remove();
+                                    $row.addClass('wpgdprc-status--removed');
+                                    $('.dashicons-no', $row).removeClass('dashicons-no').addClass('dashicons-yes');
+                                    _ajax(values, $form, 500);
+
+                                }
                             }
                         }
                     });

@@ -40,12 +40,28 @@ class DeleteRequest {
     }
 
     /**
+     * @param string $type
+     * @param int $dataId
+     * @param int $accessRequestId
+     * @return bool|DeleteRequest
+     */
+    public function getByTypeAndDataIdAndAccessRequestId($type = '', $dataId = 0, $accessRequestId = 0) {
+        global $wpdb;
+        $query = "SELECT `ID` FROM `" . self::getDatabaseTableName() . "` WHERE `type` = '%s' AND `data_id` = '%d' AND `access_request_id` = '%d'";
+        $result = $wpdb->get_row($wpdb->prepare($query, $type, $dataId, $accessRequestId));
+        if ($result !== null) {
+            return new self($result->ID);
+        }
+        return false;
+    }
+
+    /**
      * @param int $accessRequestId
      * @return int
      */
     public function getAmountByAccessRequestId($accessRequestId = 0) {
         global $wpdb;
-        $query = "SELECT COUNT(`ID`) FROM `" . self::getDatabaseTableName() . "` WHERE `access_request_id` = '%d'";
+        $query = "SELECT COUNT(`ID`) FROM `" . self::getDatabaseTableName() . "` WHERE `access_request_id` = '%d' AND `processed` = '0'";
         $result = $wpdb->get_var(
             $wpdb->prepare(
                 $query,
@@ -53,7 +69,7 @@ class DeleteRequest {
             )
         );
         if ($result !== null) {
-            return (int)$result;
+            return absint($result);
         }
         return 0;
     }
@@ -65,7 +81,7 @@ class DeleteRequest {
     public function getTotal($filters = array()) {
         global $wpdb;
         $query = "SELECT COUNT(`ID`) FROM `" . self::getDatabaseTableName() . "` WHERE 1";
-        $query .= Helpers::getQueryByFilters($filters);
+        $query .= Helper::getQueryByFilters($filters);
         $result = $wpdb->get_var($query);
         if ($result !== null) {
             return absint($result);
@@ -83,7 +99,7 @@ class DeleteRequest {
         global $wpdb;
         $output = array();
         $query  = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE 1";
-        $query .= Helpers::getQueryByFilters($filters);
+        $query .= Helper::getQueryByFilters($filters);
         $query .= " ORDER BY `date_created` DESC";
         if (!empty($limit)) {
             $query .= " LIMIT $offset, $limit";
@@ -180,9 +196,6 @@ class DeleteRequest {
      */
     public function getManageUrl() {
         switch ($this->getType()) {
-            case 'post' :
-                return get_edit_post_link($this->getDataId());
-                break;
             case 'user' :
                 return get_edit_user_link($this->getDataId());
                 break;
@@ -334,6 +347,6 @@ class DeleteRequest {
      */
     public static function getDatabaseTableName() {
         global $wpdb;
-        return $wpdb->base_prefix . 'wpgpdrc_delete_requests';
+        return $wpdb->base_prefix . 'wpgdprc_delete_requests';
     }
 }
