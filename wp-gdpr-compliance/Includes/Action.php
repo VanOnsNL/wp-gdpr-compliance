@@ -34,7 +34,7 @@ class Action {
             $result = wp_insert_post(array(
                 'post_type' => 'page',
                 'post_status' => $status,
-                'post_title' => __('[WPGDPRC] Access Request', WP_GDPR_C_SLUG),
+                'post_title' => __('Data Access Request', WP_GDPR_C_SLUG),
                 'post_content' => '[wpgdprc_access_request_form]',
                 'meta_input' => array(
                     '_wpgdprc_access_request' => 1,

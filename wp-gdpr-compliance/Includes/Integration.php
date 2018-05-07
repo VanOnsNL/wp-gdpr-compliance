@@ -246,6 +246,34 @@ class Integration {
     }
 
     /**
+     * @param bool $insertPrivacyPolicyLink
+     * @return mixed
+     */
+    public static function getAccessRequestFormCheckboxText($insertPrivacyPolicyLink = true) {
+        $output = get_option(WP_GDPR_C_PREFIX . '_settings_access_request_form_checkbox_text');
+        if (empty($output)) {
+            $output = __('By using this form you agree with the storage and handling of your data by this website.', WP_GDPR_C_SLUG);
+        }
+        $output = ($insertPrivacyPolicyLink === true) ? self::insertPrivacyPolicyLink($output) : $output;
+        return apply_filters('wpgdprc_access_request_form_checkbox_text', wp_kses($output, Helper::getAllowedHTMLTags()));
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function getDeleteRequestFormExplanationText() {
+        $output = get_option(WP_GDPR_C_PREFIX . '_settings_delete_request_form_explanation_text');
+        if (empty($output)) {
+            $output = sprintf(
+                __('Below we show you all of the data stored by %s on %s Select the data you wish the site owner to anonymise so it cannot be linked to your email address any longer. It is the site\'s owner responsibility to act upon your request. When your data is anonymised you will receive an email confirmation.', WP_GDPR_C_SLUG),
+                get_option('blogname'),
+                get_option('siteurl')
+            );
+        }
+        return apply_filters('wpgdprc_delete_request_form_explanation_text', wp_kses($output, Helper::getAllowedHTMLTags()));
+    }
+
+    /**
      * @param string $content
      * @return mixed|string
      */

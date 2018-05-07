@@ -4,7 +4,7 @@
  Plugin Name: WP GDPR Compliance
  Plugin URI:  https://www.wpgdprc.com/
  Description: This plugin assists website and webshop owners to comply with European privacy regulations known as GDPR. By May 24th, 2018 your website or shop has to comply to avoid large fines.
- Version:     1.2.4
+ Version:     1.3
  Author:      Van Ons
  Author URI:  https://www.van-ons.nl/
  License:     GPL2
@@ -33,6 +33,7 @@ namespace WPGDPRC;
 use WPGDPRC\Includes\Action;
 use WPGDPRC\Includes\Ajax;
 use WPGDPRC\Includes\Cron;
+use WPGDPRC\Includes\Filter;
 use WPGDPRC\Includes\Helper;
 use WPGDPRC\Includes\Integration;
 use WPGDPRC\Includes\Page;
@@ -83,6 +84,7 @@ class WPGDPRC {
         add_action('wp_ajax_nopriv_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
         add_action('wp_ajax_wpgdprc_process_action', array(Ajax::getInstance(), 'processAction'));
         add_action('update_option_wpgdprc_settings_enable_access_request', array(Action::getInstance(), 'processEnableAccessRequest'));
+        add_filter('pre_update_option_wpgdprc_settings_access_request_page', array(Filter::getInstance(), 'processEnableAccessRequest'));
         Integration::getInstance();
         if (Helper::isEnabled('enable_access_request', 'settings')) {
             add_action('wpgdprc_deactivate_access_requests', array(Cron::getInstance(), 'deactivateAccessRequests'));

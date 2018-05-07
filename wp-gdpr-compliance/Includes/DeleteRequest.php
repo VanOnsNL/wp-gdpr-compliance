@@ -202,6 +202,9 @@ class DeleteRequest {
             case 'comment' :
                 return get_edit_comment_link($this->getDataId());
                 break;
+            case 'woocommerce_order' :
+                return get_edit_post_link($this->getDataId());
+                break;
         }
         return '';
     }

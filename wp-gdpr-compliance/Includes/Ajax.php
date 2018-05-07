@@ -96,44 +96,57 @@ class Ajax {
                                 $id = $request->save();
                                 if ($id !== false) {
                                     $page = Helper::getAccessRequestPage();
-                                    if (is_multisite()) {
-                                        $siteName = get_blog_option($request->getSiteId(), 'blogname');
-                                        $siteEmail = get_blog_option($request->getSiteId(), 'admin_email');
-                                    } else {
-                                        $siteName = get_option('blogname');
-                                        $siteEmail = get_option('admin_email');
-                                    }
-                                    $subject = __('[WPGDPRC] Your request', WP_GDPR_C_SLUG);
-                                    $message = '';
                                     if (!empty($page)) {
+                                        if (is_multisite()) {
+                                            $siteName = get_blog_option($request->getSiteId(), 'blogname');
+                                            $siteEmail = get_blog_option($request->getSiteId(), 'admin_email');
+                                            $siteUrl = get_blog_option($request->getSiteId(), 'siteurl');
+                                        } else {
+                                            $siteName = get_option('blogname');
+                                            $siteEmail = get_option('admin_email');
+                                            $siteUrl = get_option('siteurl');
+                                        }
+                                        $subject = sprintf(__('%s - Your data request', WP_GDPR_C_SLUG), $siteName);
                                         $message = sprintf(
-                                            '<a target="_blank" href="%s">%s</a>',
-                                            add_query_arg(
-                                                array(
-                                                    'wpgdprc' => base64_encode(serialize(array(
-                                                        'email' => $request->getEmailAddress(),
-                                                        'sId' => $request->getSessionId()
-                                                    )))
+                                            __('You have requested to access your data on %s.', WP_GDPR_C_SLUG),
+                                            sprintf('<a target="_blank" href="%s">%s</a>', $siteUrl, $siteName)
+                                        ) . '<br /><br />';
+                                        $message .= sprintf(
+                                            __('Please visit this %s to view the data linked to the email address %s', WP_GDPR_C_SLUG),
+                                            sprintf(
+                                                '<a target="_blank" href="%s">%s</a>',
+                                                add_query_arg(
+                                                    array(
+                                                        'wpgdprc' => base64_encode(serialize(array(
+                                                            'email' => $request->getEmailAddress(),
+                                                            'sId' => $request->getSessionId()
+                                                        )))
+                                                    ),
+                                                    get_permalink($page)
                                                 ),
-                                                get_permalink($page)
+                                                __('page', WP_GDPR_C_SLUG)
                                             ),
-                                            // TODO: Better message.
-                                            __('Let\'s go!', WP_GDPR_C_SLUG)
+                                            $emailAddress
+                                        ) . '<br /><br />';
+                                        $message .= __('This page is available for 24 hours and can only be reached from the same IP address you requested from.', WP_GDPR_C_SLUG)  . '<br />';
+                                        $message .= sprintf(
+                                            __('If your link is invalid please fill in a new request: %s.', WP_GDPR_C_SLUG),
+                                            sprintf('<a target="_blank" href="%s">%s</a>', get_permalink($page), get_the_title($page))
                                         );
-                                    }
-                                    $headers = array(
-                                        'Content-Type: text/html; charset=UTF-8',
-                                        "From: $siteName <$siteEmail>"
-                                    );
-                                    $response = wp_mail($emailAddress, $subject, $message, $headers);
-                                    if ($response !== false) {
-                                        $output['message'] = __('Wooooo!', WP_GDPR_C_SLUG);
+                                        $headers = array(
+                                            'Content-Type: text/html; charset=UTF-8',
+                                            "From: $siteName <$siteEmail>"
+                                        );
+                                        $response = wp_mail($emailAddress, $subject, $message, $headers);
+                                        if ($response !== false) {
+                                            $output['message'] = __('Success. You will receive an email with your data shortly.', WP_GDPR_C_SLUG);
+                                        }
                                     }
                                 } else {
                                     $output['error'] = __('Something went wrong while saving the request.', WP_GDPR_C_SLUG);
                                 }
                             } else {
-                                $output['error'] = __('Already requested.', WP_GDPR_C_SLUG);
+                                $output['error'] = __('You have already requested your data. Please check your mailbox. After 24 hours you can put in a new request.', WP_GDPR_C_SLUG);
                             }
                         }
                     }
@@ -150,7 +163,7 @@ class Ajax {
                         }
 
                         if (empty($type)) {
-                            $output['error'] = __('Missing type.', WP_GDPR_C_SLUG);
+                            $output['error'] = __('Missing or invalid type.', WP_GDPR_C_SLUG);
                         }
 
                         if ($value === 0) {
@@ -263,6 +276,29 @@ class Ajax {
                             }
                         } else {
                             $output['error'] = __('You\'re not allowed to edit comments.', WP_GDPR_C_SLUG);
+                        }
+                        break;
+                    case 'woocommerce_order' :
+                        if (current_user_can('edit_shop_orders')) {
+                            $date = Helper::localDateTime(time());
+                            update_post_meta($request->getDataId(), '_billing_first_name', 'FIRST_NAME');
+                            update_post_meta($request->getDataId(), '_billing_last_name', 'LAST_NAME');
+                            update_post_meta($request->getDataId(), '_billing_company', 'COMPANY_NAME');
+                            update_post_meta($request->getDataId(), '_billing_address_1', 'ADDRESS_1');
+                            update_post_meta($request->getDataId(), '_billing_address_2', 'ADDRESS_2');
+                            update_post_meta($request->getDataId(), '_billing_postcode', 'ZIP_CODE');
+                            update_post_meta($request->getDataId(), '_billing_city', 'CITY');
+                            update_post_meta($request->getDataId(), '_billing_phone', 'PHONE_NUMBER');
+                            update_post_meta($request->getDataId(), '_billing_email', $request->getDataId() . '.' . $date->format('Ymd') . '.' . $date->format('His') . '@example.org');
+                            update_post_meta($request->getDataId(), '_shipping_first_name', 'FIRST_NAME');
+                            update_post_meta($request->getDataId(), '_shipping_last_name', 'LAST_NAME');
+                            update_post_meta($request->getDataId(), '_shipping_company', 'COMPANY_NAME');
+                            update_post_meta($request->getDataId(), '_shipping_address_1', 'ADDRESS_1');
+                            update_post_meta($request->getDataId(), '_shipping_address_2', 'ADDRESS_2');
+                            update_post_meta($request->getDataId(), '_shipping_postcode', 'ZIP_CODE');
+                            update_post_meta($request->getDataId(), '_shipping_city', 'CITY');
+                        } else {
+                            $output['error'] = __('You\'re not allowed to edit WooCommerce orders.', WP_GDPR_C_SLUG);
                         }
                         break;
                 }

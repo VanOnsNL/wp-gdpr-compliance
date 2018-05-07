@@ -25,10 +25,10 @@ class Shortcode {
                 $data = new Data($request->getEmailAddress());
                 $users = Data::getOutput($data->getUsers(), 'user', $request->getId());
                 $comments = Data::getOutput($data->getComments(), 'comment', $request->getId());
-                $woocommerce = Data::getOutput($data->getWooCommerce(), 'woocommerce', $request->getId());
+                $woocommerceOrders = Data::getOutput($data->getWooCommerceOrders(), 'woocommerce_order', $request->getId());
                 $output .= sprintf(
-                    '<div class="wpgdprc-feedback wpgdprc-feedback--error">%s</div>',
-                    __('Hier een bericht over hoe het werkt enzo....', WP_GDPR_C_SLUG)
+                    '<div class="wpgdprc-feedback wpgdprc-feedback--notice">%s</div>',
+                    Integration::getDeleteRequestFormExplanationText()
                 );
                 $output .= sprintf('<h2 class="wpgdprc-title">%s</h2>', __('Users', WP_GDPR_C_SLUG));
                 if (!empty($users)) {
@@ -54,14 +54,14 @@ class Shortcode {
                         )
                     );
                 }
-                $output .= sprintf('<h2 class="wpgdprc-title">%s</h2>', __('WooCommerce', WP_GDPR_C_SLUG));
-                if (!empty($woocommerce)) {
-                    $output .= $woocommerce;
+                $output .= sprintf('<h2 class="wpgdprc-title">%s</h2>', __('WooCommerce Orders', WP_GDPR_C_SLUG));
+                if (!empty($woocommerceOrders)) {
+                    $output .= $woocommerceOrders;
                 } else {
                     $output .= sprintf(
                         '<div class="wpgdprc-feedback wpgdprc-feedback--notice">%s</div>',
                         sprintf(
-                            __('No WooCommerce user data found with email address %s.', WP_GDPR_C_SLUG),
+                            __('No WooCommerce orders found with email address %s.', WP_GDPR_C_SLUG),
                             sprintf('<strong>%s</strong>', $request->getEmailAddress())
                         )
                     );
@@ -76,8 +76,7 @@ class Shortcode {
                 exit;
             }
         } else {
-            $output .= 'Doesn\'t exist';
-            // TODO: Nice error message.
+            $output .= __('This request is expired or doesn\'t exist.', WP_GDPR_C_SLUG);
         }
         return $output;
     }
@@ -88,22 +87,25 @@ class Shortcode {
     public function accessRequestForm() {
         wp_enqueue_style('wpgdprc.css');
         wp_enqueue_script('wpgdprc.js');
+        $page = Helper::getAccessRequestPage();
+        if (!empty($page) && (get_queried_object_id() !== $page->ID)) {
+            return '';
+        }
         $output = '<div class="wpgdprc">';
         if (isset($_REQUEST['wpgdprc'])) {
             $output .= self::getAccessRequestData();
         } else {
             $output .= '<form class="wpgdprc-form wpgdprc-form--access-request" name="wpgdprc_form" method="POST">';
-            $output .= '<div class="wpgdprc-feedback" style="display: none;"></div>';
-            $output .= '<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>';
             $output .= apply_filters('wpgdprc_request_form_email_field', '<p><input type="email" name="wpgdprc_email" id="wpgdprc-form__email" placeholder="' . esc_attr__(apply_filters('wpgdprc_request_form_email_placeholder', __('Your Email Address', WP_GDPR_C_SLUG))) . '" required /></p>');
             $output .= apply_filters(
                 'wpgdprc_request_form_consent_field',
                 sprintf(
                     '<p><input type="checkbox" name="wpgdprc_consent" id="wpgdprc-form__consent" value="1" required /> %s</p>',
-                    __('Blabla ik ga akkoord en shit.', WP_GDPR_C_SLUG)
+                    Integration::getAccessRequestFormCheckboxText()
                 )
             );
             $output .= apply_filters('wpgdprc_request_form_submit_field', '<p><input type="submit" name="wpgdprc_submit" value="' . esc_attr__(apply_filters('wpgdprc_request_form_submit_label', __('Send', WP_GDPR_C_SLUG))) . '" /></p>');
+            $output .= '<div class="wpgdprc-feedback" style="display: none;"></div>';
             $output .= '</form>';
         }
         $output .= '</div>';

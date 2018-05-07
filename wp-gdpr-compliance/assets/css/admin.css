@@ -143,13 +143,6 @@ h1.wpgdprc-title {
     font-size: 36px;
 }
 
-h1.wpgdprc-title .dashicons {
-    width: inherit;
-    height: inherit;
-    font-size: inherit;
-    color: #4AA94F;
-}
-
 div.wpgdprc-description {
     margin-top: 20px;
     padding: 10px;
@@ -205,6 +198,7 @@ table.wpgdprc-table tr:nth-child(even) {
 }
 
 .wpgdprc-navigation > a {
+    position: relative;
     display: block;
     float: left;
     margin-bottom: -1px;
@@ -221,12 +215,28 @@ table.wpgdprc-table tr:nth-child(even) {
     color: inherit;
 }
 
-.wpgdprc-navigation > a.active {
+.wpgdprc-navigation > a.wpgdprc-active {
     background-color: #fff;
     color: #4AA94F;
     border-top-color: #DBD6D6;
     border-right-color: #DBD6D6;
     border-left-color: #DBD6D6;
+}
+
+.wpgdprc-navigation span.wpgdprc-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-color: #4AA94F;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    font-size: 11px;
+    color: #FFFFFF;
+    z-index: 1;
 }
 
 .wpgdprc-content {
@@ -443,7 +453,7 @@ span.wpgdprc-instructions {
     margin-top: 0 !important;
 }
 
-.wpgdprc-setting input[type="text"], .wpgdprc-setting select {
+.wpgdprc-setting input[type="text"], .wpgdprc-setting textarea, .wpgdprc-setting select {
     margin: 0;
     width: 100%;
     -webkit-box-shadow: none;
@@ -452,7 +462,7 @@ span.wpgdprc-instructions {
     font-size: inherit;
 }
 
-.wpgdprc-setting input[type="text"] {
+.wpgdprc-setting input[type="text"], .wpgdprc-setting textarea {
     background-color: #FFFFFF;
 }
 

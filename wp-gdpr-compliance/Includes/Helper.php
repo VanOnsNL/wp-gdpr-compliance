@@ -393,16 +393,21 @@ class Helper {
      */
     public static function getAccessRequestPage() {
         $output = false;
-        $page = get_pages(array(
-            'post_type' => 'page',
-            'post_status' => 'publish,private,draft',
-            'number' => 1,
-            'meta_key' => '_wpgdprc_access_request',
-            'meta_value' => '1'
-        ));
-        if (!empty($page)) {
-            /** @var \WP_Post $output */
-            $output = $page[0];
+        $option = get_option(WP_GDPR_C_PREFIX . '_settings_access_request_page', 0);
+        if (!empty($option)) {
+            $output = get_post($option);
+        } else {
+            $page = get_pages(array(
+                'post_type' => 'page',
+                'post_status' => 'publish,private,draft',
+                'number' => 1,
+                'meta_key' => '_wpgdprc_access_request',
+                'meta_value' => '1'
+            ));
+            if (!empty($page)) {
+                /** @var \WP_Post $output */
+                $output = $page[0];
+            }
         }
         return $output;
     }

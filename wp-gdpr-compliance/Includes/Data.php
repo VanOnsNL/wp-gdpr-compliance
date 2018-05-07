@@ -4,7 +4,7 @@ namespace WPGDPRC\Includes;
 
 use WPGDPRC\Includes\Data\Comment;
 use WPGDPRC\Includes\Data\User;
-use WPGDPRC\Includes\Data\WooCommerce;
+use WPGDPRC\Includes\Data\WooCommerceOrder;
 
 /**
  * Class Data
@@ -37,7 +37,7 @@ class Data {
      * @return array
      */
     public static function getPossibleDataTypes() {
-        return array('user', 'comment');
+        return array('user', 'comment', 'woocommerce_order');
     }
 
     /**
@@ -64,9 +64,14 @@ class Data {
                     __('IP Address', WP_GDPR_C_SLUG)
                 );
                 break;
-            case 'woocommerce' :
+            case 'woocommerce_order' :
                 $output = array(
+                    __('Order', WP_GDPR_C_SLUG),
                     __('Email Address', WP_GDPR_C_SLUG),
+                    __('Name', WP_GDPR_C_SLUG),
+                    __('Address', WP_GDPR_C_SLUG),
+                    __('Postcode / ZIP', WP_GDPR_C_SLUG),
+                    __('City', WP_GDPR_C_SLUG)
                 );
                 break;
         }
@@ -111,11 +116,19 @@ class Data {
                     );
                 }
                 break;
-            case 'woocommerce' :
-                /** @var WooCommerce $woocommerce */
-                foreach ($data as $woocommerce) {
-                    $output[] = array(
-                        $woocommerce->getBillingEmailAddress()
+            case 'woocommerce_order' :
+                /** @var WooCommerceOrder $woocommerceOrder */
+                foreach ($data as $woocommerceOrder) {
+                    $request = DeleteRequest::getInstance()->getByTypeAndDataIdAndAccessRequestId($type, $woocommerceOrder->getOrderId(), $requestId);
+                    $address = (!empty($woocommerceOrder->getBillingAddressTwo())) ? sprintf('%s,<br />%s', $woocommerceOrder->getBillingAddressOne(), $woocommerceOrder->getBillingAddressTwo()) : $woocommerceOrder->getBillingAddressOne();
+                    $output[$woocommerceOrder->getOrderId()] = array(
+                        sprintf('#%d', $woocommerceOrder->getOrderId()),
+                        $woocommerceOrder->getBillingEmailAddress(),
+                        sprintf('%s %s', $woocommerceOrder->getBillingFirstName(), $woocommerceOrder->getBillingLastName()),
+                        $address,
+                        $woocommerceOrder->getBillingPostCode(),
+                        $woocommerceOrder->getBillingCity(),
+                        (($request === false) ? sprintf($action, $woocommerceOrder->getOrderId()) : '&nbsp;')
                     );
                 }
                 break;
@@ -159,7 +172,7 @@ class Data {
             $output .= '</table>';
             $output .= sprintf(
                 '<p><input type="submit" class="wpgdprc-remove" value="Remove selected %s(s)" /></p>',
-                $type
+                str_replace('_', ' ', $type)
             );
             $output .= '</form>';
         }
@@ -202,18 +215,16 @@ class Data {
     }
 
     /**
-     * @return WooCommerce[]
+     * @return WooCommerceOrder[]
      */
-    public function getWooCommerce() {
+    public function getWooCommerceOrders() {
         global $wpdb;
         $output = array();
         $query = "SELECT * FROM " . $wpdb->postmeta . " WHERE `meta_key` = '_billing_email' AND `meta_value` = '%s'";
         $results = $wpdb->get_results($wpdb->prepare($query, $this->getEmailAddress()));
         if ($results !== null) {
             foreach ($results as $row) {
-                $object = new WooCommerce();
-                $object->loadByRow($row);
-                $output[] = $object;
+                $output[] = new WooCommerceOrder($row->post_id);
             }
         }
         return $output;
