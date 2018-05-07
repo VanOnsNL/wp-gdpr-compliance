@@ -40,13 +40,13 @@ You'll find answers to many of your questions on [wpgdprc.com](https://www.wpgdp
 
 = 1.3 =
 *Release date: May 7th, 2018*
-* Added the request user data page. You can enable this in the Settings tab.
+* Added the request user data page. You can enable it in the Settings tab.
 * The newly created page contains a shortcode which allows visitors to request their data. WordPress Users, WordPress Comments and WooCommerce orders linked to their email address are then send to that email address.
-* The request user data page becomes the delete user page when visited through this email. The link in the email is available for 24 hours (cronjob) and linked to the visitors IP and current session.
+* The request user data page becomes the delete user page when visited through this email. The link in the email is available for 24 hours (cronjob) and linked to the visitors' IP and current session.
 * Delete requests end up in the new Requests tab. Click on 'Manage' to view a request and tick the checkbox to anonymise. Make sure to take care of these requests as quickly as possible!
-* For WordPress Users 'anonymise' means first and last name, display name, nickname and email address are substituted by the corresponding fields name in the database.
-* For WordPress Comments 'anonymise' means author name, email address and IP address are substituted by the corresponding fields name in the database.
-* For WooCommerce orders 'anonymise' means billing and shipping details are substituted by the corresponding fields name in the database.
+* For WordPress Users 'anonymise' means first and last name, display name, nickname and email address are substituted by the corresponding field name in the database.
+* For WordPress Comments 'anonymise' means author name, email address and IP address are substituted by the corresponding field name in the database.
+* For WooCommerce orders 'anonymise' means billing and shipping details are substituted by the corresponding field name in the database.
 
 = 1.2.4 =
 *Release date: April 3rd, 2018*
