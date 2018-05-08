@@ -40,7 +40,7 @@ You'll find answers to many of your questions on [wpgdprc.com](https://www.wpgdp
 
 = 1.3.1 =
 *Release date: May 8th, 2018*
-* Shows an error message if the required request user data tables couldn't be created.
+* Added a button to retry creating database tables required by the request user data functionality.
 
 = 1.3 =
 *Release date: May 7th, 2018*
