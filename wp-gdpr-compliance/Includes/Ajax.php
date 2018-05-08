@@ -143,7 +143,7 @@ class Ajax {
                                         }
                                     }
                                 } else {
-                                    $output['error'] = __('Something went wrong while saving the request.', WP_GDPR_C_SLUG);
+                                    $output['error'] = __('Something went wrong while saving the request. Please try again.', WP_GDPR_C_SLUG);
                                 }
                             } else {
                                 $output['error'] = __('You have already requested your data. Please check your mailbox. After 24 hours you can put in a new request.', WP_GDPR_C_SLUG);

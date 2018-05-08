@@ -412,6 +412,36 @@ class Helper {
         return $output;
     }
 
+    public static function createUserRequestDataTables() {
+        global $wpdb;
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        $charsetCollate = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE IF NOT EXISTS `" . AccessRequest::getDatabaseTableName() . "` (
+            `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+            `site_id` bigint(20) NOT NULL,
+            `email_address` varchar(100) NOT NULL,
+            `session_id` varchar(255) NOT NULL,
+            `ip_address` varchar(100) NOT NULL,
+            `expired` tinyint(1) DEFAULT '0' NOT NULL,
+            `date_created` datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            PRIMARY KEY (`ID`)
+            ) $charsetCollate;";
+        dbDelta($sql);
+        $sql = "CREATE TABLE IF NOT EXISTS `" . DeleteRequest::getDatabaseTableName() . "` (
+            `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+            `site_id` bigint(20) NOT NULL,
+            `access_request_id` bigint(20) NOT NULL,
+            `session_id` varchar(255) NOT NULL,
+            `ip_address` varchar(100) NOT NULL,
+            `data_id` bigint(20) NOT NULL,
+            `type` varchar(255) NOT NULL,
+            `processed` tinyint(1) DEFAULT '0' NOT NULL,
+            `date_created` datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            PRIMARY KEY (`ID`)
+            ) $charsetCollate;";
+        dbDelta($sql);
+    }
+
     /**
      * @param array $filters
      * @param bool $grouped

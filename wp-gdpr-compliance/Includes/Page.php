@@ -37,6 +37,16 @@ class Page {
     }
 
     public function generatePage() {
+        $action = (isset($_REQUEST['action'])) ? esc_html($_REQUEST['action']) : false;
+        if (!empty($action)) {
+            switch ($action) {
+                case 'create_request_tables' :
+                    Helper::createUserRequestDataTables();
+                    wp_redirect(Helper::getPluginAdminUrl());
+                    die();
+                    break;
+            }
+        }
         $type = (isset($_REQUEST['type'])) ? esc_html($_REQUEST['type']) : false;
         $pluginData = Helper::getPluginData();
         $daysLeftToComply = Helper::getDaysLeftToComply();
@@ -285,7 +295,10 @@ class Page {
                         printf(
                             '<strong>%s:</strong> %s',
                             strtoupper(__('Note', WP_GDPR_C_SLUG)),
-                            __('Enabling this will create one private page containing the necessary shortcode. You can determine when and how to publish this page yourself.', WP_GDPR_C_SLUG)
+                            sprintf(
+                                __('Enabling this will create one private page containing the necessary shortcode: %s. You can determine when and how to publish this page yourself.', WP_GDPR_C_SLUG),
+                                '<pre>[wpgdprc_access_request_form]</pre>'
+                            )
                         );
                         ?>
                     </div>

@@ -51,33 +51,33 @@ class Action {
             ));
         }
         if ($enabled) {
+            Helper::createUserRequestDataTables();
+        }
+    }
+
+    public function showNoticesRequestUserData() {
+        $enabled = Helper::isEnabled('enable_access_request', 'settings');
+        if ($enabled) {
             global $wpdb;
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            $charsetCollate = $wpdb->get_charset_collate();
-            $sql = "CREATE TABLE IF NOT EXISTS `" . AccessRequest::getDatabaseTableName() . "` (
-            `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-            `site_id` bigint(20) NOT NULL,
-            `email_address` varchar(100) NOT NULL,
-            `session_id` varchar(255) NOT NULL,
-            `ip_address` varchar(100) NOT NULL,
-            `expired` tinyint(1) DEFAULT '0' NOT NULL,
-            `date_created` datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-            PRIMARY KEY (`ID`)
-            ) $charsetCollate;";
-            dbDelta($sql);
-            $sql = "CREATE TABLE IF NOT EXISTS `" . DeleteRequest::getDatabaseTableName() . "` (
-            `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-            `site_id` bigint(20) NOT NULL,
-            `access_request_id` bigint(20) NOT NULL,
-            `session_id` varchar(255) NOT NULL,
-            `ip_address` varchar(100) NOT NULL,
-            `data_id` bigint(20) NOT NULL,
-            `type` varchar(255) NOT NULL,
-            `processed` tinyint(1) DEFAULT '0' NOT NULL,
-            `date_created` datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-            PRIMARY KEY (`ID`)
-            ) $charsetCollate;";
-            dbDelta($sql);
+            $accessRequest = $wpdb->query("SHOW TABLES LIKE '" . AccessRequest::getDatabaseTableName() . "'");
+            $deleteRequest = $wpdb->query("SHOW TABLES LIKE '" . DeleteRequest::getDatabaseTableName() . "'");
+            if ($accessRequest !== 1 || $deleteRequest !== 1) {
+                $pluginData = Helper::getPluginData();
+                printf(
+                    '<div class="%s"><p><strong>%s:</strong> %s %s</p></div>',
+                    'notice notice-error',
+                    $pluginData['Name'],
+                    __('Couldn\'t create the required database tables.', WP_GDPR_C_SLUG),
+                    sprintf(
+                        '<a class="button" href="%s">%s</a>',
+                        add_query_arg(
+                            array('action' => 'create_request_tables'),
+                            Helper::getPluginAdminUrl()
+                        ),
+                        __('Retry', WP_GDPR_C_SLUG)
+                    )
+                );
+            }
         }
     }
 

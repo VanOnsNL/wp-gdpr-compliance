@@ -48,10 +48,6 @@
     line-height: inherit;
 }
 
-.wpgdprc p:last-child {
-    margin-bottom: 0;
-}
-
 .wpgdprc a {
     color: #4AA94F;
 }

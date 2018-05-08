@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP GDPR Compliance\n"
-"POT-Creation-Date: 2018-05-07 18:53+0200\n"
+"POT-Creation-Date: 2018-05-08 13:29+0200\n"
 "Last-Translator: \n"
 "Language-Team: Van Ons <info@van-ons.nl>\n"
 "MIME-Version: 1.0\n"
@@ -80,7 +80,7 @@ msgid "Success. You will receive an email with your data shortly."
 msgstr ""
 
 #: Includes/Ajax.php:146
-msgid "Something went wrong while saving the request."
+msgid "Something went wrong while saving the request. Please try again."
 msgstr ""
 
 #: Includes/Ajax.php:149

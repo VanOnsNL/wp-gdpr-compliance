@@ -4,7 +4,7 @@
  Plugin Name: WP GDPR Compliance
  Plugin URI:  https://www.wpgdprc.com/
  Description: This plugin assists website and webshop owners to comply with European privacy regulations known as GDPR. By May 24th, 2018 your website or shop has to comply to avoid large fines.
- Version:     1.3
+ Version:     1.3.1
  Author:      Van Ons
  Author URI:  https://www.van-ons.nl/
  License:     GPL2
@@ -37,7 +37,6 @@ use WPGDPRC\Includes\Filter;
 use WPGDPRC\Includes\Helper;
 use WPGDPRC\Includes\Integration;
 use WPGDPRC\Includes\Page;
-use WPGDPRC\Includes\AccessRequest;
 use WPGDPRC\Includes\Shortcode;
 
 // If this file is called directly, abort.
@@ -45,7 +44,6 @@ if (!defined('WPINC')) {
     die();
 }
 
-define('WP_GDPR_C_VERSION', '1.2.4');
 define('WP_GDPR_C_SLUG', 'wp-gdpr-compliance');
 define('WP_GDPR_C_PREFIX', 'wpgdprc');
 define('WP_GDPR_C_ROOT_FILE', __FILE__);
@@ -87,6 +85,7 @@ class WPGDPRC {
         add_filter('pre_update_option_wpgdprc_settings_access_request_page', array(Filter::getInstance(), 'processEnableAccessRequest'));
         Integration::getInstance();
         if (Helper::isEnabled('enable_access_request', 'settings')) {
+            add_action('admin_notices', array(Action::getInstance(), 'showNoticesRequestUserData'));
             add_action('wpgdprc_deactivate_access_requests', array(Cron::getInstance(), 'deactivateAccessRequests'));
             add_action('wp_ajax_wpgdprc_process_delete_request', array(Ajax::getInstance(), 'processDeleteRequest'));
             add_shortcode('wpgdprc_access_request_form', array(Shortcode::getInstance(), 'accessRequestForm'));
