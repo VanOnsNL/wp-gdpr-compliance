@@ -87,10 +87,6 @@ class Shortcode {
     public function accessRequestForm() {
         wp_enqueue_style('wpgdprc.css');
         wp_enqueue_script('wpgdprc.js');
-        $page = Helper::getAccessRequestPage();
-        if (!empty($page) && (get_queried_object_id() !== $page->ID)) {
-            return '';
-        }
         $output = '<div class="wpgdprc">';
         if (isset($_REQUEST['wpgdprc'])) {
             $output .= self::getAccessRequestData();
