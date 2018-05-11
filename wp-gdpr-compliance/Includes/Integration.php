@@ -284,7 +284,7 @@ class Integration {
             $link = apply_filters(
                 'wpgdprc_privacy_policy_link',
                 sprintf(
-                    '<a target="_blank" href="%s">%s</a>',
+                    '<a target="_blank" href="%s" rel="noopener noreferrer">%s</a>',
                     get_page_link($page),
                     esc_html($text)
                 ),
