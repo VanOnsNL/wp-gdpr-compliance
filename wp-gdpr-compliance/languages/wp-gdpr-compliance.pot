@@ -2,14 +2,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP GDPR Compliance\n"
-"POT-Creation-Date: 2018-05-11 12:00+0200\n"
+"POT-Creation-Date: 2018-05-11 13:34+0200\n"
 "Last-Translator: \n"
 "Language-Team: Van Ons <info@van-ons.nl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "PO-Revision-Date: \n"
-"X-Generator: Poedit 2.0.7\n"
+"X-Generator: Poedit 2.0.6\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_ngettext:1,2;_n;_ngettext_noop:1,2;_n_noop:1,2;"
 "_c;_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;esc_attr__;"
@@ -113,7 +113,7 @@ msgstr ""
 msgid "Something went wrong while saving this request. Please try again."
 msgstr ""
 
-#: Includes/Ajax.php:203 Includes/Page.php:73
+#: Includes/Ajax.php:203 Includes/Page.php:74
 msgid "Requests"
 msgstr ""
 
@@ -210,7 +210,7 @@ msgid "Display Name"
 msgstr ""
 
 #: Includes/Data.php:54 Includes/Data.php:63 Includes/Data.php:70
-#: Includes/Page.php:481
+#: Includes/Page.php:485
 msgid "Email Address"
 msgstr ""
 
@@ -230,7 +230,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-#: Includes/Data.php:64 Includes/Page.php:397 Includes/Page.php:482
+#: Includes/Data.php:64 Includes/Page.php:401 Includes/Page.php:486
 msgid "IP Address"
 msgstr ""
 
@@ -302,7 +302,7 @@ msgstr ""
 msgid "You can use: %s"
 msgstr ""
 
-#: Includes/Helper.php:90 Includes/Helper.php:111 Includes/Page.php:315
+#: Includes/Helper.php:90 Includes/Helper.php:111 Includes/Page.php:319
 msgid "Note"
 msgstr ""
 
@@ -390,7 +390,7 @@ msgid "Activate for this form:"
 msgstr ""
 
 #: Includes/Integration.php:115 Includes/Integration.php:156
-#: Includes/Integration.php:183 Includes/Page.php:345
+#: Includes/Integration.php:183 Includes/Page.php:349
 msgid "Checkbox text"
 msgstr ""
 
@@ -413,7 +413,7 @@ msgstr ""
 msgid "Please accept the privacy checkbox."
 msgstr ""
 
-#: Includes/Integration.php:243 Includes/Page.php:281 Includes/Page.php:285
+#: Includes/Integration.php:243 Includes/Page.php:285 Includes/Page.php:289
 msgid "Privacy Policy"
 msgstr ""
 
@@ -426,7 +426,7 @@ msgid ""
 "request. When your data is anonymised you will receive an email confirmation."
 msgstr ""
 
-#: Includes/Integration.php:306 Includes/Page.php:385
+#: Includes/Integration.php:306 Includes/Page.php:389
 msgid "WordPress Comments"
 msgstr ""
 
@@ -448,7 +448,7 @@ msgstr ""
 msgid "Gravity Forms"
 msgstr ""
 
-#: Includes/Integration.php:335 Includes/Page.php:386
+#: Includes/Integration.php:335 Includes/Page.php:390
 msgid "WooCommerce"
 msgstr ""
 
@@ -458,109 +458,109 @@ msgid ""
 "page."
 msgstr ""
 
-#: Includes/Page.php:63
+#: Includes/Page.php:64
 msgid "Integration"
 msgstr ""
 
-#: Includes/Page.php:78
+#: Includes/Page.php:84
 msgid "Checklist"
 msgstr ""
 
-#: Includes/Page.php:79 wp-gdpr-compliance.php:108
+#: Includes/Page.php:85 wp-gdpr-compliance.php:108
 msgid "Settings"
 msgstr ""
 
-#: Includes/Page.php:107
+#: Includes/Page.php:113
 msgid ""
 "This plugin assists website and webshop owners to comply with European "
 "privacy regulations known as GDPR. By May 25th, 2018 your site or shop has "
 "to comply."
 msgstr ""
 
-#: Includes/Page.php:110
+#: Includes/Page.php:116
 #, php-format
 msgid ""
 "%s currently supports %s. Please visit %s for frequently asked questions and "
 "our development roadmap."
 msgstr ""
 
-#: Includes/Page.php:118
+#: Includes/Page.php:124
 msgid ""
 "Disclaimer: The creators of this plugin do not have a legal background "
 "please contact a law firm for rock solid legal advice."
 msgstr ""
 
-#: Includes/Page.php:126
+#: Includes/Page.php:133
 #, php-format
 msgid "You have %s left to comply with GDPR."
 msgstr ""
 
-#: Includes/Page.php:126
+#: Includes/Page.php:133
 #, php-format
 msgid "%s day"
 msgstr ""
 
-#: Includes/Page.php:133
+#: Includes/Page.php:140
 msgid "Rate us"
 msgstr ""
 
-#: Includes/Page.php:135
-msgid ""
-"Did WP GDPR Compliance help you out? Please leave a positive 5-star review."
+#: Includes/Page.php:142
+#, php-format
+msgid "Did %s help you out? Please leave a positive 5-star review."
 msgstr ""
 
-#: Includes/Page.php:137
+#: Includes/Page.php:143
 msgid "Write a review"
 msgstr ""
 
-#: Includes/Page.php:147
+#: Includes/Page.php:151
 msgid "Yes"
 msgstr ""
 
-#: Includes/Page.php:148
+#: Includes/Page.php:152
 msgid "No"
 msgstr ""
 
-#: Includes/Page.php:175
+#: Includes/Page.php:179
 msgid "Enable:"
 msgstr ""
 
-#: Includes/Page.php:201
+#: Includes/Page.php:205
 #, php-format
 msgid "This plugin is outdated. %s supports version %s and up."
 msgstr ""
 
-#: Includes/Page.php:210
+#: Includes/Page.php:214
 msgid "Couldn't find any supported plugins installed."
 msgstr ""
 
-#: Includes/Page.php:211
+#: Includes/Page.php:215
 msgid "The following plugins are supported as of now:"
 msgstr ""
 
-#: Includes/Page.php:217
+#: Includes/Page.php:221
 msgid "More plugins will be added in the future."
 msgstr ""
 
-#: Includes/Page.php:229
+#: Includes/Page.php:233
 msgid ""
 "Below we ask you what private data you currently collect and provide you "
 "with tips to comply."
 msgstr ""
 
-#: Includes/Page.php:290 Includes/Page.php:332
+#: Includes/Page.php:294 Includes/Page.php:336
 msgid "Select an option"
 msgstr ""
 
-#: Includes/Page.php:298
+#: Includes/Page.php:302
 msgid "Link text"
 msgstr ""
 
-#: Includes/Page.php:303
+#: Includes/Page.php:307
 msgid "Request User Data"
 msgstr ""
 
-#: Includes/Page.php:305
+#: Includes/Page.php:309
 msgid ""
 "Allow your site's visitors to request their data stored in the WordPress "
 "database (comments, WooCommerce orders etc.). Data found is send to their "
@@ -568,93 +568,93 @@ msgid ""
 "data anonymised."
 msgstr ""
 
-#: Includes/Page.php:308
+#: Includes/Page.php:312
 msgid "Activate"
 msgstr ""
 
-#: Includes/Page.php:310
+#: Includes/Page.php:314
 msgid "Activate page"
 msgstr ""
 
-#: Includes/Page.php:317
+#: Includes/Page.php:321
 #, php-format
 msgid ""
 "Enabling this will create one private page containing the necessary "
 "shortcode: %s. You can determine when and how to publish this page yourself."
 msgstr ""
 
-#: Includes/Page.php:327
+#: Includes/Page.php:331
 msgid "Page"
 msgstr ""
 
-#: Includes/Page.php:339
+#: Includes/Page.php:343
 msgid "Click here to edit this page"
 msgstr ""
 
-#: Includes/Page.php:351
+#: Includes/Page.php:355
 msgid "Anonymise request explanation"
 msgstr ""
 
-#: Includes/Page.php:382
+#: Includes/Page.php:386
 msgid ""
 "Anonymise a request by ticking the checkbox and clicking on the green "
 "anonymise button below."
 msgstr ""
 
-#: Includes/Page.php:384
+#: Includes/Page.php:388
 msgid "WordPress Users"
 msgstr ""
 
-#: Includes/Page.php:395
+#: Includes/Page.php:399
 msgid "Request"
 msgstr ""
 
-#: Includes/Page.php:396
+#: Includes/Page.php:400
 msgid "Type"
 msgstr ""
 
-#: Includes/Page.php:398 Includes/Page.php:483
+#: Includes/Page.php:402 Includes/Page.php:487
 msgid "Date"
 msgstr ""
 
-#: Includes/Page.php:399
+#: Includes/Page.php:403
 msgid "Processed"
 msgstr ""
 
-#: Includes/Page.php:400
+#: Includes/Page.php:404
 msgid "Action"
 msgstr ""
 
-#: Includes/Page.php:415
+#: Includes/Page.php:419
 msgid "View"
 msgstr ""
 
-#: Includes/Page.php:429
+#: Includes/Page.php:433
 msgid "Anonymise selected request(s)"
 msgstr ""
 
-#: Includes/Page.php:451 Includes/Page.php:542
+#: Includes/Page.php:455 Includes/Page.php:546
 #, php-format
 msgid "%d of %d results found"
 msgstr ""
 
-#: Includes/Page.php:457 Includes/Page.php:548
+#: Includes/Page.php:461 Includes/Page.php:552
 msgid "No requests found."
 msgstr ""
 
-#: Includes/Page.php:479
+#: Includes/Page.php:483
 msgid "ID"
 msgstr ""
 
-#: Includes/Page.php:480
+#: Includes/Page.php:484
 msgid "Requests to Process"
 msgstr ""
 
-#: Includes/Page.php:484
+#: Includes/Page.php:488
 msgid "Expired"
 msgstr ""
 
-#: Includes/Page.php:508
+#: Includes/Page.php:512
 msgid "Manage"
 msgstr ""
 
