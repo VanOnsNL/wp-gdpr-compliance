@@ -30,13 +30,51 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    max-width: 900px;
     font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
     font-weight: normal;
     font-size: 14px;
     line-height: 1.4;
     text-rendering: optimizeLegibility;
     color: #0A0A0A;
+    display: flex;
+    flex-direction: row;
+}
+
+.wpgdprc-contents {
+    flex: 11;
+}
+
+.wpgdprc-sidebar {
+    flex: 3;
+    align-content: space-around;
+    padding: 0 20px;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.wpgdprc-sidebar-block {
+background: #F3F3F3;
+padding: 20px;
+margin: 0 0 20px 0;
+border-bottom: 2px solid #DFDFDF;
+border-radius: 5px;
+}
+
+.wpgdprc .wpgdprc-sidebar-block h3 {
+    margin: 0;
+    display: inline-block;
+    letter-spacing: 0.5px;
+}
+
+.wpgdprc-sidebar-block--no-background {
+    background: none;
+    border: 0;
+}
+
+.wpgdprc-sidebar-donate {
+    margin: 5px 0 0 10px;
+    display: inline-block;
+    float: right;
 }
 
 .wpgdprc h1, .wpgdprc h2, .wpgdprc p {
@@ -141,8 +179,10 @@ h1.wpgdprc-title {
 
 div.wpgdprc-description {
     margin-top: 20px;
-    padding: 10px;
-    background: #F1F1F1;
+    padding: 20px;
+    background: #F3F3F3;
+    border-bottom: 2px solid #DFDFDF;
+    border-radius: 5px;
 }
 
 div.wpgdprc-description p {
@@ -472,7 +512,7 @@ span.wpgdprc-instructions {
 
 .wpgdprc-countdown {
     display: table;
-    margin: 30px auto 0;
+    margin: 0 auto;
     padding: 20px;
     background: #4AA94F;
     -webkit-border-radius: 50%;
@@ -516,6 +556,30 @@ span.wpgdprc-instructions {
     margin-left: 10px;
 }
 
+.wpgdprc-stars {
+    background: url(../svg/stars.svg);
+    height: 30px;
+    width: 150px;
+    margin: 15px auto;
+    animation: wpgdprc-stars 4.5s steps(1,end) infinite;
+    -webkit-animation: wpgdprc-stars 4.5s steps(1,end) infinite;
+    -moz-animation: wpgdprc-stars 4.5s steps(1,end) infinite;
+    -o-animation: wpgdprc-stars 4.5s steps(1,end) infinite;
+}
+
+@keyframes wpgdprc-stars {
+    1% { background-position: 0; }
+    2% { background-position: 30px; }
+    3% { background-position: 60px; }
+    4% { background-position: 90px; }
+    5% { background-position: 120px; }
+    6% { background-position: 150px; }
+    7% { background-position: 180px; }
+    8% { background-position: 210px; }
+    9% { background-position: 240px; }
+    100% { background-position: 240px; }
+}
+
 @media screen and (max-width: 639px) {
     .wpgdprc-instructions {
         display: none;
@@ -540,11 +604,39 @@ span.wpgdprc-instructions {
     }
 }
 
-@media screen and (min-width: 1400px) {
-    .wpgdprc-countdown {
-        position: absolute;
-        top: 30px;
-        right: 30px;
-        margin: 0;
+@media screen and (max-width: 1400px) {
+    .wpgdprc {
+        display: block;
+    }
+
+    .wpgdprc-contents, .wpgdprc-sidebar {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .wpgdprc-sidebar {
+        display: flex;
+        margin: 30px 0 0 0;
+    }
+
+    .wpgdprc-sidebar-block {
+        width: 33%;
+        margin: 0 30px 0 0;
+    }
+}
+
+@media screen and (min-width: 320px) and (max-width: 840px) {
+    .wpgdprc-sidebar {
+        display: block;
+    }
+    .wpgdprc-sidebar-block {
+        max-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .wpgdprc .button.button-primary {
+        height: auto;
     }
 }

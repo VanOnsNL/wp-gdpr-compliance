@@ -55,76 +55,91 @@ class Page {
         ?>
         <div class="wrap">
             <div class="wpgdprc">
-                <h1 class="wpgdprc-title"><?php echo $pluginData['Name']; ?> <?php printf('v%s', $pluginData['Version']); ?></h1>
+                <div class="wpgdprc-contents">
+                    <h1 class="wpgdprc-title"><?php echo $pluginData['Name']; ?> <?php printf('v%s', $pluginData['Version']); ?></h1>
 
-                <?php settings_errors(); ?>
+                    <?php settings_errors(); ?>
 
-                <div class="wpgdprc-navigation wpgdprc-clearfix">
-                    <a class="<?php echo (empty($type)) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>"><?php _e('Integration', WP_GDPR_C_SLUG); ?></a>
-                    <?php
-                    if ($enableAccessRequest) :
-                        $totalDeleteRequests = DeleteRequest::getInstance()->getTotal();
-                        ?>
-                        <a class="<?php echo checked('requests', $type, false) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>&type=requests">
-                            <?php _e('Requests', WP_GDPR_C_SLUG); ?>
-                            <?php
-                            if ($totalDeleteRequests > 1) {
-                                printf('<span class="wpgdprc-badge">%d</span>', $totalDeleteRequests);
-                            } ?>
-                        </a>
+                    <div class="wpgdprc-navigation wpgdprc-clearfix">
+                        <a class="<?php echo (empty($type)) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>"><?php _e('Integration', WP_GDPR_C_SLUG); ?></a>
                         <?php
-                    endif;
-                    ?>
-                    <a class="<?php echo checked('checklist', $type, false) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>&type=checklist"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
-                    <a class="<?php echo checked('settings', $type, false) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>&type=settings"><?php _e('Settings', WP_GDPR_C_SLUG); ?></a>
-                </div>
-
-                <div class="wpgdprc-content wpgdprc-clearfix">
-                    <?php
-                    switch ($type) {
-                        case 'requests' :
-                            $id = (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) ? intval($_REQUEST['id']) : 0;
-                            if (!empty($id) && AccessRequest::getInstance()->exists($id)) {
-                                self::renderManageRequestPage($id);
-                            } else {
-                                self::renderRequestsPage();
-                            }
-                            break;
-                        case 'checklist' :
-                            self::renderChecklistPage();
-                            break;
-                        case 'settings' :
-                            self::renderSettingsPage();
-                            break;
-                        default :
-                            self::renderIntegrationsPage();
-                            break;
-                    }
-                    ?>
-                </div>
-
-                <div class="wpgdprc-description">
-                    <p><?php _e('This plugin assists website and webshop owners to comply with European privacy regulations known as GDPR. By May 25th, 2018 your site or shop has to comply.', WP_GDPR_C_SLUG); ?></p>
-                    <p><?php
-                        printf(
-                            __('%s currently supports %s. Please visit %s for frequently asked questions and our development roadmap.', WP_GDPR_C_SLUG),
-                            $pluginData['Name'],
-                            implode(', ', Integration::getSupportedIntegrationsLabels()),
-                            sprintf('<a target="_blank" href="%s">%s</a>', '//www.wpgdprc.com/', 'www.wpgdprc.com')
-                        );
-                        ?></p>
-                </div>
-
-                <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background please contact a law firm for rock solid legal advice.', WP_GDPR_C_SLUG); ?></p>
-
-                <?php if ($daysLeftToComply > 0) : ?>
-                    <div class="wpgdprc-countdown">
-                        <div class="wpgdprc-countdown-inner">
-                            <h2><?php echo date(get_option('date_format'), strtotime('25 May 2018')); ?></h2>
-                            <p><?php printf(__('You have %s left to comply with GDPR.', WP_GDPR_C_SLUG), sprintf(_n('%s day', '%s days', $daysLeftToComply, WP_GDPR_C_SLUG), number_format_i18n($daysLeftToComply))); ?></p>
-                        </div>
+                        if ($enableAccessRequest) :
+                            $totalDeleteRequests = DeleteRequest::getInstance()->getTotal();
+                            ?>
+                            <a class="<?php echo checked('requests', $type, false) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>&type=requests">
+                                <?php _e('Requests', WP_GDPR_C_SLUG); ?>
+                                <?php
+                                if ($totalDeleteRequests > 1) {
+                                    printf('<span class="wpgdprc-badge">%d</span>', $totalDeleteRequests);
+                                } ?>
+                            </a>
+                            <?php
+                        endif;
+                        ?>
+                        <a class="<?php echo checked('checklist', $type, false) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>&type=checklist"><?php _e('Checklist', WP_GDPR_C_SLUG); ?></a>
+                        <a class="<?php echo checked('settings', $type, false) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>&type=settings"><?php _e('Settings', WP_GDPR_C_SLUG); ?></a>
                     </div>
-                <?php endif; ?>
+
+                    <div class="wpgdprc-content wpgdprc-clearfix">
+                        <?php
+                        switch ($type) {
+                            case 'requests' :
+                                $id = (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) ? intval($_REQUEST['id']) : 0;
+                                if (!empty($id) && AccessRequest::getInstance()->exists($id)) {
+                                    self::renderManageRequestPage($id);
+                                } else {
+                                    self::renderRequestsPage();
+                                }
+                                break;
+                            case 'checklist' :
+                                self::renderChecklistPage();
+                                break;
+                            case 'settings' :
+                                self::renderSettingsPage();
+                                break;
+                            default :
+                                self::renderIntegrationsPage();
+                                break;
+                        }
+                        ?>
+                    </div>
+
+                    <div class="wpgdprc-description">
+                        <p><?php _e('This plugin assists website and webshop owners to comply with European privacy regulations known as GDPR. By May 25th, 2018 your site or shop has to comply.', WP_GDPR_C_SLUG); ?></p>
+                        <p><?php
+                            printf(
+                                __('%s currently supports %s. Please visit %s for frequently asked questions and our development roadmap.', WP_GDPR_C_SLUG),
+                                $pluginData['Name'],
+                                implode(', ', Integration::getSupportedIntegrationsLabels()),
+                                sprintf('<a target="_blank" href="%s">%s</a>', '//www.wpgdprc.com/', 'www.wpgdprc.com')
+                            );
+                            ?></p>
+                    </div>
+
+                    <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background please contact a law firm for rock solid legal advice.', WP_GDPR_C_SLUG); ?></p>
+                </div>
+                <div class="wpgdprc-sidebar">
+                    <?php if ($daysLeftToComply > 0) : ?>
+                        <div class="wpgdprc-sidebar-block wpgdprc-sidebar-block--no-background">
+                            <div class="wpgdprc-countdown">
+                                <div class="wpgdprc-countdown-inner">
+                                    <h2><?php echo date(get_option('date_format'), strtotime('25 May 2018')); ?></h2>
+                                    <p><?php printf(__('You have %s left to comply with GDPR.', WP_GDPR_C_SLUG), sprintf(_n('%s day', '%s days', $daysLeftToComply, WP_GDPR_C_SLUG), number_format_i18n($daysLeftToComply))); ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="wpgdprc-sidebar-block">
+                        <h3><?php _e('Rate us', WP_GDPR_C_SLUG); ?></h3>
+                        <div class="wpgdprc-stars"></div>
+                        <p><?php _e('Did WP GDPR Compliance help you out? Please leave a positive 5-star review.', WP_GDPR_C_SLUG); ?></p>
+                        <a href="https://wordpress.org/support/plugin/wp-gdpr-compliance/reviews/#new-post" class="button button-primary" target="_blank" rel="noopener noreferrer">
+                            <?php _e('Write a review', WP_GDPR_C_SLUG); ?>
+                        </a>
+                    </div>
+
+                </div>
 
                 <div class="wpgdprc-background"><?php include(WP_GDPR_C_DIR_SVG . '/inline-waves.svg.php'); ?></div>
             </div>
