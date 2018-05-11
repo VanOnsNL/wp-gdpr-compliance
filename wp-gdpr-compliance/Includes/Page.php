@@ -59,6 +59,7 @@ class Page {
                     <h1 class="wpgdprc-title"><?php echo $pluginData['Name']; ?> <?php printf('v%s', $pluginData['Version']); ?></h1>
 
                     <?php settings_errors(); ?>
+
                     <div class="wpgdprc-navigation wpgdprc-clearfix">
                         <a class="<?php echo (empty($type)) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>"><?php _e('Integration', WP_GDPR_C_SLUG); ?></a>
                         <?php
@@ -71,6 +72,11 @@ class Page {
                             ?>
                             <a class="<?php echo checked('requests', $type, false) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>&type=requests">
                                 <?php _e('Requests', WP_GDPR_C_SLUG); ?>
+                                <?php
+                                if ($totalDeleteRequests > 1) {
+                                    printf('<span class="wpgdprc-badge">%d</span>', $totalDeleteRequests);
+                                }
+                                ?>
                             </a>
                             <?php
                         endif;
@@ -117,6 +123,7 @@ class Page {
 
                     <p class="wpgdprc-disclaimer"><?php _e('Disclaimer: The creators of this plugin do not have a legal background please contact a law firm for rock solid legal advice.', WP_GDPR_C_SLUG); ?></p>
                 </div>
+
                 <div class="wpgdprc-sidebar">
                     <?php if ($daysLeftToComply > 0) : ?>
                         <div class="wpgdprc-sidebar-block wpgdprc-sidebar-block--no-background">
@@ -132,12 +139,9 @@ class Page {
                     <div class="wpgdprc-sidebar-block">
                         <h3><?php _e('Rate us', WP_GDPR_C_SLUG); ?></h3>
                         <div class="wpgdprc-stars"></div>
-                        <p><?php _e('Did WP GDPR Compliance help you out? Please leave a positive 5-star review.', WP_GDPR_C_SLUG); ?></p>
-                        <a href="https://wordpress.org/support/plugin/wp-gdpr-compliance/reviews/#new-post" class="button button-primary" target="_blank" rel="noopener noreferrer">
-                            <?php _e('Write a review', WP_GDPR_C_SLUG); ?>
-                        </a>
+                        <p><?php echo sprintf(__('Did %s help you out? Please leave a positive 5-star review.', WP_GDPR_C_SLUG), $pluginData['Name']); ?></p>
+                        <a target="_blank" href="//wordpress.org/support/plugin/wp-gdpr-compliance/reviews/#new-post" class="button button-primary" rel="noopener noreferrer"><?php _e('Write a review', WP_GDPR_C_SLUG); ?></a>
                     </div>
-
                 </div>
 
                 <div class="wpgdprc-background"><?php include(WP_GDPR_C_DIR_SVG . '/inline-waves.svg.php'); ?></div>

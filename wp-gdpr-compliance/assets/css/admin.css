@@ -1,3 +1,36 @@
+@keyframes wpgdprc-stars {
+    1% {
+        background-position: 0;
+    }
+    2% {
+        background-position: 30px;
+    }
+    3% {
+        background-position: 60px;
+    }
+    4% {
+        background-position: 90px;
+    }
+    5% {
+        background-position: 120px;
+    }
+    6% {
+        background-position: 150px;
+    }
+    7% {
+        background-position: 180px;
+    }
+    8% {
+        background-position: 210px;
+    }
+    9% {
+        background-position: 240px;
+    }
+    100% {
+        background-position: 240px;
+    }
+}
+
 .wpgdprc-clearfix:before, .wpgdprc-clearfix:after {
     content: " ";
     display: table;
@@ -26,6 +59,7 @@
 }
 
 .wpgdprc {
+    display: flex;
     padding: 20px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -35,45 +69,7 @@
     font-size: 14px;
     line-height: 1.4;
     color: #0A0A0A;
-    display: flex;
     flex-direction: row;
-}
-
-.wpgdprc-contents {
-    flex: 11;
-}
-
-.wpgdprc-sidebar {
-    flex: 3;
-    align-content: space-around;
-    padding: 0 20px;
-    align-items: flex-start;
-    align-content: flex-start;
-}
-
-.wpgdprc-sidebar-block {
-background: #F3F3F3;
-padding: 20px;
-margin: 0 0 20px 0;
-border-bottom: 2px solid #DFDFDF;
-border-radius: 5px;
-}
-
-.wpgdprc .wpgdprc-sidebar-block h3 {
-    margin: 0;
-    display: inline-block;
-    letter-spacing: 0.5px;
-}
-
-.wpgdprc-sidebar-block--no-background {
-    background: none;
-    border: 0;
-}
-
-.wpgdprc-sidebar-donate {
-    margin: 5px 0 0 10px;
-    display: inline-block;
-    float: right;
 }
 
 .wpgdprc h1, .wpgdprc h2, .wpgdprc p {
@@ -230,6 +226,41 @@ table.wpgdprc-table tr:nth-child(even) {
 
 .wpgdprc-background g {
     fill: #4AA94F;
+}
+
+.wpgdprc-contents {
+    flex: 11;
+}
+
+.wpgdprc-sidebar {
+    flex: 3;
+    padding: 0 20px;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.wpgdprc-sidebar-block {
+    background: #F3F3F3;
+    padding: 20px;
+    margin: 0 0 20px 0;
+    border-bottom: 2px solid #DFDFDF;
+    border-radius: 5px;
+}
+
+.wpgdprc-sidebar-block h3 {
+    display: inline-block;
+    margin: 0;
+}
+
+.wpgdprc-sidebar-block--no-background {
+    background: none;
+    border: 0;
+}
+
+.wpgdprc-sidebar-donate {
+    margin: 5px 0 0 10px;
+    display: inline-block;
+    float: right;
 }
 
 .wpgdprc-navigation {
@@ -560,27 +591,14 @@ span.wpgdprc-instructions {
 }
 
 .wpgdprc-stars {
-    background: url(../svg/stars.svg);
-    height: 30px;
-    width: 150px;
     margin: 15px auto;
-    animation: wpgdprc-stars 4.5s steps(1,end) infinite;
-    -webkit-animation: wpgdprc-stars 4.5s steps(1,end) infinite;
-    -moz-animation: wpgdprc-stars 4.5s steps(1,end) infinite;
-    -o-animation: wpgdprc-stars 4.5s steps(1,end) infinite;
-}
-
-@keyframes wpgdprc-stars {
-    1% { background-position: 0; }
-    2% { background-position: 30px; }
-    3% { background-position: 60px; }
-    4% { background-position: 90px; }
-    5% { background-position: 120px; }
-    6% { background-position: 150px; }
-    7% { background-position: 180px; }
-    8% { background-position: 210px; }
-    9% { background-position: 240px; }
-    100% { background-position: 240px; }
+    width: 150px;
+    height: 30px;
+    background: url('../svg/stars.svg');
+    animation: wpgdprc-stars 4.5s steps(1, end) infinite;
+    -webkit-animation: wpgdprc-stars 4.5s steps(1, end) infinite;
+    -moz-animation: wpgdprc-stars 4.5s steps(1, end) infinite;
+    -o-animation: wpgdprc-stars 4.5s steps(1, end) infinite;
 }
 
 @media screen and (max-width: 639px) {
@@ -611,21 +629,18 @@ span.wpgdprc-instructions {
     .wpgdprc {
         display: block;
     }
-
     .wpgdprc-contents, .wpgdprc-sidebar {
         display: block;
-        width: 100%;
         max-width: 100%;
+        width: 100%;
     }
-
     .wpgdprc-sidebar {
         display: flex;
         margin: 30px 0 0 0;
     }
-
     .wpgdprc-sidebar-block {
-        width: 33%;
         margin: 0 30px 0 0;
+        width: 33%;
     }
 }
 
@@ -638,7 +653,6 @@ span.wpgdprc-instructions {
         width: 100%;
         margin: 0 auto;
     }
-
     .wpgdprc .button.button-primary {
         height: auto;
     }
