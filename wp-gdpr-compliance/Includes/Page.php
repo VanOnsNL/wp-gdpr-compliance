@@ -398,7 +398,7 @@ class Page {
                         ?>
                         <tr data-id="<?php echo $request->getId(); ?>">
                             <td><?php printf('#%d', $request->getId()); ?></td>
-                            <td><?php echo $request->getType(); ?></td>
+                            <td><?php echo $request->getNiceTypeLabel(); ?></td>
                             <td><?php echo $request->getIpAddress(); ?></td>
                             <td><?php echo $request->getDateCreated(); ?></td>
                             <td><span class="dashicons dashicons-<?php echo ($request->getProcessed()) ? 'yes' : 'no'; ?>"></span></td>
