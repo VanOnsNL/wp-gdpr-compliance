@@ -92,15 +92,27 @@ class Shortcode {
             $output .= self::getAccessRequestData();
         } else {
             $output .= '<form class="wpgdprc-form wpgdprc-form--access-request" name="wpgdprc_form" method="POST">';
-            $output .= apply_filters('wpgdprc_request_form_email_field', '<p><input type="email" name="wpgdprc_email" id="wpgdprc-form__email" placeholder="' . esc_attr__(apply_filters('wpgdprc_request_form_email_placeholder', __('Your Email Address', WP_GDPR_C_SLUG))) . '" required /></p>');
+            $output .= apply_filters(
+                'wpgdprc_request_form_email_field',
+                sprintf(
+                    '<p><input type="email" name="wpgdprc_email" id="wpgdprc-form__email" placeholder="%s" required /></p>',
+                    esc_attr__(apply_filters('wpgdprc_request_form_email_placeholder', __('Your Email Address', WP_GDPR_C_SLUG)))
+                )
+            );
             $output .= apply_filters(
                 'wpgdprc_request_form_consent_field',
                 sprintf(
-                    '<p><input type="checkbox" name="wpgdprc_consent" id="wpgdprc-form__consent" value="1" required /> %s</p>',
+                    '<p><label><input type="checkbox" name="wpgdprc_consent" id="wpgdprc-form__consent" value="1" required /> %s</label></p>',
                     Integration::getAccessRequestFormCheckboxText()
                 )
             );
-            $output .= apply_filters('wpgdprc_request_form_submit_field', '<p><input type="submit" name="wpgdprc_submit" value="' . esc_attr__(apply_filters('wpgdprc_request_form_submit_label', __('Send', WP_GDPR_C_SLUG))) . '" /></p>');
+            $output .= apply_filters(
+                'wpgdprc_request_form_submit_field',
+                sprintf(
+                    '<p><input type="submit" name="wpgdprc_submit" value="%s" /></p>',
+                    esc_attr__(apply_filters('wpgdprc_request_form_submit_label', __('Send', WP_GDPR_C_SLUG)))
+                )
+            );
             $output .= '<div class="wpgdprc-feedback" style="display: none;"></div>';
             $output .= '</form>';
         }

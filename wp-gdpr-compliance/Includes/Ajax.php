@@ -97,35 +97,35 @@ class Ajax {
                                 if ($id !== false) {
                                     $page = Helper::getAccessRequestPage();
                                     if (!empty($page)) {
-                                        if (is_multisite()) {
-                                            $siteName = get_blog_option($request->getSiteId(), 'blogname');
-                                            $siteEmail = get_blog_option($request->getSiteId(), 'admin_email');
-                                            $siteUrl = get_blog_option($request->getSiteId(), 'siteurl');
-                                        } else {
-                                            $siteName = get_option('blogname');
-                                            $siteEmail = get_option('admin_email');
-                                            $siteUrl = get_option('siteurl');
-                                        }
-                                        $subject = sprintf(__('%s - Your data request', WP_GDPR_C_SLUG), $siteName);
+                                        $deleteRequestPage = sprintf(
+                                            '<a target="_blank" href="%s">%s</a>',
+                                            add_query_arg(
+                                                array(
+                                                    'wpgdprc' => base64_encode(serialize(array(
+                                                        'email' => $request->getEmailAddress(),
+                                                        'sId' => $request->getSessionId()
+                                                    )))
+                                                ),
+                                                get_permalink($page)
+                                            ),
+                                            __('page', WP_GDPR_C_SLUG)
+                                        );
+                                        $siteName = Helper::getSiteData('blogname', $request->getSiteId());
+                                        $siteEmail = Helper::getSiteData('admin_email', $request->getSiteId());
+                                        $siteUrl = Helper::getSiteData('siteurl', $request->getSiteId());
+                                        $subject = apply_filters(
+                                            'wpgdprc_access_request_mail_subject',
+                                            sprintf(__('%s - Your data request', WP_GDPR_C_SLUG), $siteName),
+                                            $request,
+                                            $siteName
+                                        );
                                         $message = sprintf(
                                             __('You have requested to access your data on %s.', WP_GDPR_C_SLUG),
                                             sprintf('<a target="_blank" href="%s">%s</a>', $siteUrl, $siteName)
                                         ) . '<br /><br />';
                                         $message .= sprintf(
                                             __('Please visit this %s to view the data linked to the email address %s', WP_GDPR_C_SLUG),
-                                            sprintf(
-                                                '<a target="_blank" href="%s">%s</a>',
-                                                add_query_arg(
-                                                    array(
-                                                        'wpgdprc' => base64_encode(serialize(array(
-                                                            'email' => $request->getEmailAddress(),
-                                                            'sId' => $request->getSessionId()
-                                                        )))
-                                                    ),
-                                                    get_permalink($page)
-                                                ),
-                                                __('page', WP_GDPR_C_SLUG)
-                                            ),
+                                            $deleteRequestPage,
                                             $emailAddress
                                         ) . '<br /><br />';
                                         $message .= __('This page is available for 24 hours and can only be reached from the same IP address you requested from.', WP_GDPR_C_SLUG)  . '<br />';
@@ -133,6 +133,7 @@ class Ajax {
                                             __('If your link is invalid please fill in a new request: %s.', WP_GDPR_C_SLUG),
                                             sprintf('<a target="_blank" href="%s">%s</a>', get_permalink($page), get_the_title($page))
                                         );
+                                        $message = apply_filters('wpgdprc_access_request_mail_content', $message, $request, $deleteRequestPage);
                                         $headers = array(
                                             'Content-Type: text/html; charset=UTF-8',
                                             "From: $siteName <$siteEmail>"
@@ -189,6 +190,38 @@ class Ajax {
                                     $id = $request->save();
                                     if ($id === false) {
                                         $output['error'] = __('Something went wrong while saving this request. Please try again.', WP_GDPR_C_SLUG);
+                                    } else {
+                                        $siteName = Helper::getSiteData('blogname', $request->getSiteId());
+                                        $siteEmail = Helper::getSiteData('admin_email', $request->getSiteId());
+                                        $siteUrl = Helper::getSiteData('siteurl', $request->getSiteId());
+                                        $adminPage = sprintf(
+                                            '<a target="_blank" href="%s">%s</a>',
+                                            add_query_arg(
+                                                array('type' => 'requests'),
+                                                Helper::getPluginAdminUrl()
+                                            ),
+                                            __('Requests', WP_GDPR_C_SLUG)
+                                        );
+                                        $subject = apply_filters(
+                                            'wpgdprc_delete_request_admin_mail_subject',
+                                            sprintf(__('%s - New anonymise request', WP_GDPR_C_SLUG), $siteName),
+                                            $request,
+                                            $siteName
+                                        );
+                                        $message = sprintf(
+                                            __('You have received a new anonymise request on %s.', WP_GDPR_C_SLUG),
+                                            sprintf('<a target="_blank" href="%s">%s</a>', $siteUrl, $siteName)
+                                        ) . '<br /><br />';
+                                        $message .= sprintf(
+                                            __('You can manage this request in the admin panel: %s', WP_GDPR_C_SLUG),
+                                            $adminPage
+                                        );
+                                        $message = apply_filters('wpgdprc_delete_request_admin_mail_content', $message, $request, $adminPage);
+                                        $headers = array(
+                                            'Content-Type: text/html; charset=UTF-8',
+                                            "From: $siteName <$siteEmail>"
+                                        );
+                                        wp_mail($siteEmail, $subject, $message, $headers);
                                     }
                                 } else {
                                     $output['error'] = __('Session doesn\'t match.', WP_GDPR_C_SLUG);
@@ -230,7 +263,7 @@ class Ajax {
         }
 
         if ($id === 0 || !DeleteRequest::getInstance()->exists($id)) {
-            $output['error'] = __('This delete request doesn\'t exist.', WP_GDPR_C_SLUG);
+            $output['error'] = __('This request doesn\'t exist.', WP_GDPR_C_SLUG);
         }
 
         // Let's do this!
@@ -297,13 +330,43 @@ class Ajax {
                             update_post_meta($request->getDataId(), '_shipping_address_2', 'ADDRESS_2');
                             update_post_meta($request->getDataId(), '_shipping_postcode', 'ZIP_CODE');
                             update_post_meta($request->getDataId(), '_shipping_city', 'CITY');
+                            $request->setProcessed(1);
+                            $request->save();
                         } else {
                             $output['error'] = __('You\'re not allowed to edit WooCommerce orders.', WP_GDPR_C_SLUG);
                         }
                         break;
                 }
+
+                if (empty($output['error']) && $request->getProcessed()) {
+                    $accessRequest = new AccessRequest($request->getAccessRequestId());
+                    $siteName = Helper::getSiteData('blogname', $request->getSiteId());
+                    $siteEmail = Helper::getSiteData('admin_email', $request->getSiteId());
+                    $siteUrl = Helper::getSiteData('siteurl', $request->getSiteId());
+                    $subject = apply_filters(
+                        'wpgdprc_delete_request_mail_subject',
+                        sprintf(__('%s - Your request', WP_GDPR_C_SLUG), $siteName),
+                        $request,
+                        $accessRequest
+                    );
+                    $message = sprintf(
+                        __('We have successfully processed your request and your data has been anonymised on %s.', WP_GDPR_C_SLUG),
+                        sprintf('<a target="_blank" href="%s">%s</a>', $siteUrl, $siteName)
+                    ) . '<br /><br />';
+                    $message .= __('The following has been processed:', WP_GDPR_C_SLUG) . '<br />';
+                    $message .= sprintf('%s #%d with email address %s.', $request->getNiceTypeLabel(), $request->getDataId(), $accessRequest->getEmailAddress());
+                    $message = apply_filters('wpgdprc_delete_request_mail_content', $message, $request, $accessRequest);
+                    $headers = array(
+                        'Content-Type: text/html; charset=UTF-8',
+                        "From: $siteName <$siteEmail>"
+                    );
+                    $response = wp_mail($accessRequest->getEmailAddress(), $subject, $message, $headers);
+                    if ($response !== false) {
+                        $output['message'] = __('Successfully sent an confirmation mail to the user.', WP_GDPR_C_SLUG);
+                    }
+                }
             } else {
-                $output['error'] = __('This delete request has already been processed.', WP_GDPR_C_SLUG);
+                $output['error'] = __('This request has already been processed.', WP_GDPR_C_SLUG);
             }
         }
 

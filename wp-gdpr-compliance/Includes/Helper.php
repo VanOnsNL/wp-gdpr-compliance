@@ -389,6 +389,19 @@ class Helper {
     }
 
     /**
+     * @param string $type
+     * @param int $siteId
+     * @return string
+     */
+    public static function getSiteData($type = '', $siteId = 0) {
+        $output = '';
+        if (!empty($type)) {
+            $output = (!empty($siteId)) ? get_blog_option($siteId, $type) : get_option($type);
+        }
+        return $output;
+    }
+
+    /**
      * @return bool|\WP_Post
      */
     public static function getAccessRequestPage() {
@@ -458,7 +471,7 @@ class Helper {
                     $output .= " )";
                 } else {
                     $value = (isset($filter['value'])) ? $filter['value'] : false;
-                    if (!empty($value)) {
+                    if ($value !== false) {
                         $or = (isset($filter['or']) && filter_var($filter['or'], FILTER_VALIDATE_BOOLEAN)) ? 'OR' : 'AND';
                         $or = ($grouped === true && $count === 0) ? '' : $or;
                         $compare = (isset($filter['compare'])) ? $filter['compare'] : '=';
