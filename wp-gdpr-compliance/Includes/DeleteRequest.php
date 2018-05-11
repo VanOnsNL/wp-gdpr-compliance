@@ -210,6 +210,27 @@ class DeleteRequest {
     }
 
     /**
+     * @return string
+     */
+    public function getNiceTypeLabel() {
+        switch ($this->getType()) {
+            case 'user' :
+                $output = __('User', WP_GDPR_C_SLUG);
+                break;
+            case 'comment' :
+                $output = __('Comment', WP_GDPR_C_SLUG);
+                break;
+            case 'woocommerce_order' :
+                $output = __('WooCommerce Order', WP_GDPR_C_SLUG);
+                break;
+            default :
+                $output = $this->getType();
+                break;
+        }
+        return $output;
+    }
+
+    /**
      * @return null|DeleteRequest
      */
     public static function getInstance() {

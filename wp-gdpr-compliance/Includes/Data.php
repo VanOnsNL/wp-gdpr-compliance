@@ -171,7 +171,7 @@ class Data {
             $output .= '</tbody>';
             $output .= '</table>';
             $output .= sprintf(
-                '<p><input type="submit" class="wpgdprc-remove" value="Remove selected %s(s)" /></p>',
+                '<p><input type="submit" class="wpgdprc-remove" value="Anonymise selected %s(s)" /></p>',
                 str_replace('_', ' ', $type)
             );
             $output .= '</form>';

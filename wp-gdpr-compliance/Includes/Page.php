@@ -63,7 +63,11 @@ class Page {
                     <a class="<?php echo (empty($type)) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>"><?php _e('Integration', WP_GDPR_C_SLUG); ?></a>
                     <?php
                     if ($enableAccessRequest) :
-                        $totalDeleteRequests = DeleteRequest::getInstance()->getTotal();
+                        $totalDeleteRequests = DeleteRequest::getInstance()->getTotal(array(
+                            'processed' => array(
+                                'value' => 0
+                            )
+                        ));
                         ?>
                         <a class="<?php echo checked('requests', $type, false) ? 'wpgdprc-active' : ''; ?>" href="<?php echo $adminUrl; ?>&type=requests">
                             <?php _e('Requests', WP_GDPR_C_SLUG); ?>
@@ -129,6 +133,10 @@ class Page {
                 <div class="wpgdprc-background"><?php include(WP_GDPR_C_DIR_SVG . '/inline-waves.svg.php'); ?></div>
             </div>
         </div>
+        <style>
+            .wpgdprc-switch .wpgdprc-switch-inner:before { content: '<?php _e('Yes', WP_GDPR_C_SLUG); ?>'; }
+            .wpgdprc-switch .wpgdprc-switch-inner:after { content: '<?php _e('No', WP_GDPR_C_SLUG); ?>'; }
+        </style>
         <?php
     }
 
@@ -330,7 +338,7 @@ class Page {
                     </div>
                 </div>
                 <div class="wpgdprc-setting">
-                    <label for="<?php echo $optionNameDeleteRequestFormExplanationText; ?>"><?php _e('Delete request explanation', WP_GDPR_C_SLUG); ?></label>
+                    <label for="<?php echo $optionNameDeleteRequestFormExplanationText; ?>"><?php _e('Anonymise request explanation', WP_GDPR_C_SLUG); ?></label>
                     <div class="wpgdprc-options">
                         <textarea name="<?php echo $optionNameDeleteRequestFormExplanationText; ?>" rows="5" id="<?php echo $optionNameAccessRequestFormCheckboxText; ?>" placeholder="<?php echo $deleteRequestFormExplanationText; ?>"><?php echo $deleteRequestFormExplanationText; ?></textarea>
                         <?php echo Helper::getAllowedHTMLTagsOutput(); ?>
@@ -436,7 +444,7 @@ class Page {
             <?php
         else :
             ?>
-            <p><strong><?php _e('No delete requests found.', WP_GDPR_C_SLUG); ?></strong></p>
+            <p><strong><?php _e('No requests found.', WP_GDPR_C_SLUG); ?></strong></p>
             <?php
         endif;
         ?>
