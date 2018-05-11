@@ -40,9 +40,10 @@ You'll find answers to many of your questions on [wpgdprc.com](https://www.wpgdp
 
 = 1.3.2 =
 *Release date: May 11th, 2018*
-* Added translatable 'Yes' and 'No' strings
-* Added confirmation mails sent after processing a delete request
-* Added mail sent to the admin when a new request is created
+* Added translatable 'Yes' and 'No' strings.
+* Added confirmation mails sent after processing a anonymise request.
+* Added mail sent to the admin when a new request is created.
+* Added 'noopener noreferrer' to the Privacy Policy link.
 
 = 1.3.1 =
 *Release date: May 8th, 2018*
