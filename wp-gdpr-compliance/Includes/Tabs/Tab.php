@@ -20,7 +20,6 @@ class Tab implements TabInterface {
 		$this->adminUrl = Helper::getPluginAdminUrl();
 		$this->getClassName();
 		$this->createTab();
-		$this->checkFilters();
 	}
 
 	public function buildTabUrl() {
