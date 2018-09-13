@@ -47,8 +47,12 @@ class DeleteRequest {
      */
     public function getByTypeAndDataIdAndAccessRequestId($type = '', $dataId = 0, $accessRequestId = 0) {
         global $wpdb;
-        $query = "SELECT `ID` FROM `" . self::getDatabaseTableName() . "` WHERE `type` = '%s' AND `data_id` = '%d' AND `access_request_id` = '%d'";
-        $result = $wpdb->get_row($wpdb->prepare($query, $type, $dataId, $accessRequestId));
+        $query = "SELECT `ID` FROM `" . self::getDatabaseTableName() . "`";
+        $query .= " WHERE `type` = '%s'";
+        $query .= " AND `data_id` = '%d'";
+        $query .= " AND `access_request_id` = '%d'";
+        $query .= " AND `site_id` = '%d'";
+        $result = $wpdb->get_row($wpdb->prepare($query, $type, $dataId, $accessRequestId, get_current_blog_id()));
         if ($result !== null) {
             return new self($result->ID);
         }
@@ -61,13 +65,11 @@ class DeleteRequest {
      */
     public function getAmountByAccessRequestId($accessRequestId = 0) {
         global $wpdb;
-        $query = "SELECT COUNT(`ID`) FROM `" . self::getDatabaseTableName() . "` WHERE `access_request_id` = '%d' AND `processed` = '0'";
-        $result = $wpdb->get_var(
-            $wpdb->prepare(
-                $query,
-                intval($accessRequestId)
-            )
-        );
+        $query = "SELECT COUNT(`ID`) FROM `" . self::getDatabaseTableName() . "`";
+        $query .= " WHERE `access_request_id` = '%d'";
+        $query .= " AND `processed` = '0'";
+        $query .= " AND `site_id` = '%d'";
+        $result = $wpdb->get_var($wpdb->prepare($query, intval($accessRequestId), get_current_blog_id()));
         if ($result !== null) {
             return absint($result);
         }
@@ -82,6 +84,7 @@ class DeleteRequest {
         global $wpdb;
         $query = "SELECT COUNT(`ID`) FROM `" . self::getDatabaseTableName() . "` WHERE 1";
         $query .= Helper::getQueryByFilters($filters);
+        $query .= sprintf(" AND `site_id` = '%d'", get_current_blog_id());
         $result = $wpdb->get_var($query);
         if ($result !== null) {
             return absint($result);
@@ -100,6 +103,7 @@ class DeleteRequest {
         $output = array();
         $query  = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE 1";
         $query .= Helper::getQueryByFilters($filters);
+        $query .= sprintf(" AND `site_id` = '%d'", get_current_blog_id());
         $query .= " ORDER BY `date_created` DESC";
         if (!empty($limit)) {
             $query .= " LIMIT $offset, $limit";
@@ -364,6 +368,15 @@ class DeleteRequest {
      */
     public function setDateCreated($dateCreated) {
         $this->dateCreated = $dateCreated;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function databaseTableExists() {
+        global $wpdb;
+        $result = $wpdb->query("SHOW TABLES LIKE '" . self::getDatabaseTableName() . "'");
+        return ($result === 1);
     }
 
     /**

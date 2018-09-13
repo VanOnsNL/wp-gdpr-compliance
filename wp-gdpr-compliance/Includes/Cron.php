@@ -23,7 +23,7 @@ class Cron {
             'date_created' => array(
                 'value' => $date->format('Y-m-d H:i:s'),
                 'compare' => '<='
-            ),
+            )
         ));
         if (!empty($requests)) {
             foreach ($requests as $request) {

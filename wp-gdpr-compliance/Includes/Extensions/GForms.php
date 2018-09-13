@@ -33,23 +33,25 @@ class GForms {
      */
     public function addField($form = array()) {
         $isUpdated = false;
+        $lastFieldId = 0;
         $choices = array(
             array(
-                'text' => self::getCheckboxText($form['id']),
+                'text' => self::getCheckboxText($form['id']) . ' <abbr class="wpgdprc-required" title="' . self::getRequiredMessage($form['id']) . '">*</abbr>',
                 'value' => 'true',
                 'isSelected' => false
             )
         );
         foreach ($form['fields'] as &$field) {
+            if ($field->id > $lastFieldId) {
+                $lastFieldId = intval($field->id);
+            }
             if (isset($field->wpgdprc) && $field->wpgdprc === true) {
                 $field['choices'] = $choices;
                 $isUpdated = true;
             }
         }
         if (!$isUpdated) {
-            $lastField = array_values(array_slice($form['fields'], -1));
-            $lastField = (isset($lastField[0])) ? $lastField[0] : false;
-            $id = (!empty($lastField)) ? (int)$lastField['id'] + 1 : 1;
+            $id = ((int)$lastFieldId > 0) ? $lastFieldId + 1 : 99;
             $args = array(
                 'id' => $id,
                 'type' => 'checkbox',
@@ -134,18 +136,20 @@ class GForms {
     /**
      * @param string $value
      * @param array $lead
-     * @param \GF_Field $field
+     * @param mixed $field
      * @return string
      */
-    public function addAcceptedDateToEntry($value = '', $lead = array(), \GF_Field $field) {
-        if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
-            if (!empty($value)) {
-                $date = Helper::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), time());
-                $value = sprintf(__('Accepted on %s.', WP_GDPR_C_SLUG), $date);
-            } else {
-                $value = __('Not accepted.', WP_GDPR_C_SLUG);
+    public function addAcceptedDateToEntry($value = '', $lead = array(), $field) {
+        if ($field instanceof \GF_Field) {
+            if (isset($field['wpgdprc']) && $field['wpgdprc'] === true) {
+                if (!empty($value)) {
+                    $date = Helper::localDateFormat(get_option('date_format') . ' ' . get_option('time_format'), time());
+                    $value = sprintf(__('Accepted on %s.', WP_GDPR_C_SLUG), $date);
+                } else {
+                    $value = __('Not accepted.', WP_GDPR_C_SLUG);
+                }
+                $value = apply_filters('wpgdprc_gforms_accepted_date_to_entry', $value, $field, $lead);
             }
-            $value = apply_filters('wpgdprc_gforms_accepted_date_to_entry', $value, $field, $lead);
         }
         return $value;
     }
@@ -202,6 +206,13 @@ class GForms {
         return (array)get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_error_message', array());
     }
 
+     /**
+     * @return array
+     */
+    public function getFormRequiredMessages() {
+        return (array)get_option(WP_GDPR_C_PREFIX . '_integrations_' . self::ID . '_required_message', array());
+    }
+
     /**
      * @param int $formId
      * @param bool $insertPrivacyPolicyLink
@@ -232,6 +243,21 @@ class GForms {
             }
         }
         return Integration::getErrorMessage();
+    }
+
+     /**
+     * @param int $formId
+     * @return string
+     */
+    public function getRequiredMessage($formId = 0) {
+        if (!empty($formId)) {
+            $errors = $this->getFormRequiredMessages();
+            if (!empty($errors[$formId])) {
+                $result = esc_attr($errors[$formId]);
+                return apply_filters('wpgdprc_gforms_required_message', $result, $formId);
+            }
+        }
+        return Integration::getRequiredMessage();
     }
 
     /**

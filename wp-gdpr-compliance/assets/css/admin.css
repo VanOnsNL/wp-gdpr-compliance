@@ -85,13 +85,14 @@
     color: #4AA94F;
 }
 
-.wpgdprc pre {
+.wpgdprc pre, .wpgdprc span.wpgdprc-pre {
     display: inline;
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
     word-wrap: break-word;
+    font-family: monospace;
     font-style: normal;
 }
 
@@ -144,6 +145,12 @@ div.wpgdprc-message--error {
     color: #CC4B37;
 }
 
+div.wpgdprc-message--success {
+    background: #E1FAEA;
+    border-color: #5B9C73;
+    color: #5B9C73;
+}
+
 div.wpgdprc-message + form.wpgdprc-form {
     margin-top: 20px;
 }
@@ -153,27 +160,34 @@ div.wpgdprc-message + form.wpgdprc-form {
     padding-bottom: 0;
 }
 
-.wpgdprc .button.button-primary {
+.wpgdprc .button {
     vertical-align: top;
-    height: 34px;
-    background: #4AA94F;
-    border-top-color: #459D49;
-    border-right-color: #419546;
-    border-bottom-color: #419546;
-    border-left-color: #419546;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
     text-shadow: none;
     font-size: inherit;
     font-weight: bold;
-    line-height: 32px;
+}
+
+.wpgdprc .button.button-primary {
+    background: #4AA94F;
+    border-top-color: #459D49;
+    border-right-color: #419546;
+    border-bottom-color: #419546;
+    border-left-color: #419546;
 }
 
 h1.wpgdprc-title {
     margin-bottom: 20px;
     font-weight: 700;
     font-size: 36px;
+}
+
+h1.wpgdprc-title span {
+    font-weight: 400;
+    font-size: 18px;
+    color: #8A8A8A;
 }
 
 div.wpgdprc-description {
@@ -197,6 +211,10 @@ p.wpgdprc-disclaimer {
     color: #8A8A8A;
 }
 
+div.wpgdprc-message +  table.wpgdprc-table {
+    margin-top: 20px;
+}
+
 table.wpgdprc-table {
     width: 100%;
     border: 1px solid #DBD6D6;
@@ -205,6 +223,10 @@ table.wpgdprc-table {
 
 table.wpgdprc-table th, table.wpgdprc-table td {
     padding: 5px;
+    word-break: break-word;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
 }
 
 table.wpgdprc-table th {
@@ -214,6 +236,10 @@ table.wpgdprc-table th {
 
 table.wpgdprc-table tr:nth-child(even) {
     background-color: #F1F1F1;
+}
+
+table.wpgdprc-table tr.wpgdprc-table__row--expired {
+    opacity: .5;
 }
 
 .wpgdprc-background {
@@ -233,16 +259,16 @@ table.wpgdprc-table tr:nth-child(even) {
 }
 
 .wpgdprc-sidebar {
-    flex: 3;
     padding: 0 20px;
+    flex: 3;
     align-items: flex-start;
     align-content: flex-start;
 }
 
 .wpgdprc-sidebar-block {
-    background: #F3F3F3;
+    margin-bottom: 20px;
     padding: 20px;
-    margin: 0 0 20px 0;
+    background: #F3F3F3;
     border-bottom: 2px solid #DFDFDF;
     border-radius: 5px;
 }
@@ -253,6 +279,7 @@ table.wpgdprc-table tr:nth-child(even) {
 }
 
 .wpgdprc-sidebar-block--no-background {
+    padding: 0;
     background: none;
     border: 0;
 }
@@ -514,6 +541,14 @@ span.wpgdprc-instructions {
     clear: both;
 }
 
+.wpgdprc-setting:first-child {
+    margin-top: 0;
+}
+
+.wpgdprc-setting:last-child {
+    margin-bottom: 0;
+}
+
 .wpgdprc-setting label {
     display: inline-block;
     vertical-align: top;
@@ -524,6 +559,7 @@ span.wpgdprc-instructions {
 }
 
 .wpgdprc-setting input[type="text"], .wpgdprc-setting textarea, .wpgdprc-setting select {
+    display: block;
     margin: 0;
     width: 100%;
     -webkit-box-shadow: none;
@@ -544,31 +580,13 @@ span.wpgdprc-instructions {
     margin-top: .5em;
 }
 
-.wpgdprc-countdown {
-    display: table;
-    margin: 0 auto;
-    padding: 20px;
-    background: #4AA94F;
-    -webkit-border-radius: 50%;
-    -moz-border-radius: 50%;
-    border-radius: 50%;
-    width: 200px;
-    height: 200px;
-    text-align: center;
-    color: #FFFFFF;
+.wpgdprc-setting .wpgdprc-information p {
+    margin-top: 0;
+    margin-bottom: .5em;
 }
 
-.wpgdprc-countdown-inner {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.wpgdprc-countdown h2 {
-    font-size: 22px;
-}
-
-.wpgdprc-countdown h2, .wpgdprc-countdown p {
-    margin: 0;
+.wpgdprc-setting .wpgdprc-information p:last-child {
+    margin-bottom: 0;
 }
 
 .wpgdprc-pagination {
@@ -601,6 +619,10 @@ span.wpgdprc-instructions {
     -o-animation: wpgdprc-stars 4.5s steps(1, end) infinite;
 }
 
+.CodeMirror {
+    border: 1px solid #DDDDDD;
+}
+
 @media screen and (max-width: 639px) {
     .wpgdprc-instructions {
         display: none;
@@ -618,6 +640,7 @@ span.wpgdprc-instructions {
         width: 100%;
         max-width: 30%;
     }
+
     .wpgdprc-options {
         float: right;
         width: 100%;
@@ -625,22 +648,35 @@ span.wpgdprc-instructions {
     }
 }
 
+@media screen and (min-width: 783px) {
+    .wpgdprc .button {
+        height: 34px;
+        line-height: 32px;
+    }
+}
+
 @media screen and (max-width: 1400px) {
     .wpgdprc {
         display: block;
     }
+
     .wpgdprc-contents, .wpgdprc-sidebar {
         display: block;
         max-width: 100%;
         width: 100%;
     }
+
     .wpgdprc-sidebar {
         display: flex;
-        margin: 30px 0 0 0;
+        margin-top: 30px;
+        padding-right: 0;
+        padding-left: 0;
     }
+
     .wpgdprc-sidebar-block {
-        margin: 0 30px 0 0;
-        width: 33%;
+        margin-right: 15px;
+        margin-left: 15px;
+        width: 33.33333%;
     }
 }
 
@@ -648,11 +684,14 @@ span.wpgdprc-instructions {
     .wpgdprc-sidebar {
         display: block;
     }
+
     .wpgdprc-sidebar-block {
         max-width: 400px;
         width: 100%;
-        margin: 0 auto;
+        margin-right: auto;
+        margin-left: auto;
     }
+
     .wpgdprc .button.button-primary {
         height: auto;
     }

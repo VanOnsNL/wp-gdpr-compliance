@@ -1,10 +1,10 @@
 === WP GDPR Compliance ===
-Contributors: donnyoexman, michaelvt, jeffreyvisser, van-ons
+Contributors: adamdoe, donnyoexman, jeffreyvisser, merijnmolenaar, michaelvt, van-ons
 Tags: gdpr, law, regulations, compliance, data, protection, privacy, data protection, eu, avg, comments, woocommerce, wc, contact form 7, cf7
 Requires at least: 4.5
 Tested up to: 4.9.4
 Requires PHP: 5.3
-Stable tag: 1.3.2
+Stable tag: 1.4.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,10 +33,78 @@ You'll find answers to many of your questions on [wpgdprc.com](https://www.wpgdp
 == Screenshots ==
 
 1. Automatically add GDPR checkboxes to some of your favourite plugins.
-2. Overview of the view and delete requests by your site's visitors.
-3. Control the link to your privacy policy and activate the request user data page.
+2. Ask your visitors for permission to enable certain scripts for tracking or advertising purposes.
+3. Overview of the view and delete requests by your site's visitors.
+4. Control the link to your privacy policy, activate the request user data page and more.
 
 == Changelog ==
+
+= 1.4.2 =
+*Release date: July 6th, 2018*
+* Added the ability to add required 'Consents'. These Consents will always be triggered on page load.
+* Added 'Privacy' column to the WooCommerce order overview.
+* Added the ability to change the message of the required asterisk elements.
+* Remove or re-add the GDPR fields from forms on plugin deactivation and activation.
+
+= 1.4.1 =
+*Release date: June 12th, 2018*
+* Also show the WordPress Comments checkbox for administrators.
+* Small bugfix in certain PHP versions.
+
+= 1.4.0 =
+*Release date: June 8th, 2018*
+* Small front-end fixes.
+* Added missing translatable strings.
+* Fixed the text domain for some translatable strings.
+* Show enabled consents of user.
+* Small bugfix for admin redirects.
+* Added the ability to remove 'Consents' via the admin panel.
+* Added the option to wrap 'Consents' with <script> tags.
+
+= 1.3.9 =
+*Release date: June 3rd, 2018*
+* Small front-end fixes.
+* Added translatable strings.
+* Added shortcode [wpgdprc_consents_settings_link]. This will create a link to the consent settings.
+
+= 1.3.8 =
+*Release date: June 1st, 2018*
+* Front-end bugfix.
+
+= 1.3.7 =
+*Release date: June 1st, 2018*
+* Bugfix for admin columns at the comments panel.
+* Fixed a bug when creating the database tables used by the consents functionality.
+
+= 1.3.6 =
+*Release date: June 1st, 2018*
+* Added 'Consents' tab. Ask your visitors for permission to enable certain scripts for tracking or advertising purposes.
+* Corrected the implementation of the multisite environment.
+* Fixed an issue with the Gravity Forms integration and Pronamic.
+* Larger input fields for checkbox texts.
+* Hide WordPress Comments checkbox for administrators.
+* Also anonymise WooCommerce data in user profiles.
+
+= 1.3.5 =
+*Release date: May 24th, 2018*
+* Small bugfix for older WooCommerce versions.
+* Small bugfix for some translatable strings.
+* Bugfix to make sure the correct Gravity Forms field ID is determined.
+* Added checkbox to the WooCommerce register forms.
+* Hide WooCommerce orders section when plugin is inactive.
+
+= 1.3.4 =
+*Release date: May 16th, 2018*
+* Fixed a bug when creating the database tables used by the request user data functionality.
+* Fixed a bug when creating the request user data page.
+* Expired access requests are shown more clearly.
+* Improved error messages.
+* Added a link to the support forum. We're happy to help!
+
+= 1.3.3 =
+*Release date: May 14th, 2018*
+* Fixed a bug that caused anonymise request mails to fail.
+* Added missing translatable strings.
 
 = 1.3.2 =
 *Release date: May 11th, 2018*

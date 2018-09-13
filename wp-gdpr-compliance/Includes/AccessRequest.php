@@ -42,11 +42,12 @@ class AccessRequest {
      */
     public function getByEmailAddressAndSessionId($emailAddress = '', $sessionId = '') {
         global $wpdb;
-        $query = "SELECT * FROM `" . self::getDatabaseTableName() . "`
-        WHERE `email_address` = '%s'
-        AND `session_id` = '%s'
-        AND `expired` = '0'";
-        $row = $wpdb->get_row($wpdb->prepare($query, $emailAddress, $sessionId));
+        $query  = "SELECT * FROM `" . self::getDatabaseTableName() . "`";
+        $query .= " WHERE `email_address` = '%s'";
+        $query .= " AND `session_id` = '%s'";
+        $query .= " AND `expired` = '0'";
+        $query .= " AND `site_id` = '%d'";
+        $row = $wpdb->get_row($wpdb->prepare($query, $emailAddress, $sessionId, get_current_blog_id()));
         if ($row !== null) {
             return new self($row->ID);
         }
@@ -61,6 +62,7 @@ class AccessRequest {
         global $wpdb;
         $query = "SELECT COUNT(`ID`) FROM `" . self::getDatabaseTableName() . "` WHERE 1";
         $query .= Helper::getQueryByFilters($filters);
+        $query .= sprintf(" AND `site_id` = '%d'", get_current_blog_id());
         $result = $wpdb->get_var($query);
         if ($result !== null) {
             return absint($result);
@@ -79,6 +81,7 @@ class AccessRequest {
         $output = array();
         $query  = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE 1";
         $query .= Helper::getQueryByFilters($filters);
+        $query .= sprintf(" AND `site_id` = '%d'", get_current_blog_id());
         $query .= " ORDER BY `date_created` DESC";
         if (!empty($limit)) {
             $query .= " LIMIT $offset, $limit";
@@ -138,11 +141,13 @@ class AccessRequest {
      */
     public function existsByEmailAddress($emailAddress = '', $nonExpiredOnly = false) {
         global $wpdb;
-        $query = "SELECT * FROM `" . self::getDatabaseTableName() . "` WHERE `email_address` = '%s'";
+        $query  = "SELECT * FROM `" . self::getDatabaseTableName() . "`";
+        $query .= " WHERE `email_address` = '%s'";
+        $query .= " AND `site_id` = '%d'";
         if ($nonExpiredOnly) {
             $query .= " AND `expired` = '0'";
         }
-        $row = $wpdb->get_row($wpdb->prepare($query, $emailAddress));
+        $row = $wpdb->get_row($wpdb->prepare($query, $emailAddress, get_current_blog_id()));
         return ($row !== null);
     }
 
@@ -287,6 +292,15 @@ class AccessRequest {
      */
     public function setDateCreated($dateCreated) {
         $this->dateCreated = $dateCreated;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function databaseTableExists() {
+        global $wpdb;
+        $result = $wpdb->query("SHOW TABLES LIKE '" . self::getDatabaseTableName() . "'");
+        return ($result === 1);
     }
 
     /**

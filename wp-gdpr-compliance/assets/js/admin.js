@@ -97,12 +97,12 @@
         _ajax = function (values, $form, delay) {
             var value = values.slice(0, 1);
             if (value.length > 0) {
-                var $feedback = $('.wpgdprc-feedback', $form),
+                var $feedback = $('.wpgdprc-message', $form),
                     $row = $('tr[data-id="' + value[0] + '"]', $form);
                 $row.removeClass('wpgdprc-status--error');
                 $row.addClass('wpgdprc-status--processing');
                 $feedback.attr('style', 'display: none;');
-                $feedback.removeClass('wpgdprc-feedback--error');
+                $feedback.removeClass('wpgdprc-message--error');
                 $feedback.empty();
                 setTimeout(function () {
                     $.ajax({
@@ -122,7 +122,7 @@
                                 if (response.error) {
                                     $row.addClass('wpgdprc-status--error');
                                     $feedback.html(response.error);
-                                    $feedback.addClass('wpgdprc-feedback--error');
+                                    $feedback.addClass('wpgdprc-message--error');
                                     $feedback.removeAttr('style');
                                 } else {
                                     values.splice(0, 1);
@@ -143,8 +143,10 @@
                 return;
             }
             $checkbox.on('change', function (e) {
-                e.preventDefault();
-                _doProcessAction($(this));
+                if ($(this).data('type')) {
+                    e.preventDefault();
+                    _doProcessAction($(this));
+                }
             });
         },
         initSelectAll = function () {
@@ -178,5 +180,15 @@
         initCheckboxes();
         initSelectAll();
         initProcessDeleteRequests();
+
+        var $snippet = document.getElementById('wpgdprc_snippet');
+        if ($snippet !== null) {
+            var editor = CodeMirror.fromTextArea($snippet, {
+                mode: 'text/html',
+                lineNumbers: true,
+                matchBrackets: true,
+                indentUnit: 4
+            });
+        }
     });
 })(jQuery, window, document);

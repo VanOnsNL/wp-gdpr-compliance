@@ -119,19 +119,24 @@ class Ajax {
                                             $request,
                                             $siteName
                                         );
+
                                         $message = sprintf(
                                             __('You have requested to access your data on %s.', WP_GDPR_C_SLUG),
                                             sprintf('<a target="_blank" href="%s">%s</a>', $siteUrl, $siteName)
                                         ) . '<br /><br />';
                                         $message .= sprintf(
-                                            __('Please visit this %s to view the data linked to the email address %s', WP_GDPR_C_SLUG),
+                                            __('Please visit this %s to view the data linked to the email address %s.', WP_GDPR_C_SLUG),
                                             $deleteRequestPage,
                                             $emailAddress
                                         ) . '<br /><br />';
-                                        $message .= __('This page is available for 24 hours and can only be reached from the same IP address you requested from.', WP_GDPR_C_SLUG)  . '<br />';
+                                        $message .= __('This page is available for 24 hours and can only be reached from the same device, IP address and browser session you requested from.', WP_GDPR_C_SLUG)  . '<br /><br />';
                                         $message .= sprintf(
-                                            __('If your link is invalid please fill in a new request: %s.', WP_GDPR_C_SLUG),
-                                            sprintf('<a target="_blank" href="%s">%s</a>', get_permalink($page), get_the_title($page))
+                                            __('If your link is invalid you can fill in a new request after 24 hours: %s.', WP_GDPR_C_SLUG),
+                                            sprintf(
+                                                '<a target="_blank" href="%s">%s</a>',
+                                                get_permalink($page),
+                                                get_the_title($page)
+                                            )
                                         );
                                         $message = apply_filters('wpgdprc_access_request_mail_content', $message, $request, $deleteRequestPage);
                                         $headers = array(
@@ -196,10 +201,7 @@ class Ajax {
                                         $siteUrl = Helper::getSiteData('siteurl', $request->getSiteId());
                                         $adminPage = sprintf(
                                             '<a target="_blank" href="%s">%s</a>',
-                                            add_query_arg(
-                                                array('type' => 'requests'),
-                                                Helper::getPluginAdminUrl()
-                                            ),
+                                            Helper::getPluginAdminUrl('requests'),
                                             __('Requests', WP_GDPR_C_SLUG)
                                         );
                                         $subject = apply_filters(
@@ -314,6 +316,7 @@ class Ajax {
                     case 'woocommerce_order' :
                         if (current_user_can('edit_shop_orders')) {
                             $date = Helper::localDateTime(time());
+                            $userId = get_post_meta($request->getDataId(), '_customer_user', true);
                             update_post_meta($request->getDataId(), '_billing_first_name', 'FIRST_NAME');
                             update_post_meta($request->getDataId(), '_billing_last_name', 'LAST_NAME');
                             update_post_meta($request->getDataId(), '_billing_company', 'COMPANY_NAME');
@@ -330,6 +333,24 @@ class Ajax {
                             update_post_meta($request->getDataId(), '_shipping_address_2', 'ADDRESS_2');
                             update_post_meta($request->getDataId(), '_shipping_postcode', 'ZIP_CODE');
                             update_post_meta($request->getDataId(), '_shipping_city', 'CITY');
+                            if (!empty($userId) && get_user_by('id', $userId) !== false) {
+                                update_user_meta($userId, 'billing_first_name', 'FIRST_NAME');
+                                update_user_meta($userId, 'billing_last_name', 'LAST_NAME');
+                                update_user_meta($userId, 'billing_company', 'COMPANY_NAME');
+                                update_user_meta($userId, 'billing_address_1', 'ADDRESS_1');
+                                update_user_meta($userId, 'billing_address_2', 'ADDRESS_2');
+                                update_user_meta($userId, 'billing_postcode', 'ZIP_CODE');
+                                update_user_meta($userId, 'billing_city', 'CITY');
+                                update_user_meta($userId, 'billing_phone', 'PHONE_NUMBER');
+                                update_user_meta($userId, 'billing_email', $request->getDataId() . '.' . $date->format('Ymd') . '.' . $date->format('His') . '@example.org');
+                                update_user_meta($userId, 'shipping_first_name', 'FIRST_NAME');
+                                update_user_meta($userId, 'shipping_last_name', 'LAST_NAME');
+                                update_user_meta($userId, 'shipping_company', 'COMPANY_NAME');
+                                update_user_meta($userId, 'shipping_address_1', 'ADDRESS_1');
+                                update_user_meta($userId, 'shipping_address_2', 'ADDRESS_2');
+                                update_user_meta($userId, 'shipping_postcode', 'ZIP_CODE');
+                                update_user_meta($userId, 'shipping_city', 'CITY');
+                            }
                             $request->setProcessed(1);
                             $request->save();
                         } else {

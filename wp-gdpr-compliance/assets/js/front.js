@@ -6,7 +6,10 @@
      * @returns {string}
      * @private
      */
-    var _objectToParametersString = function (data) {
+    var ajaxLoading = false,
+        ajaxURL = wpgdprcData.ajaxURL,
+        ajaxSecurity = wpgdprcData.ajaxSecurity,
+        _objectToParametersString = function (data) {
             return Object.keys(data).map(function (key) {
                 var value = data[key];
                 if (typeof value === 'object') {
@@ -32,9 +35,6 @@
             }
             return output;
         },
-        ajaxLoading = false,
-        ajaxURL = wpgdprcData.ajaxURL,
-        ajaxSecurity = wpgdprcData.ajaxSecurity,
         /**
          * @param data
          * @param values
@@ -42,15 +42,15 @@
          * @param delay
          * @private
          */
-        _ajax = function (data, values, $form, delay) {
-            var $feedback = $form.querySelector('.wpgdprc-feedback'),
+        _doAjax = function (data, values, $form, delay) {
+            var $feedback = $form.querySelector('.wpgdprc-message'),
                 value = values.slice(0, 1);
             if (value.length > 0) {
                 var $row = $form.querySelector('tr[data-id="' + value[0] + '"]');
                 $row.classList.remove('wpgdprc-status--error');
                 $row.classList.add('wpgdprc-status--processing');
                 $feedback.setAttribute('style', 'display: none;');
-                $feedback.classList.remove('wpgdprc-feedback--error');
+                $feedback.classList.remove('wpgdprc-message--error');
                 $feedback.innerHTML = '';
                 setTimeout(function () {
                     var request = new XMLHttpRequest();
@@ -65,26 +65,160 @@
                             if (response.error) {
                                 $row.classList.add('wpgdprc-status--error');
                                 $feedback.innerHTML = response.error;
-                                $feedback.classList.add('wpgdprc-feedback--error');
+                                $feedback.classList.add('wpgdprc-message--error');
                                 $feedback.removeAttribute('style');
                             } else {
                                 values.splice(0, 1);
                                 $row.querySelector('input[type="checkbox"]').remove();
                                 $row.classList.add('wpgdprc-status--removed');
-                                _ajax(data, values, $form, 500);
+                                _doAjax(data, values, $form, 500);
                             }
                         }
                     });
                 }, (delay || 0));
             }
-        };
+        },
+        /**
+         * @param data
+         * @param days
+         * @private
+         */
+        _saveCookie = function (data, days) {
+            data = (data) ? data : '';
+            days = (days) ? days : 365;
+            var date = new Date();
+            date.setTime(date.getTime() + 24 * days * 60 * 60 * 1e3);
+            document.cookie = 'wpgdprc-consent=' + encodeURIComponent(data) + '; expires=' + date.toGMTString() + '; path=/';
+        },
+        /**
+         * @param name
+         * @returns {*}
+         * @private
+         */
+        _readCookie = function (name) {
+            if (name) {
+                for (var e = encodeURIComponent(name) + "=", o = document.cookie.split(";"), r = 0; r < o.length; r++) {
+                    for (var n = o[r]; " " === n.charAt(0);) {
+                        n = n.substring(1, n.length);
+                    }
+                    if (n.indexOf(e) === 0) {
+                        return decodeURIComponent(n.substring(e.length, n.length));
+                    }
+                }
+            }
+            return null;
+        },
+        initConsentBar = function () {
+            var $consentBar = document.querySelector('.wpgdprc-consent-bar');
+            if ($consentBar === null) {
+                return;
+            }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var $formAccessRequest = document.querySelector('.wpgdprc-form--access-request'),
-            $formDeleteRequest = document.querySelectorAll('.wpgdprc-form--delete-request');
+            $consentBar.style.display = 'block';
 
-        if ($formAccessRequest !== null) {
-            var $feedback = $formAccessRequest.querySelector('.wpgdprc-feedback'),
+            var $button = $consentBar.querySelector('.wpgdprc-consent-bar__button');
+            if ($button !== null) {
+                $button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    _saveCookie('accept');
+                    window.location.reload(true);
+                });
+            }
+        },
+        initConsentModal = function () {
+            var $consentModal = document.querySelector('#wpgdprc-consent-modal');
+            if ($consentModal === null) {
+                return;
+            }
+
+            MicroModal.init({
+                disableScroll: true,
+                disableFocus: true,
+                onClose: function ($consentModal) {
+                    var $descriptions = $consentModal.querySelectorAll('.wpgdprc-consent-modal__description'),
+                        $buttons = $consentModal.querySelectorAll('.wpgdprc-consent-modal__navigation > a'),
+                        $checkboxes = $consentModal.querySelectorAll('input[type="checkbox"]');
+
+                    if ($descriptions.length > 0) {
+                        for (var i = 0; i < $descriptions.length; i++) {
+                            $descriptions[i].style.display = ((i === 0) ? 'block' : 'none');
+                        }
+                    }
+                    if ($buttons.length > 0) {
+                        for (var i = 0; i < $buttons.length; i++) {
+                            $buttons[i].classList.remove('wpgdprc-button--active');
+                        }
+                    }
+                    if ($checkboxes.length > 0) {
+                        for (var i = 0; i < $checkboxes.length; i++) {
+                            $checkboxes[i].checked = false;
+                        }
+                    }
+                }
+            });
+
+            var $settingsLink = document.querySelector('.wpgdprc-consents-settings-link');
+            if ($settingsLink !== null) {
+                $settingsLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    MicroModal.show('wpgdprc-consent-modal');
+                });
+            }
+
+            var $buttons = $consentModal.querySelectorAll('.wpgdprc-consent-modal__navigation > a');
+            if ($buttons.length > 0) {
+                var $descriptions = $consentModal.querySelectorAll('.wpgdprc-consent-modal__description');
+                for (var i = 0; i < $buttons.length; i++) {
+                    $buttons[i].addEventListener('click', function (e) {
+                        e.preventDefault();
+                        var $target = $consentModal.querySelector('.wpgdprc-consent-modal__description[data-target="' + this.dataset.target + '"]');
+                        if ($target !== null) {
+                            for (var i = 0; i < $buttons.length; i++) {
+                                $buttons[i].classList.remove('wpgdprc-button--active');
+                            }
+                            this.classList.add('wpgdprc-button--active');
+                            for (var i = 0; i < $descriptions.length; i++) {
+                                $descriptions[i].style.display = 'none';
+                            }
+                            $target.style.display = 'block';
+                        }
+                    });
+                }
+            }
+
+            var $buttonSave = $consentModal.querySelector('.wpgdprc-button--secondary');
+            if ($buttonSave !== null) {
+                $buttonSave.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var $checkboxes = $consentModal.querySelectorAll('input[type="checkbox"]'),
+                        checked = [];
+
+                    if ($checkboxes.length > 0) {
+                        for (var i = 0; i < $checkboxes.length; i++) {
+                            var $checkbox = $checkboxes[i],
+                                value = $checkbox.value;
+                            if ($checkbox.checked === true && !isNaN(value)) {
+                                checked.push(parseInt(value));
+                            }
+                        }
+                        if (checked.length > 0) {
+                            _saveCookie(checked);
+                        } else {
+                            _saveCookie('decline');
+                        }
+                    }
+
+                    window.location.reload(true);
+                });
+            }
+        },
+        initFormAccessRequest = function () {
+            var $formAccessRequest = document.querySelector('.wpgdprc-form--access-request');
+            if ($formAccessRequest === null) {
+                return;
+            }
+
+            var $feedback = $formAccessRequest.querySelector('.wpgdprc-message'),
                 $emailAddress = $formAccessRequest.querySelector('#wpgdprc-form__email'),
                 $consent = $formAccessRequest.querySelector('#wpgdprc-form__consent');
 
@@ -93,7 +227,7 @@
                 if (!ajaxLoading) {
                     ajaxLoading = true;
                     $feedback.style.display = 'none';
-                    $feedback.classList.remove('wpgdprc-feedback--success', 'wpgdprc-feedback--error');
+                    $feedback.classList.remove('wpgdprc-message--success', 'wpgdprc-message--error');
                     $feedback.innerHTML = '';
 
                     var data = {
@@ -118,13 +252,13 @@
                                 $formAccessRequest.reset();
                                 $emailAddress.blur();
                                 $feedback.innerHTML = response.message;
-                                $feedback.classList.add('wpgdprc-feedback--success');
+                                $feedback.classList.add('wpgdprc-message--success');
                                 $feedback.removeAttribute('style');
                             }
                             if (response.error) {
                                 $emailAddress.focus();
                                 $feedback.innerHTML = response.error;
-                                $feedback.classList.add('wpgdprc-feedback--error');
+                                $feedback.classList.add('wpgdprc-message--error');
                                 $feedback.removeAttribute('style');
                             }
                         }
@@ -132,9 +266,13 @@
                     });
                 }
             });
-        }
+        },
+        initFormDeleteRequest = function () {
+            var $formDeleteRequest = document.querySelectorAll('.wpgdprc-form--delete-request');
+            if ($formDeleteRequest.length < 1) {
+                return;
+            }
 
-        if ($formDeleteRequest.length > 0) {
             $formDeleteRequest.forEach(function ($form) {
                 var $selectAll = $form.querySelector('.wpgdprc-select-all');
 
@@ -152,7 +290,7 @@
                             }
                         };
                     $selectAll.checked = false;
-                    _ajax(data, _getValuesByCheckedBoxes($checkboxes), $this);
+                    _doAjax(data, _getValuesByCheckedBoxes($checkboxes), $this);
                 });
 
                 if ($selectAll !== null) {
@@ -166,6 +304,14 @@
                     });
                 }
             });
+        };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (_readCookie('wpgdprc-consent') === null) {
+            initConsentBar();
         }
+        initConsentModal();
+        initFormAccessRequest();
+        initFormDeleteRequest();
     });
 })(window, document);
